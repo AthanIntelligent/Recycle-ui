@@ -28,6 +28,7 @@
 <script>
 import { getImage } from '@/api/introduction'
 import Stack from '@/components/tantan/stack'
+import process from 'process'
 export default {
   name: 'introduction',
   components: {

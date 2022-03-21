@@ -91,45 +91,18 @@ export const constantRouterMap = [
     component: Layout,
     meta: {
       icon: 'svg-layers',
-      title: '路由嵌套'
+      title: '基站管理'
     },
     children: [
       {
-        path: 'menu1',
-        meta: { icon: 'share', title: '嵌套路由1' },
-        component: () => import('@/views/nested/menu1/index'),
-        children: [
-          {
-            path: 'menu1-1',
-            name: 'menu1-1',
-            component: () => import('@/views/introduction/index'),
-            meta: {icon: 'success', title: '嵌套路由1-1'}
-          },
-          {
-            path: 'menu1-2',
-            name: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2/index'),
-            alwaysShow: true,
-            meta: {icon: 'error', title: '嵌套路由1-2'},
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/introduction/index'),
-                name: 'menu1-2-1',
-                meta: {icon: 'warning', title: '嵌套路由1-2-1'}
-              }
-            ]
-          }
-        ]
-      },
-      {
-        path: 'menu2',
-        name: 'menu2',
-        component: () => import('@/views/user/add'),
-        meta: {icon: 'star-on', title: '嵌套路由2'}
+        path: 'index',
+        name: 'Station',
+        component: () => import('@/views/station/index'),
+        meta: {icon: 'star-on', title: '基站管理'}
       }
     ]
   },
+  // 自定义组件 放到 用户预订基站时间
   {
     path: '/custom-component',
     component: Layout,
@@ -171,21 +144,15 @@ export const constantRouterMap = [
     alwaysShow: true,
     meta: {
       icon: 's-order',
-      title: '富文本'
+      title: '用户管理'
     },
     redirect: 'quill',
     children: [
       {
         path: 'quill',
         name: 'QuillEditor',
-        component: () => import('@/views/rich-editor/quill'),
+        component: () => import('@/views/user/index'),
         meta: {icon: 's-order', title: 'quill'}
-      },
-      {
-        path: 'tinymce',
-        name: 'TinyMCE',
-        component: () => import('@/views/rich-editor/tinymce'),
-        meta: {icon: 'svg-type', title: 'tinymce'}
       }
     ]
   },
@@ -231,15 +198,21 @@ export const asyncRouterMap = [
     redirect: '/excel/export-excel',
     alwaysShow: true,
     meta: {
-      title: '表格',
+      title: '物品管理',
       icon: 'date'
     },
     children: [
       {
+        path: 'dynamic-type',
+        component: () => import('@/views/excel/dynamic-type/index'),
+        name: 'DynamicType',
+        meta: { icon: 'menu', title: '所属类型' }
+      },
+      {
         path: 'dynamic-table',
         component: () => import('@/views/excel/dynamic-table/index'),
         name: 'DynamicTable',
-        meta: { icon: 'set-up', title: '动态表格' }
+        meta: { icon: 'set-up', title: '物品详情' }
       },
       {
         path: 'export-excel',
@@ -253,6 +226,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/excel/upload-excel'),
         meta: {icon: 'upload', title: '上传表格'}
       },
+      // 放到 统计交易中 和 可视化一个目录
       {
         path: 'merge-count',
         name: '合并&统计',
