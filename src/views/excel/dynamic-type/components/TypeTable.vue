@@ -86,7 +86,7 @@ export default {
   methods: {
     getAllList() {
       axios({
-        url: 'http://localhost:8080/goods/dirGoodsType',
+        url: 'http://10.15.0.92:8082/goods/dirGoodsType',
         method: 'get'
       }).then(res => {
         this.goodsTypeList = res

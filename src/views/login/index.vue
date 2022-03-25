@@ -12,17 +12,17 @@
         <h2 class="login-title">{{$t('login.title')}}</h2>
       </div>
       <el-form :rules="rules" :model="loginForm" ref="loginForm" label-width="80px">
-        <el-form-item :label="$t('login.account')" prop="username" style="position:relative">
-          <el-input type="text" v-model="loginForm.username"
-            @keyup.enter.native="goToPwdInput"
+        <el-form-item :label="$t('login.account')" prop="loginName" style="position:relative">
+          <el-input type="text" v-model="loginForm.loginName"
+            @keyup.enter.native="goTopasswordInput"
             maxlength="20"/>
           <span class="svg-container svg-container_user">
             <svg-icon icon-class="user" />
           </span>
         </el-form-item>
-        <el-form-item :label="$t('login.password')" prop="pwd">
-          <el-input ref="pwd" type="password"
-            v-model="loginForm.pwd"
+        <el-form-item :label="$t('login.password')" prop="password">
+          <el-input ref="password" type="password"
+            v-model="loginForm.password"
             @keyup.enter.native="onLogin"
             maxlength="20" />
           <span class="svg-container svg-container_password">
@@ -40,27 +40,29 @@
   </el-container>
 </template>
 <script>
-import { isValidUsername } from '@/utils/validate'
+import { isValidLoginName } from '@/utils/validate'
 import LangSelect from '@/components/lang-select'
 import { saveToLocal, loadFromLocal } from '@/common/local-storage'
 import { mapActions } from 'vuex'
 /* eslint-disable*/
 import particles from 'particles.js'
+import {login} from '../../api/login'
+import axios from 'axios'
 export default {
   components: {
     LangSelect
   },
   data() {
-    // username 验证
-    const validateUsername = (rule, value, callback) => {
-      if (!isValidUsername(value)) {
+    // loginName 验证
+    const validateLoginName = (rule, value, callback) => {
+      if (!isValidLoginName(value)) {
         callback(new Error('请输入正确的用户名'))
       } else {
         callback()
       }
     }
-    // pwd 验证
-    const validatePwd = (rule, value, callback) => {
+    // password 验证
+    const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
         callback(new Error('密码不能小于6位'))
       } else {
@@ -71,21 +73,21 @@ export default {
       // 粒子开关
       toggleParticles: false,
       loginForm: {
-        username: '',
-        pwd: ''
+        loginName: '',
+        password: ''
       },
       remember: false,
       loading: false,
       rules: {
-        username: [
+        loginName: [
           { required: true, message: '请输入账号', trigger: 'blur' },
-          { required: true, trigger: 'blur', validator: validateUsername },
-          { required: true, trigger: 'change', validator: validateUsername }
+          { required: true, trigger: 'blur', validator: validateLoginName },
+          { required: true, trigger: 'change', validator: validateLoginName }
         ],
-        pwd: [
+        password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
-          { required: true, trigger: 'blur', validator: validatePwd },
-          { required: true, trigger: 'change', validator: validatePwd }
+          { required: true, trigger: 'blur', validator: validatePassword },
+          { required: true, trigger: 'change', validator: validatePassword }
         ]
       }
     }
@@ -93,11 +95,11 @@ export default {
   created() {
     // 初始化时读取localStorage用户信息
     if (loadFromLocal('remember', false)) {
-      this.loginForm.username = loadFromLocal('username', '')
-      this.loginForm.pwd = loadFromLocal('password', '')
+      this.loginForm.loginName = loadFromLocal('loginName', '')
+      this.loginForm.password = loadFromLocal('password', '')
     } else {
-      this.loginForm.username = ''
-      this.loginForm.pwd = ''
+      this.loginForm.loginName = ''
+      this.loginForm.password = ''
     }
   },
   methods: {
@@ -105,30 +107,47 @@ export default {
       'login'
     ]),
     // 用户名输入框回车后切换到密码输入框
-    goToPwdInput() {
-      this.$refs.pwd.$el.getElementsByTagName('input')[0].focus()
+    goToPasswordInput() {
+      this.$refs.password.$el.getElementsByTagName('input')[0].focus()
     },
     // 登录操作
     onLogin() {
-      this.$refs.pwd.$el.getElementsByTagName('input')[0].blur()
+      // axios({
+      //   method: "post",
+      //   url: "/login",
+      //   data:this.loginForm,
+      //   headers: {
+      //     "Content-Type":"application/json"
+      //   }
+      // })
+
+
+      this.$refs.password.$el.getElementsByTagName('input')[0].blur()
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.login(this.loginForm).then(() => {
-            // 保存账号
-            if (this.remember) {
-              saveToLocal('username', this.loginForm.username)
-              saveToLocal('password', this.loginForm.pwd)
-              saveToLocal('remember', true)
-            } else {
-              saveToLocal('username', '')
-              saveToLocal('password', '')
-              saveToLocal('remember', false)
-            }
-            this.$router.push({ path: '/home' })
-          }).catch(() => {
-            this.loading = false
-          })
+            login(this.loginForm).then((res) => {
+              console.log(res);
+              if(res.data.status == 200){
+                this.$router.push({ path: '/home' })
+              }
+            })
+          // this.login(this.loginForm).then(() => {
+          //   // 保存账号
+          //   if (this.remember) {
+          //     saveToLocal('loginName', this.loginForm.loginName)
+          //     saveToLocal('password', this.loginForm.password)
+          //     saveToLocal('remember', true)
+          //   } else {
+          //     saveToLocal('loginName', '')
+          //     saveToLocal('password', '')
+          //     saveToLocal('remember', false)
+          //   }
+
+          //
+          // }).catch(() => {
+          //   this.loading = false
+          // })
         } else {
           return false
         }

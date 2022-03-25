@@ -5,7 +5,7 @@
  * @param    {[string]}                 str [description]
  * @return   {Boolean}                    [description]
  */
-export function isValidUsername(str) {
-  const usernameMap = ['admin', 'lucy']
-  return usernameMap.indexOf(str.trim()) >= 0
+export function isValidLoginName(str) {
+  // const usernameMap = ['admin', 'lucy']
+  return str.length >= 0
 }

@@ -24,12 +24,17 @@ import './icons'
 // 全局 Mock 接口
 import './mock'
 
+import axios from 'axios'
+import {devServer} from '../vue.config'
+
 Vue.use(ElementUI, {
   size: 'medium',
   i18n: (key, value) => i18n.t(key, value)
 })
 Vue.use(Notification)
 
+Vue.prototype.$ajax = axios
+axios.defaults.baseURL = 'http://localhost:8082/'
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
