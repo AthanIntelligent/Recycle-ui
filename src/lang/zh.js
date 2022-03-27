@@ -3,14 +3,14 @@ export default {
     name: '喻'
   },
   login: {
-    title: '后台管理系统',
+    title: '基于SpringBoot的垃圾分类回收后台管理系统',
     account: '账号',
     password: '密码',
     remember: '记住密码',
     login: '登录'
   },
   navbar: {
-    title: '后台管理系统',
+    title: '基于SpringBoot的垃圾分类回收后台管理系统',
     screenfull: '全屏',
     profile: '个人中心',
     avatar: '修改头像',
