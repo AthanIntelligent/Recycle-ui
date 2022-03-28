@@ -3,18 +3,18 @@
     <el-switch v-model="toggleParticles"
       inactive-color="#ff4949">
     ></el-switch>
-    <el-button class="show-account" type="text" @click="accountTip">提示帐号信息</el-button>
+<!--    <el-button class="show-account" type="text" @click="accountTip">提示帐号信息</el-button>-->
     <el-card class="animated flipInY">
       <div slot="header" class="el-card-header">
         <lang-select class="lang-select"></lang-select>
         <div style="clear: both;"></div>
-        <img src="../../../static/image/login-logo.png" alt="">
+        <img src="../../../static/image/223.png" alt="">
         <h2 class="login-title">{{$t('login.title')}}</h2>
       </div>
       <el-form :rules="rules" :model="loginForm" ref="loginForm" label-width="80px">
         <el-form-item :label="$t('login.account')" prop="loginName" style="position:relative">
           <el-input type="text" v-model="loginForm.loginName"
-            @keyup.enter.native="goTopasswordInput"
+            @keyup.enter.native="goToPasswordInput"
             maxlength="20"/>
           <span class="svg-container svg-container_user">
             <svg-icon icon-class="user" />
@@ -47,7 +47,7 @@ import { mapActions } from 'vuex'
 /* eslint-disable*/
 import particles from 'particles.js'
 import {login} from '../../api/login'
-import axios from 'axios'
+
 export default {
   components: {
     LangSelect
@@ -112,37 +112,33 @@ export default {
     },
     // 登录操作
     onLogin() {
-      // axios({
-      //   method: "post",
-      //   url: "/login",
-      //   data:this.loginForm,
-      //   headers: {
-      //     "Content-Type":"application/json"
-      //   }
-      // })
-
-
       this.$refs.password.$el.getElementsByTagName('input')[0].blur()
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
             login(this.loginForm).then((res) => {
-              console.log(res);
               if(res.data.status == 200){
+                console.log(res)
+                if (this.remember) {
+                  saveToLocal('loginName', this.loginForm.loginName)
+                  saveToLocal('password', this.loginForm.password)
+                  saveToLocal('remember', true)
+                } else {
+                  saveToLocal('loginName', '')
+                  saveToLocal('password', '')
+                  saveToLocal('remember', false)
+                }
+                this.loading = false
+                window.sessionStorage.setItem("user",res.data)
                 this.$router.push({ path: '/home' })
+              }else {
+                console.log(res)
+                this.accountTip("error",res.data.message);
               }
             })
           // this.login(this.loginForm).then(() => {
           //   // 保存账号
-          //   if (this.remember) {
-          //     saveToLocal('loginName', this.loginForm.loginName)
-          //     saveToLocal('password', this.loginForm.password)
-          //     saveToLocal('remember', true)
-          //   } else {
-          //     saveToLocal('loginName', '')
-          //     saveToLocal('password', '')
-          //     saveToLocal('remember', false)
-          //   }
+
 
           //
           // }).catch(() => {
@@ -153,20 +149,13 @@ export default {
         }
       })
     },
-    accountTip() {
+    accountTip(type,info) {
       this.$notify({
-        title: '账号：admin',
+        title: '输入错误',
         dangerouslyUseHTMLString: true,
-        message: '<strong>密码：<i>123456</i></strong>',
-        type: 'success',
-        position: 'bottom-left'
-      })
-      this.$notify({
-        title: '账号：lucy',
-        dangerouslyUseHTMLString: true,
-        message: '<strong>密码：<i>123456</i></strong>',
-        type: 'success',
-        position: 'bottom-left',
+        message: '<strong>提示：<i>'+info+'</i></strong>',
+        type: type,
+        position: 'top-right',
         offset: 80
       })
     }
@@ -286,7 +275,6 @@ export default {
     }
   },
   mounted() {
-    this.accountTip()
   }
 }
 </script>
@@ -314,7 +302,7 @@ export default {
     left 50%
     margin -300px 0 0 -250px
     width 500px
-    height 450px
+    height 500px
     background #fff
     .el-card-header
       text-align center

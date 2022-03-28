@@ -3,7 +3,7 @@ export default {
     name: 'yu'
   },
   login: {
-    title: 'Content Manage System',
+    title: 'Garbage Classification And Recycling Background Management System Based On SpringBoot',
     account: 'Account',
     password: 'Pwd',
     remember: 'Remember',
