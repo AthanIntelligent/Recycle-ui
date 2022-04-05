@@ -5,7 +5,7 @@ export function login (userInfo) {
 }
 
 export function userInfo() {
-  return axios.post('/user/getUserInfo')
+  return axios.get('/user/getUserInfo')
 }
 
 export function logout() {

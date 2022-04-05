@@ -3,26 +3,27 @@ import { getToken, setToken, removeToken } from '@/common/auth'
 
 const SET_ACCOUNT = 'SET_ACCOUNT'
 const SET_TOKEN = 'SET_TOKEN'
-const SET_NAME = 'SET_NAME'
+const SET_REALNAME = 'SET_REALNAME'
 const SET_AGE = 'SET_AGE'
 const SET_SEX = 'SET_AEX'
-const SET_AVATAR = 'SET_AVATAR'
-const SET_PERMISSIONS = 'SET_PERMISSIONS'
+const SET_MOBILE = 'SET_MOBILE'
 const SET_TYPE = 'SET_TYPE'
-const SET_DESC = 'SET_DESC'
+const SET_ADDRESS = 'SET_ADDRESS'
+const SET_CARDNO = 'SET_CARDNO'
+const SET_PERMISSIONS = 'PERMISSIONS'
 const SET_ALL = 'SET_ALL'
-
 const user = {
   state: {
     token: getToken(),
     account: '',
-    name: '',
+    realName: '',
     age: 0,
     sex: '',
-    avatar: '',
-    permissions: '',
-    type: [],
-    desc: ''
+    address: '',
+    mobile: '',
+    userType: '',
+    id: '',
+    permissions: ''
   },
   mutations: {
     [SET_ACCOUNT](state, account) {
@@ -31,8 +32,8 @@ const user = {
     [SET_TOKEN](state, token) {
       state.token = token
     },
-    [SET_NAME](state, name) {
-      state.name = name
+    [SET_REALNAME](state, realName) {
+      state.realName = realName
     },
     [SET_AGE](state, age) {
       state.age = age
@@ -40,17 +41,20 @@ const user = {
     [SET_SEX](state, sex) {
       state.sex = sex
     },
-    [SET_AVATAR](state, avatar) {
-      state.avatar = avatar
-    },
-    [SET_PERMISSIONS](state, permissions) {
-      state.permissions = permissions
+    [SET_MOBILE](state, mobile) {
+      state.mobile = mobile
     },
     [SET_TYPE](state, type) {
       state.type = type
     },
-    [SET_DESC](state, desc) {
-      state.desc = desc
+    [SET_ADDRESS](state, address) {
+      state.address = address
+    },
+    [SET_CARDNO](state, id) {
+      state.id = id
+    },
+    [SET_PERMISSIONS](state, permissions) {
+      state.permissions = permissions
     },
     [SET_ALL](state, userInfo) {
       state = Object.assign(state, userInfo)
@@ -61,14 +65,13 @@ const user = {
     login({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo).then(resp => {
-          let data = resp.data
-          setToken(data.token)
-          commit(SET_TOKEN, data.token)
-          // commit(SET_NAME, data.name)
-          // commit(SET_AGE, data.age)
-          // commit(SET_AVATAR, data.avatar)
-          // commit(SET_PERMISSIONS, data.permissions)
-          return resolve()
+          let data = resp.data.data
+          if(resp.data.status === 200) {
+            setToken(data.token)
+            commit(SET_TOKEN, data.token)
+            commit(SET_ACCOUNT, data.loginName)
+          }
+          return resolve(resp)
         }).catch(err => {
           return reject(err)
         })
@@ -78,16 +81,18 @@ const user = {
     pullUserInfo({ commit }) {
       return new Promise((resolve, reject) => {
         userInfo().then(resp => {
-          let data = resp.data
-          commit(SET_ACCOUNT, data.account)
-          commit(SET_NAME, data.name)
+          let user = resp.data.data
+          let data = user.userInfo
+          commit(SET_ACCOUNT, data.loginName)
+          commit(SET_REALNAME, data.realName)
           commit(SET_AGE, data.age)
           commit(SET_SEX, data.sex)
-          commit(SET_AVATAR, data.avatar)
-          commit(SET_PERMISSIONS, data.permissions)
-          commit(SET_TYPE, data.type)
-          commit(SET_DESC, data.desc)
-          return resolve(data)
+          commit(SET_TYPE, data.userType)
+          commit(SET_ADDRESS, data.address)
+          commit(SET_MOBILE, data.mobile)
+          commit(SET_CARDNO, data.id)
+          commit(SET_PERMISSIONS, user.permissions)
+          return resolve(user)
         }).catch(err => {
           return reject(err)
         })
@@ -99,7 +104,7 @@ const user = {
         logout().then(resp => {
           removeToken()
           commit(SET_TOKEN, '')
-          commit(SET_NAME, '')
+          commit(SET_ACCOUNT, '')
           return resolve()
         }).catch(err => {
           return reject(err)
@@ -110,7 +115,6 @@ const user = {
     doUpdateAvatar({ commit }, imgFile) {
       return new Promise(resolve => {
         setTimeout(() => {
-          commit(SET_AVATAR, imgFile)
           resolve()
         }, 1000)
       })
@@ -130,9 +134,9 @@ const user = {
   },
   getters: {
     token: state => state.token,
-    name: state => state.name,
+    name: state => state.loginName,
     age: state => state.age,
-    avatar: state => state.avatar,
+    // avatar: state => state.avatar,
     permissions: state => state.permissions,
     allInfo: state => state
   }

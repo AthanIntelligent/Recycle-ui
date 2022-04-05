@@ -23,6 +23,7 @@ router.beforeEach((to, from, next) => {
       // 有token，没有permissions
       if (store.getters.permissions.length === 0) {
         store.dispatch('pullUserInfo').then(resp => {
+          // console.log(resp, "userInfo")
           const permissions = resp.permissions
           store.dispatch('GenerateRoutes', { permissions }).then(() => {
             // 动态添加可访问路由表

@@ -46,7 +46,6 @@ import { saveToLocal, loadFromLocal } from '@/common/local-storage'
 import { mapActions } from 'vuex'
 /* eslint-disable*/
 import particles from 'particles.js'
-import {login} from '../../api/login'
 
 export default {
   components: {
@@ -116,34 +115,25 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-            login(this.loginForm).then((res) => {
-              if(res.data.status == 200){
-                console.log(res)
-                if (this.remember) {
-                  saveToLocal('loginName', this.loginForm.loginName)
-                  saveToLocal('password', this.loginForm.password)
-                  saveToLocal('remember', true)
-                } else {
-                  saveToLocal('loginName', '')
-                  saveToLocal('password', '')
-                  saveToLocal('remember', false)
-                }
-                this.loading = false
-                window.sessionStorage.setItem("user",res.data)
-                this.$router.push({ path: '/home' })
-              }else {
-                console.log(res)
-                this.accountTip("error",res.data.message);
+          this.login(this.loginForm).then((res) => {
+            // 保存账号
+            if(res.data.status === 200){
+              if (this.remember) {
+                saveToLocal('loginName', this.loginForm.loginName)
+                saveToLocal('password', this.loginForm.password)
+                saveToLocal('remember', true)
+              } else {
+                saveToLocal('loginName', '')
+                saveToLocal('password', '')
+                saveToLocal('remember', false)
               }
-            })
-          // this.login(this.loginForm).then(() => {
-          //   // 保存账号
-
-
-          //
-          // }).catch(() => {
-          //   this.loading = false
-          // })
+              this.$router.push({ path: '/home' })
+            }else {
+              this.accountTip("error",res.data.message);
+            }
+          }).catch(() => {
+            this.loading = false
+          })
         } else {
           return false
         }

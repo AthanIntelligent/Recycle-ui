@@ -7,5 +7,5 @@
  */
 export function isValidLoginName(str) {
   // const usernameMap = ['admin', 'lucy']
-  return str.length >= 0
+  return str.length > 0
 }
