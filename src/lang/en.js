@@ -9,6 +9,17 @@ export default {
     remember: 'Remember',
     login: 'Login'
   },
+  register: {
+    account: 'Account',
+    password: 'Password',
+    realName: 'RealName',
+    mobile: 'Mobile',
+    address: 'Address',
+    userType: 'UserType',
+    sex: 'Sex',
+    age: 'Age',
+    id: 'CardId'
+  },
   navbar: {
     title: 'vue-cms',
     screenfull: 'screenfull',
