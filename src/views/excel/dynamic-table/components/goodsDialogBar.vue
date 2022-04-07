@@ -1,19 +1,19 @@
 <template>
   <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm" v-if="goods.uuid==''">
     <el-form-item label="物品名称" prop="name">
-      <el-input v-model="ruleForm.name"></el-input>
+      <el-input v-model="ruleForm.goodsName"></el-input>
     </el-form-item>
     <el-form-item label="物品类型" prop="type">
-      <el-select v-model="ruleForm.type" placeholder="请选择物品类型">
+      <el-select v-model="ruleForm.goodsType" placeholder="请选择物品类型">
         <el-option label="可回收垃圾" value="shanghai"></el-option>
         <el-option label="可循环利用垃圾" value="beijing"></el-option>
       </el-select>
     </el-form-item>
     <el-form-item label="简介" prop="desc">
-      <el-input type="textarea" v-model="ruleForm.desc"></el-input>
+      <el-input type="textarea" v-model="ruleForm.recycleDetail"></el-input>
     </el-form-item>
     <el-form-item label="单价" prop="price">
-      <el-input type="text" v-model="ruleForm.price"></el-input>
+      <el-input type="text" v-model="ruleForm.perMoney"></el-input>
     </el-form-item>
     <el-form-item label="图片" prop="img">
       <el-upload
@@ -30,19 +30,22 @@
   </el-form>
   <el-form :model="goods" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm" v-else>
     <el-form-item label="物品名称" prop="name">
-      <el-input v-model="goods.name"></el-input>
+      <el-input v-model="goods.goodsName"></el-input>
     </el-form-item>
     <el-form-item label="物品类型" prop="type">
-      <el-select v-model="goods.type" placeholder="请选择物品类型">
+      <el-select v-model="goods.goodsType" placeholder="请选择物品类型">
         <el-option label="可回收垃圾" value="shanghai"></el-option>
         <el-option label="可循环利用垃圾" value="beijing"></el-option>
       </el-select>
     </el-form-item>
     <el-form-item label="简介" prop="desc">
-      <el-input type="textarea" v-model="goods.desc"></el-input>
+      <el-input type="textarea" v-model="goods.recycleDetail"></el-input>
     </el-form-item>
     <el-form-item label="单价" prop="price">
-      <el-input type="text" v-model="goods.price"></el-input>
+      <el-input type="text" v-model="goods.perMoney"></el-input>
+    </el-form-item>
+    <el-form-item label="备注" prop="remark">
+      <el-input type="text" v-model="goods.remark"></el-input>
     </el-form-item>
     <el-form-item label="图片" prop="img">
       <el-upload
@@ -64,21 +67,24 @@ export default {
   props: {
     goods: {
       uuid: '',
-      name: '',
-      type: '',
-      img: Object,
-      desc: '',
-      price: ''
+      goodsType: '',
+      goodsName: '',
+      pic: Object,
+      recycleDetail: '',
+      perMoney: 0,
+      remark: ''
     }
   },
   data() {
     return {
       ruleForm: {
-        name: '',
-        type: '',
-        img: Object,
-        desc: '',
-        price: ''
+        uuid: '',
+        goodsType: '',
+        goodsName: '',
+        pic: Object,
+        recycleDetail: '',
+        perMoney: 0,
+        remark: ''
       },
       rules: {
         name: [

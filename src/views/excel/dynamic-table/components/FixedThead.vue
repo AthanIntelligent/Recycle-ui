@@ -2,11 +2,11 @@
   <div class="app-container">
     <el-form :inline="true" :model="goods" class="demo-form-inline">
       <el-form-item label="名称">
-        <el-input v-model="goods.name" placeholder="物品名称"></el-input>
+        <el-input v-model="goods.goodsName" placeholder="物品名称"></el-input>
       </el-form-item>
       <el-form-item label="类型">
         <!--从数据库中查-->
-        <el-select v-model="goods.type" placeholder="物品类型">
+        <el-select v-model="goods.goodsType" placeholder="物品类型">
           <el-option label="区域一" value="shanghai"></el-option>
           <el-option label="区域二" value="beijing"></el-option>
         </el-select>
@@ -16,29 +16,36 @@
       </el-form-item>
     </el-form>
     <el-button @click="dialogVisible = true">添加</el-button>
+    <el-button @click="">导入</el-button>
+    <el-button @click="">导出</el-button>
+    <el-button @click="">下载模板</el-button>
     <!-- 列表数据 goodsList -->
     <el-table :key="key" :data="goodsList" border fit highlight-current-row style="width: 100%">
       <el-table-column
-        prop="name"
+        prop="goodsName"
         label="物品名称"
         width="180">
       </el-table-column>
       <el-table-column
-        prop="type"
+        prop="goodsType"
         label="物品类型"
         width="180">
       </el-table-column>
       <el-table-column
-        prop="desc"
+        prop="recycleDetail"
         label="简介">
       </el-table-column>
       <el-table-column
-        prop="price"
+        prop="perMoney"
         label="单价">
       </el-table-column>
       <el-table-column
-        prop="img"
+        prop="pic"
         label="物品图片">
+      </el-table-column>
+      <el-table-column
+        prop="remark"
+        label="备注">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -52,7 +59,7 @@
             修改
           </el-button>
           <el-button
-            @click="delGoods(item.uuid)"
+            @click="delGoods(uuid)"
             type="text"
             size="small">
             删除
@@ -69,9 +76,9 @@
       <goodsDialogBar v-bind:goods="goods"></goodsDialogBar>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false,addGoods()"
+        <el-button type="primary" @click="dialogVisible = false,addGoods(goods)"
                    v-if="goods.uuid == ''">确 定</el-button>
-        <el-button type="primary" @click="dialogVisible = false,updGoods()" v-else>确 定</el-button>
+        <el-button type="primary" @click="dialogVisible = false,updGoods(goods)" v-else>确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -79,7 +86,7 @@
 
 <script>
 import goodsDialogBar from './goodsDialogBar'
-import axios from 'axios'
+import {dirGoods, addGoods, delGoods, updGoods} from '@/api/goods'
 
 export default {
   components: {'goodsDialogBar': goodsDialogBar},
@@ -87,44 +94,15 @@ export default {
     return {
       goods: {
         uuid: '',
-        name: '3',
-        type: '可回收',
-        img: Object,
-        desc: '备注',
-        price: 5
+        goodsType: '',
+        goodsName: '',
+        pic: Object,
+        recycleDetail: '备注',
+        perMoney: 5,
+        remark: ''
       },
-      goodsList: [
-        {
-          uuid: '001',
-          name: '1',
-          type: '可回收',
-          img: Object,
-          desc: '备注',
-          price: 1
-        },
-        {
-          uuid: '002',
-          name: '2',
-          type: '可回收',
-          img: Object,
-          desc: '备注',
-          price: 2
-        }],
+      goodsList: [],
       dialogVisible: false,
-      tableData: [
-        {
-          name: '电池',
-          apple: 'apple-10',
-          banana: 'banana-10',
-          orange: 'orange-10'
-        },
-        {
-          name: '衣服',
-          apple: 'apple-20',
-          banana: 'banana-20',
-          orange: 'orange-20'
-        }
-      ],
       key: 1 // table key
     }
   },
@@ -133,44 +111,43 @@ export default {
   },
   methods: {
     getAllGoods() {
-      axios({
-        url: 'http://localhost:8080/goods/dirGoods',
-        method: 'get'
-      }).then(res => {
-        this.goodsList = res
+      dirGoods().then((res) => {
+        if (res.data.status === 200) {
+          this.goodsList = res.data.data
+        }
+      }).catch((res) => {
+        console.log(res.message)
       })
     },
     onSubmit(goods) {
-      console.log(goods)
-      alert('query')
-      // 根据条件查询
-      axios({
-        url: 'http://localhost:8080/goods/dirGoodsBy',
-        method: 'get'
-      }).then(res => {
-        this.goodsList = res
+      // 根据条件查询物品
+      dirGoods(goods).then((res) => {
+        if (res.data.status === 200) {
+          this.goodsList = res.data
+        }
+      }).catch((res) => {
+        console.log(res.message)
       })
     },
     addGoods() {
       alert('add')
-      // axios({
-      //   url: 'http://localhost:8080/goods/addGoods',
-      //   method: 'post'
-      // }).then(res => {
-      //   console.log(res)
-      // })
+      addGoods().then((res) => {
+      }).catch((res) => {
+        console.log(res.message)
+      })
     },
     updGoods() {
       alert('upd')
-      // axios({
-      //   url: 'http://localhost:8080/goods/updGoods',
-      //   method: 'post'
-      // }).then(res => {
-      //   console.log(res)
-      // })
+      updGoods().then((res) => {
+      }).catch((res) => {
+        console.log(res.message)
+      })
     },
     delGoods(uuid) {
-
+      delGoods(uuid).then((res) => {
+      }).catch((res) => {
+        console.log(res.message)
+      })
     }
   }
 }
