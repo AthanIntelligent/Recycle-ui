@@ -14,11 +14,13 @@ export default {
     password: '密码',
     realName: '真实姓名',
     mobile: '手机号码',
-    address: '营业地址',
+    address: '居住地址',
+    address2: '详细地址',
     userType: '注册类型',
     sex: '性别',
     age: '年龄',
-    id: '身份证号'
+    id: '身份证号',
+    verifyCode: '验证码'
   },
   navbar: {
     title: '基于SpringBoot的垃圾分类回收后台管理系统',

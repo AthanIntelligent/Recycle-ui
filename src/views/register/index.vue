@@ -15,6 +15,7 @@
           <span class="svg-container svg-container_user">
             <svg-icon icon-class="user" />
           </span>
+          <div v-show="verAccountFlag" style="color:red;font-size: 12px;position: absolute;top: 29px;">{{verAccount}}</div>
         </el-form-item>
         <el-form-item :label="$t('register.password')" prop="password">
           <el-input ref="password" type="password"
@@ -37,20 +38,62 @@
             <el-radio v-model="registerForm.sex" label="2">女</el-radio>
           </div>
         </el-form-item>
-        <el-form-item :label="$t('register.realName')" prop="realName" label-width="80px">
+        <el-form-item :label="$t('register.address')" prop="address" label-width="80px">
+          <el-cascader
+            style="width: 50%"
+            :options="options"
+            v-model="selectedOptions"
+            @change="handleChange">
+          </el-cascader>
+          <div style="float: right">
+            <label-wrap>年龄&nbsp;&nbsp;&nbsp;&nbsp;</label-wrap>
+            <el-input-number size="small" v-model="registerForm.age" controls-position="right" @change="handleAgeChange" :min="18" :max="60" label="年龄"></el-input-number>
+          </div>
+        </el-form-item>
+        <el-form-item :label="$t('register.address2')" prop="address2" label-width="80px">
+          <el-input type="text"
+                    style="width: 100%"
+                    v-model="address2"
+                    @keyup.enter.native="goToPasswordInput"
+                    maxlength="50" />
+        </el-form-item>
+        <el-form-item :label="$t('register.mobile')" prop="mobile" label-width="80px">
+          <el-input type="number"
+                    style="width: 76%"
+                    v-model="registerForm.mobile"
+                    @keyup.enter.native="goToPasswordInput"
+                    maxlength="11" />
+
+        </el-form-item>
+        <el-form-item :label="$t('register.verifyCode')" label-width="80px">
           <el-input type="text"
                     style="width: 50%"
-                    v-model="registerForm.realName"
+                    v-model="verifyCode"
                     @keyup.enter.native="goToPasswordInput"
-                    maxlength="20" />
+                    maxlength="6" />
+          <el-button style="background-color: white;color: gray">获取验证码</el-button>
+        </el-form-item>
+        <el-form-item label-width="0px">
+          <div style="display: flex;justify-content: space-around">
+            <el-radio v-model="registerForm.userType" label='1'>普通用户</el-radio>
+            <el-radio v-model="registerForm.userType" label='2'>基站人员</el-radio>
+            <el-radio v-model="registerForm.userType" label='3'>系统管理员</el-radio>
+          </div>
+
         </el-form-item>
       </el-form>
+      <div style="display: flex;justify-content: space-around;">
+        <el-button type="button" style="width: 45%;color: gray;" @click="reset">取消重置</el-button>
+        <el-button type="button" style="width: 45%;background-color: #1d7ac2;color: white;" @click="register">确认提交</el-button>
+      </div>
     </el-card>
   </el-container>
 </template>
 
 <script>
 import LangSelect from '@/components/lang-select'
+import {regionData,CodeToText} from 'element-china-area-data'
+import {register} from "@/api/login";
 export default {
   components: {
     LangSelect
@@ -72,6 +115,14 @@ export default {
         callback()
       }
     }
+      //mobile 验证
+    const validateMobile = (rule,value,callback) => {
+      if(!/^1[3456789]\d{9}$/.test(value)){
+        callback(new Error('请输入正确的手机号码'))
+      } else {
+        callback()
+      }
+    }
     return {
       registerForm: {
         loginName: '',
@@ -79,11 +130,14 @@ export default {
         realName: '',
         mobile: '',
         address: '',
-        userType: null,
-        sex: '',
+        userType: '1',
+        sex: '1',
         age: '',
         id: ''
       },
+      address1: '',
+      address2: '',
+      verifyCode: '',
       rules: {
         loginName: [
           { required: true, message: '请输入账号', trigger: 'blur' },
@@ -96,10 +150,18 @@ export default {
           { required: true, trigger: 'change', validator: validatePassword }
         ],
         realName: [
-          {  }
+          { required: true, message: '请输入真实姓名', trigger: 'blur' }
+        ],
+        mobile: [
+          { required: true, message: '请输入手机号码', trigger: 'blur' },
+          { required: true, trigger: 'blur', validator: validateMobile },
+          { required: true, trigger: 'change', validator: validateMobile }
         ]
       },
-
+      options: regionData,
+      selectedOptions: [],
+      verAccount: '账户不能为空',
+      verAccountFlag: false
     }
   },
   methods: {
@@ -107,6 +169,40 @@ export default {
     goToPasswordInput() {
       this.$refs.password.$el.getElementsByTagName('input')[0].focus()
     },
+    handleChange() {
+      var loc = "";
+      for(let i=0;i<this.selectedOptions.length;i++){
+        loc += CodeToText[this.selectedOptions[i]];
+      }
+      this.address1 = loc;
+    },
+    //改变年龄
+    handleAgeChange(val) {
+      this.registerForm.age = val
+    },
+    //重置
+    reset() {
+      this.registerForm.loginName = '',
+      this.registerForm.password = '',
+      this.registerForm.realName = '',
+      this.registerForm.mobile = '',
+      this.registerForm.address = '',
+      this.registerForm.userType = null,
+      this.registerForm.sex = '1',
+      this.registerForm.age = '',
+      this.registerForm.id = ''
+      this.address2 = '',
+      this.verifyCode = ''
+    },
+    //注册
+    register() {
+      this.registerForm.address = this.address1 + "," + this.address2;
+      register(this.registerForm).then(res => {
+        console.log(res)
+      }).cache(err => {
+        console.log(err)
+      })
+    }
   }
 }
 </script>
@@ -128,8 +224,8 @@ export default {
   top 50%
   left 50%
   margin -300px 0 0 -250px
-  width 500px
-  height 500px
+  width 590px
+  height 630px
   background #fff
   .el-card-header
     display flex
