@@ -2,7 +2,7 @@
   <el-container class="login-container">
     <el-switch v-model="toggleParticles"
       inactive-color="#ff4949">
-    ></el-switch>
+    </el-switch>
 <!--    <el-button class="show-account" type="text" @click="accountTip">提示帐号信息</el-button>-->
     <el-card class="animated flipInY">
       <div slot="header" class="el-card-header">
@@ -33,6 +33,7 @@
           <el-switch v-model="remember"></el-switch>
         </el-form-item>
         <el-button type="primary" @click="onLogin('loginForm')" :loading="loading">{{$t('login.login')}}</el-button>
+        <div style="width: 100%;height: 40px;display: flex;justify-content: center;align-items: center">还没有账号吗？去<a href="/#/register" style="color: #1b427b">注册</a></div>
       </el-form>
     </el-card>
     <!-- particles.js container -->
@@ -130,6 +131,7 @@ export default {
               this.$router.push({ path: '/home' })
             }else {
               this.accountTip("error",res.data.message);
+              this.loading = false
             }
           }).catch(() => {
             this.loading = false
