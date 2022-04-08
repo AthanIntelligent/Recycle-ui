@@ -1,41 +1,41 @@
 <template>
   <div class="app-container">
-    <el-button @click="dialogVisible = true">添加</el-button>
-    <!-- 列表数据 goodsList -->
-    <el-table :key="key" :data="goodsTypeList" border fit highlight-current-row style="width: 100%">
+    <el-button @click="dialogVisible = true" type="primary" size="medium">添加</el-button>
+    <el-table :key="key" :data="goodsTypeList.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+              highlight-current-row style="width: 100%;font-size: 18px">
+      <el-table-column type="index" width="150" label="序号">
+      </el-table-column>
       <el-table-column
         prop="goodsType"
         label="物品类型"
-        width="800"
+        width="900"
       >
       </el-table-column>
       <el-table-column
         prop="uuid"
         fixed="right"
         label="操作"
-        width="400">
+        width="500">
         <template slot-scope="scope">
           <el-button
-            @click="delGoodsType(this.uuid)"
+            @click="delGoodsType(scope.row.uuid)"
             type="text"
-            size="small">
+            size="middle">
             删除
           </el-button>
-          <!--          <el-button-->
-          <!--            @click.native.prevent="deleteRow(scope.$index, tableData)"-->
-          <!--            type="text"-->
-          <!--            size="small">-->
-          <!--            移除-->
-          <!--          </el-button>-->
         </template>
       </el-table-column>
     </el-table>
-    <!--    分页-->
-    <!--    <el-pagination-->
-    <!--      background-->
-    <!--      layout="prev, pager, next"-->
-    <!--      :total="1000">-->
-    <!--    </el-pagination>-->
+    <el-pagination
+      style="position: absolute;right:860px;bottom:25px;"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="currentPage"
+      :page-sizes="[5, 10, 15]"
+    :page-size="pagesize"
+    layout="total, sizes, prev, pager, next, jumper"
+    :total="goodsTypeList.length">
+    </el-pagination>
 
     <!--物品类型添加-->
     <el-dialog
@@ -67,6 +67,8 @@ export default {
         uuid: '',
         goodsType: ''
       },
+      currentPage: 1,
+      pagesize: 10,
       goodsTypeList: [],
       dialogVisible: false,
       key: 1 // table key
@@ -76,9 +78,12 @@ export default {
     this.getAllList()
   },
   methods: {
-    // deleteRow(index, rows) {
-    //   rows.splice(index, 1)
-    // },
+    handleSizeChange: function (size) {
+      this.pagesize = size
+    },
+    handleCurrentChange: function(currentPage) {
+      this.currentPage = currentPage
+    },
     getAllList() {
       dirGoodsType().then((res) => {
         if (res.data.status === 200) {
@@ -90,17 +95,43 @@ export default {
     },
     addGoodsType(data) {
       addGoodsType(data).then((res) => {
+        if (res.data.status == 200){
+          this.$message({
+            type: 'success',
+            message: '添加成功!'
+          })
+          this.getAllList()
+        }
+        if (res.data.status != 200){
+          this.$message({
+            type: 'info',
+            message: res.data.message
+          });
+        }
       }).catch((res) => {
-        error(res.data.message)
       })
     },
     delGoodsType(uuid) {
-      alert(123)
-      alert(uuid)
-      delGoodsType(uuid).then((res) => {
-      }).catch((res) => {
-        console.log(res.message)
-      })
+        this.$confirm('此操作将永久删除该物品类型, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          delGoodsType(uuid).then((res) => {
+            this.getAllList()
+          }).catch((res) => {
+            console.log(res.message)
+          })
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
     }
   }
 }

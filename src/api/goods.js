@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-export function dirGoods() {
-  return axios.get('/goods/dirGoods')
+export function dirGoods(goods) {
+  return axios.post('/goods/dirGoods',goods)
 }
 
 export function addGoods(goods, file) {

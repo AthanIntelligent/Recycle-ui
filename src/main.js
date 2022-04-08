@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-import ElementUI from 'element-ui'
+import ElementUI, {Message} from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import 'element-ui/lib/theme-chalk/display.css'
 // import './element-variables.scss'
@@ -36,6 +36,8 @@ Vue.use(Notification)
 Vue.prototype.$ajax = axios
 axios.defaults.baseURL = 'http://localhost:8082/'
 Vue.config.productionTip = false
+
+Vue.prototype.$message = Message
 
 /* eslint-disable no-new */
 new Vue({

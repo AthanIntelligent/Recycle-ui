@@ -9,5 +9,5 @@ export function addGoodsType(goodsType) {
 }
 
 export function delGoodsType(uuid) {
-  return axios.delete('/goodstype/delGoodsType/{uuid}')
+  return axios.delete('/goodstype/delGoodsType/' + uuid)
 }

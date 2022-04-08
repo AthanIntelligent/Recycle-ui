@@ -206,7 +206,7 @@ export const asyncRouterMap = [
         path: 'dynamic-type',
         component: () => import('@/views/excel/dynamic-type/index'),
         name: 'DynamicType',
-        meta: { icon: 'menu', title: '所属类型' }
+        meta: { icon: 'menu', title: '物品类型' }
       },
       {
         path: 'dynamic-table',

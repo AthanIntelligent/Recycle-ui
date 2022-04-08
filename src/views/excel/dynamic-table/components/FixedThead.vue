@@ -6,9 +6,8 @@
       </el-form-item>
       <el-form-item label="类型">
         <!--从数据库中查-->
-        <el-select v-model="goods.goodsType" placeholder="物品类型">
-          <el-option label="区域一" value="shanghai"></el-option>
-          <el-option label="区域二" value="beijing"></el-option>
+        <el-select v-model="goods.goodsType" @change="goodsTypeHandle(goods.goodsType)"  placeholder="物品类型">
+          <el-option v-for="item in goodsTypeList" :key="item.uuid" :value="item.goodsType"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -20,7 +19,9 @@
     <el-button @click="">导出</el-button>
     <el-button @click="">下载模板</el-button>
     <!-- 列表数据 goodsList -->
-    <el-table :key="key" :data="goodsList" border fit highlight-current-row style="width: 100%">
+    <el-table :key="key" :data="goodsList" highlight-current-row style="width: 100%">
+      <el-table-column type="index" width="100" label="序号">
+      </el-table-column>
       <el-table-column
         prop="goodsName"
         label="物品名称"
@@ -59,7 +60,7 @@
             修改
           </el-button>
           <el-button
-            @click="delGoods(uuid)"
+            @click="delGoods(scope.row.uuid)"
             type="text"
             size="small">
             删除
@@ -87,31 +88,39 @@
 <script>
 import goodsDialogBar from './goodsDialogBar'
 import {dirGoods, addGoods, delGoods, updGoods} from '@/api/goods'
+import {dirGoodsType} from '@/api/goodstype'
 
 export default {
   components: {'goodsDialogBar': goodsDialogBar},
   data() {
     return {
       goods: {
-        uuid: '',
-        goodsType: '',
-        goodsName: '',
-        pic: Object,
-        recycleDetail: '备注',
-        perMoney: 5,
-        remark: ''
+        goodsType: null,
+        goodsName: null,
       },
       goodsList: [],
+      goodsTypeList: [],
       dialogVisible: false,
       key: 1 // table key
     }
   },
   created() {
     this.getAllGoods()
+    this.getAllGoodsType()
   },
   methods: {
+    goodsTypeHandle(goodsType) {
+      console.log(goodsType,111)
+      for(var i=0;i<this.goodsTypeList;i++){
+        if(goodsType === this.goodsTypeList[i].goodsType){
+          alert(1234)
+          this.goods.goodsType = this.goodsTypeList[i].uuid;
+        }
+      }
+      alert(this.goods.goodsType)
+    },
     getAllGoods() {
-      dirGoods().then((res) => {
+      dirGoods(this.goods).then((res) => {
         if (res.data.status === 200) {
           this.goodsList = res.data.data
         }
@@ -119,11 +128,21 @@ export default {
         console.log(res.message)
       })
     },
+    getAllGoodsType(){
+      dirGoodsType().then((res) => {
+        if (res.data.status === 200) {
+          this.goodsTypeList = res.data.data
+        }
+      }).catch((res) => {
+        console.log(res.message)
+      })
+    },
     onSubmit(goods) {
+      alert(this.goods.goodsType)
       // 根据条件查询物品
       dirGoods(goods).then((res) => {
         if (res.data.status === 200) {
-          this.goodsList = res.data
+          this.goodsList = res.data.data
         }
       }).catch((res) => {
         console.log(res.message)
