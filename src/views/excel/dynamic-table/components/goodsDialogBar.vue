@@ -15,6 +15,9 @@
     <el-form-item label="单价" prop="price">
       <el-input type="text" v-model="ruleForm.perMoney"></el-input>
     </el-form-item>
+    <el-form-item label="备注" prop="remark">
+      <el-input type="text" v-model="goods.remark"></el-input>
+    </el-form-item>
     <el-form-item label="图片" prop="img">
       <el-upload
         class="upload-demo"
@@ -33,9 +36,8 @@
       <el-input v-model="goods.goodsName"></el-input>
     </el-form-item>
     <el-form-item label="物品类型" prop="type">
-      <el-select v-model="goods.goodsType" placeholder="请选择物品类型">
-        <el-option label="可回收垃圾" value="shanghai"></el-option>
-        <el-option label="可循环利用垃圾" value="beijing"></el-option>
+      <el-select v-model="goods.goodsType" placeholder="物品类型">
+        <el-option v-for="item in goodsTypeList" :key="item.uuid" :value="item.goodsType"></el-option>
       </el-select>
     </el-form-item>
     <el-form-item label="简介" prop="desc">
@@ -62,6 +64,7 @@
   </el-form>
 </template>
 <script>
+import {dirGoodsType} from '@/api/goodstype'
 export default {
   name: 'goodsDialogBar',
   props: {
@@ -86,6 +89,7 @@ export default {
         perMoney: 0,
         remark: ''
       },
+      goodsTypeList: [],
       rules: {
         name: [
           {required: true, message: '请输入物品名称', trigger: 'blur'},
@@ -103,7 +107,19 @@ export default {
       }
     }
   },
+  created() {
+    this.getAllGoodsType()
+  },
   methods: {
+    getAllGoodsType() {
+      dirGoodsType().then((res) => {
+        if (res.data.status === 200) {
+          this.goodsTypeList = res.data.data
+        }
+      }).catch((res) => {
+        console.log(res.message)
+      })
+    },
     handleRemove(file, fileList) {
       console.log(file, fileList)
     },

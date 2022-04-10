@@ -6,12 +6,13 @@
       </el-form-item>
       <el-form-item label="类型">
         <!--从数据库中查-->
-        <el-select v-model="goods.goodsType" @change="goodsTypeHandle(goods.goodsType)"  placeholder="物品类型">
+        <el-select v-model="goods.goodsType" placeholder="物品类型">
           <el-option v-for="item in goodsTypeList" :key="item.uuid" :value="item.goodsType"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit(goods)">查询</el-button>
+        <el-button type="primary" @click="clearTwo()">清空</el-button>
       </el-form-item>
     </el-form>
     <el-button @click="dialogVisible = true">添加</el-button>
@@ -71,7 +72,7 @@
 
     <!--物品添加 物品修改-->
     <el-dialog
-      :title="goods.uuid == ''?'添加物品':'修改物品'"
+      :title="goods.uuid === null?'添加物品':'修改物品'"
       :visible.sync="dialogVisible"
       width="30%">
       <goodsDialogBar v-bind:goods="goods"></goodsDialogBar>
@@ -95,8 +96,9 @@ export default {
   data() {
     return {
       goods: {
+        uuid: null,
         goodsType: null,
-        goodsName: null,
+        goodsName: null
       },
       goodsList: [],
       goodsTypeList: [],
@@ -109,16 +111,6 @@ export default {
     this.getAllGoodsType()
   },
   methods: {
-    goodsTypeHandle(goodsType) {
-      console.log(goodsType,111)
-      for(var i=0;i<this.goodsTypeList;i++){
-        if(goodsType === this.goodsTypeList[i].goodsType){
-          alert(1234)
-          this.goods.goodsType = this.goodsTypeList[i].uuid;
-        }
-      }
-      alert(this.goods.goodsType)
-    },
     getAllGoods() {
       dirGoods(this.goods).then((res) => {
         if (res.data.status === 200) {
@@ -128,7 +120,7 @@ export default {
         console.log(res.message)
       })
     },
-    getAllGoodsType(){
+    getAllGoodsType() {
       dirGoodsType().then((res) => {
         if (res.data.status === 200) {
           this.goodsTypeList = res.data.data
@@ -138,7 +130,11 @@ export default {
       })
     },
     onSubmit(goods) {
-      alert(this.goods.goodsType)
+      // for (let type of this.goodsTypeList) {
+      //   if (type.goodsType === this.goods.goodsType){
+      //     this.goods.goodsType = type.uuid
+      //   }
+      // }
       // 根据条件查询物品
       dirGoods(goods).then((res) => {
         if (res.data.status === 200) {
@@ -147,6 +143,10 @@ export default {
       }).catch((res) => {
         console.log(res.message)
       })
+    },
+    clearTwo() {
+      this.goods.goodsType = null
+      this.goods.goodsName = null
     },
     addGoods() {
       alert('add')
