@@ -148,24 +148,24 @@ export const constantRouterMap = [
       }
     ]
   },
-  {
-    path: '/rich-editor',
-    component: Layout,
-    alwaysShow: true,
-    meta: {
-      icon: 's-order',
-      title: '用户管理'
-    },
-    redirect: 'quill',
-    children: [
-      {
-        path: 'quill',
-        name: 'QuillEditor',
-        component: () => import('@/views/user/index'),
-        meta: {icon: 's-order', title: 'quill'}
-      }
-    ]
-  },
+  // {
+  //   path: '/rich-editor',
+  //   component: Layout,
+  //   alwaysShow: true,
+  //   meta: {
+  //     icon: 's-order',
+  //     title: '用户管理'
+  //   },
+  //   redirect: 'quill',
+  //   children: [
+  //     {
+  //       path: 'quill',
+  //       name: 'QuillEditor',
+  //       component: () => import('@/views/user/index'),
+  //       meta: {icon: 's-order', title: 'quill'}
+  //     }
+  //   ]
+  // },
   {
     path: '/futures',
     component: Layout,
@@ -248,6 +248,30 @@ export const asyncRouterMap = [
         name: '自定义表格',
         component: () => import('@/views/excel/custom-excel'),
         meta: {icon: 's-promotion', title: '自定义表格'}
+      }
+    ]
+  },
+  {
+    path: '/user',
+    component: Layout,
+    redirect: '/user/common-user/index',
+    alwaysShow: true,
+    meta: {
+      title: '用户管理',
+      icon: 's-order'
+    },
+    children: [
+      {
+        path: 'common-user',
+        component: () => import('@/views/user/common-user/index'),
+        name: 'CommonUser',
+        meta: { icon: 'menu', title: '普通用户管理' }
+      },
+      {
+        path: 'station-user',
+        component: () => import('@/views/user/station-user/index'),
+        name: 'StationUser',
+        meta: { icon: 'set-up', title: '基站用户管理' }
       }
     ]
   },
