@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-button @click="dialogVisible = true" type="primary" size="medium">添加</el-button>
     <el-table :key="key" :data="goodsTypeList.slice((currentPage-1)*pagesize,currentPage*pagesize)"
-              highlight-current-row style="width: 100%;font-size: 18px">
+              highlight-current-row style="width: 100%;font-size: 16px">
       <el-table-column type="index" width="150" label="序号">
       </el-table-column>
       <el-table-column
@@ -15,7 +15,7 @@
         prop="uuid"
         fixed="right"
         label="操作"
-        width="500">
+        width="400">
         <template slot-scope="scope">
           <el-button
             @click="delGoodsType(scope.row.uuid)"
