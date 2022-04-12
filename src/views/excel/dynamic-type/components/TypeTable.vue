@@ -27,7 +27,7 @@
       </el-table-column>
     </el-table>
     <el-pagination
-      style="position: absolute;right:860px;bottom:25px;"
+      style="position: absolute;right:660px;bottom:15px;"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="currentPage"
