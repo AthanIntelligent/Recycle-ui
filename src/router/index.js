@@ -267,5 +267,22 @@ export const asyncRouterMap = [
       }
     ]
   },
+  {
+    path: '/nearBaseStation',
+    component: Layout,
+    alwaysShow: false,
+    meta: {
+      icon: 'document',
+      title: '附件的基站'
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/nearBaseStation/index'),
+        name: '附件的基站',
+        meta: { title: '附件的基站', icon: 'svg-pifu' }
+      }
+    ]
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]
