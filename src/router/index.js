@@ -96,22 +96,6 @@ export const constantRouterMap = [
       }
     ]
   },
-  {
-    path: '/nested',
-    component: Layout,
-    meta: {
-      icon: 'svg-layers',
-      title: '基站管理'
-    },
-    children: [
-      {
-        path: 'index',
-        name: 'Station',
-        component: () => import('@/views/station/index'),
-        meta: {icon: 'star-on', title: '基站管理'}
-      }
-    ]
-  },
   // 自定义组件 放到 用户预订基站时间
   {
     path: '/custom-component',
@@ -148,24 +132,24 @@ export const constantRouterMap = [
       }
     ]
   },
-  {
-    path: '/rich-editor',
-    component: Layout,
-    alwaysShow: true,
-    meta: {
-      icon: 's-order',
-      title: '用户管理'
-    },
-    redirect: 'quill',
-    children: [
-      {
-        path: 'quill',
-        name: 'QuillEditor',
-        component: () => import('@/views/user/index'),
-        meta: {icon: 's-order', title: 'quill'}
-      }
-    ]
-  },
+  // {
+  //   path: '/rich-editor',
+  //   component: Layout,
+  //   alwaysShow: true,
+  //   meta: {
+  //     icon: 's-order',
+  //     title: '用户管理'
+  //   },
+  //   redirect: 'quill',
+  //   children: [
+  //     {
+  //       path: 'quill',
+  //       name: 'QuillEditor',
+  //       component: () => import('@/views/user/index'),
+  //       meta: {icon: 's-order', title: 'quill'}
+  //     }
+  //   ]
+  // },
   {
     path: '/futures',
     component: Layout,
@@ -203,7 +187,47 @@ export default new Router({
  */
 export const asyncRouterMap = [
   {
-    path: '/excel',
+    path: '/userManage',
+    component: Layout,
+    redirect: '/user/common-user/index',
+    alwaysShow: true,
+    meta: {
+      title: '用户管理',
+      icon: 's-order'
+    },
+    children: [
+      {
+        path: 'common-user',
+        component: () => import('@/views/user/common-user/index'),
+        name: 'CommonUser',
+        meta: { icon: 'menu', title: '普通用户管理' }
+      },
+      {
+        path: 'station-user',
+        component: () => import('@/views/user/station-user/index'),
+        name: 'StationUser',
+        meta: { icon: 'set-up', title: '基站用户管理' }
+      }
+    ]
+  },
+  {
+    path: '/stationManage',
+    component: Layout,
+    meta: {
+      icon: 'svg-layers',
+      title: '基站管理'
+    },
+    children: [
+      {
+        path: 'index',
+        name: 'Station',
+        component: () => import('@/views/station/index'),
+        meta: {icon: 'star-on', title: '基站管理'}
+      }
+    ]
+  },
+  {
+    path: '/goodsManage',
     component: Layout,
     redirect: '/excel/export-excel',
     alwaysShow: true,

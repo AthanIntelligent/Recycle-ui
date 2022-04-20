@@ -4,12 +4,12 @@ export function dirGoods(goods) {
   return axios.post('/goods/dirGoods',goods)
 }
 
-export function addGoods(goods, file) {
-  return axios.post('/goods/addGoods', goods, file)
+export function addGoods(goods) {
+  return axios.post('/goods/addGoods', goods)
 }
 
 export function delGoods(uuid) {
-  return axios.delete('/goods/delGoods/{uuid}')
+  return axios.delete('/goods/delGoods/'+uuid)
 }
 
 export function updGoods(goods, file) {
@@ -17,5 +17,5 @@ export function updGoods(goods, file) {
 }
 
 export function getGoods(uuid) {
-  return axios.get('/goods/getGoods', uuid)
+  return axios.get('/goods/getGoods?uuid='+uuid)
 }

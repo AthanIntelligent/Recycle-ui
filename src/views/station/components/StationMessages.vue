@@ -7,37 +7,29 @@
       <el-form-item label="基站地址">
         <el-input v-model="station.address" placeholder="基站地址"></el-input>
       </el-form-item>
-      <!--审核状态-->
-      <el-form-item label="审核状态">
-        <el-select v-model="station.check" placeholder="审核状态">
-          <el-option label="已审核" value="shanghai"></el-option>
-          <el-option label="未审核" value="beijing"></el-option>
-        </el-select>
-      </el-form-item>
       <!--开启状态-->
       <el-form-item label="开启状态">
         <el-select v-model="station.openFlag" placeholder="开启状态">
-          <el-option label="开启" value="shanghai"></el-option>
-          <el-option label="关闭" value="beijing"></el-option>
+          <el-option label="开启" value="开启"></el-option>
+          <el-option label="关闭" value="关闭"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit()">查询</el-button>
       </el-form-item>
     </el-form>
-
-    <!-- 列表数据 stationList -->
-    <el-table :data="stationList" border fit highlight-current-row style="width: 100%">
+    <el-table :data="stationList.slice((currentPage-1)*pagesize,currentPage*pagesize)" border fit highlight-current-row style="width: 100%">
+      <el-table-column type="index" width="100" label="序号">
+      </el-table-column>
       <el-table-column
-        fixed="left"
-        label="操作"
-        width="120">
+        prop="legal"
+        label="基站法人"
+        width="180">
         <template slot-scope="scope">
           <el-button
-            @click="dialogVisible = true"
-            type="text"
-            size="small">
-            修改状态
+            @click="drawer = true, getStationLegal(scope.row.uuid)" type="text"
+            size="middle">
+            查看详细信息
           </el-button>
         </template>
       </el-table-column>
@@ -47,116 +39,116 @@
         width="180">
       </el-table-column>
       <el-table-column
-        prop="legal"
-        label="基站法人"
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="address"
+        prop="stationAddress"
         label="基站地址">
-      </el-table-column>
-      <el-table-column
-        prop="pic"
-        label="基站图片">
       </el-table-column>
       <el-table-column
         prop="createTime"
         label="创建时间">
       </el-table-column>
-      <!--审核-->
-      <el-table-column
-        prop="check"
-        label="审核状态">
-        <el-button type="success" v-if="check = 1" disabled>已审核</el-button>
-        <el-button type="info" v-else>未审核</el-button>
-      </el-table-column>
       <el-table-column
         prop="openFlag"
         label="开启状态">
         <!--true 开启；false 失败-->
-        <el-button type="success" v-if="openFlag = true">开启</el-button>
-        <el-button type="info" v-else>关闭</el-button>
+<!--        <el-button type="success" v-if="openFlag = true">开启</el-button>-->
+<!--        <el-button type="info" v-else>关闭</el-button>-->
       </el-table-column>
     </el-table>
 
-    <!--添加基站信息 修改状态（可以关闭状态）-->
-<!--    <el-dialog
-      :title="station.uuid == ''?'添加基站信息':'修改基站状态'"
-      :visible.sync="dialogVisible"
-      width="30%">
-      <station-dialog-bar v-bind:station="station"></station-dialog-bar>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false,addStation()"
-                   v-if="station.uuid == ''">确 定</el-button>
-        <el-button type="primary" @click="dialogVisible = false,changeStationFlag()" v-else>确 定</el-button>
-      </span>
-    </el-dialog>-->
+    <el-drawer
+      title="基站法人详细信息"
+      :visible.sync="drawer"
+      :with-header="false">
+      <span>我来啦!</span>
+      <station-legal-dialog-bar />
+    </el-drawer>
+
+    <el-pagination
+      style="position: absolute;right:660px;bottom:15px;"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="currentPage"
+      :page-sizes="[5, 10, 15]"
+      :page-size="pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="stationList.length">
+    </el-pagination>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
 import stationDialogBar from './stationDialogBar'
+import {dirStation , getStationLegal} from '@/api/station'
+import StationLegalDialogBar from "./stationLegalDialogBar";
 
 export default {
   name: 'StationMessages',
-  components: {stationDialogBar},
+  components: {StationLegalDialogBar, stationDialogBar},
+  props: {
+    user: {
+      realName : '',
+      id : '',
+      sex: '',
+      age : null,
+      mobile : '',
+      address : '',
+      createTime : ''
+    }
+  },
   data() {
     return {
-      dialogVisible: false,
       station: {
-        uuid: '',
-        stationName: '1',
-        legal: '2',
-        address: '3',
-        pic: '',
-        createTime: '2022-03-16',
-        openFlag: true,
-        check: 1
+        stationName: null,
+        stationAddress: null,
+        createTime: null,
+        openFlag: null
       },
-      stationList: [
-        {
-          uuid: '001',
-          stationName: '111',
-          legal: '222',
-          address: '333',
-          pic: '',
-          createTime: '2022-03-17',
-          openFlag: true,
-          check: 1
-        }, {
-          uuid: '002',
-          stationName: '1',
-          legal: '2',
-          address: '3',
-          pic: '',
-          createTime: '2022-03-18',
-          openFlag: false,
-          check: 1
-        }
-      ]
+      stationList: [],
+      drawer: false,
+      currentPage: 1,
+      pagesize: 10
     }
-  },
-  methods: {
-    onSubmit() {
-      alert(123)
-    },
-    addStation() {
-    },
-    changeStationFlag() {
-    }
-    // getAllStations() {
-    //   axios({
-    //     url: 'http://localhost:8080/goods/dirStations',
-    //     method: 'get'
-    //   }).then(res => {
-    //     this.stationList = res.data
-    //   })
-    // }
   },
   created() {
-    // this.getAllStations()
+    this.getAllStations()
+  },
+  methods: {
+    handleSizeChange: function (size) {
+      this.pagesize = size
+    },
+    handleCurrentChange: function(currentPage) {
+      this.currentPage = currentPage
+    },
+    getAllStations() {
+      dirStation(this.station).then((res) => {
+        if (res.data.status === 200) {
+          this.stationList = res.data.data
+        }
+      }).catch((res) => {
+        console.log(res.data.message)
+      })
+    },
+    onSubmit() {
+      alert(123)
+      this.getAllStations()
+    },
+    getStationLegal(stationUuid) {
+      getStationLegal(stationUuid).then((res) => {
+        console.log(res.data)
+        if (res.data.status === 200) {
+          this.user.realName = res.data.data.realName
+          this.user.id = res.data.data.id
+          this.user.sex = res.data.data.sex
+          this.user.age = res.data.data.age
+          this.user.mobile = res.data.data.mobile
+          this.user.address = res.data.data.address
+          this.user.createTime = res.data.data.createTime
+          console.log(res.data.data.realName)
+        }
+      }).catch((res) => {
+        console.log(res.message)
+      })
+    }
   }
 }
 </script>
