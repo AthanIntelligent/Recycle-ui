@@ -16,6 +16,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit()">查询</el-button>
+        <el-button type="primary" @click="clearThem()">清空</el-button>
       </el-form-item>
     </el-form>
     <el-table :data="stationList.slice((currentPage-1)*pagesize,currentPage*pagesize)" border fit highlight-current-row style="width: 100%">
@@ -49,9 +50,15 @@
       <el-table-column
         prop="openFlag"
         label="开启状态">
-        <!--true 开启；false 失败-->
-<!--        <el-button type="success" v-if="openFlag = true">开启</el-button>-->
-<!--        <el-button type="info" v-else>关闭</el-button>-->
+<!--        <template slot-scope="scope">-->
+<!--          <el-switch-->
+<!--            v-model="statusSwitch"-->
+<!--            active-color="#13ce66"-->
+<!--            inactive-color="#ff4949"-->
+<!--            @click="changeStatus(scope.row.openFlag)"-->
+<!--          >-->
+<!--          </el-switch>-->
+<!--        </template>-->
       </el-table-column>
     </el-table>
 
@@ -59,7 +66,6 @@
       title="基站法人详细信息"
       :visible.sync="drawer"
       :with-header="false">
-      <span>我来啦!</span>
       <station-legal-dialog-bar />
     </el-drawer>
 
@@ -100,13 +106,13 @@ export default {
       station: {
         stationName: null,
         stationAddress: null,
-        createTime: null,
         openFlag: null
       },
       stationList: [],
       drawer: false,
       currentPage: 1,
-      pagesize: 10
+      pagesize: 10,
+      statusSwitch: fasle
     }
   },
   created() {
@@ -123,14 +129,21 @@ export default {
       dirStation(this.station).then((res) => {
         if (res.data.status === 200) {
           this.stationList = res.data.data
+          // for (let sta of this.stationList){
+          //   sta.openFlag == "1"?sta.openFlag = "开启":sta.openFlag = "关闭"
+          // }
         }
       }).catch((res) => {
         console.log(res.data.message)
       })
     },
     onSubmit() {
-      alert(123)
       this.getAllStations()
+    },
+    clearThem() {
+      this.station.stationName=null;
+      this.station.stationAddress=null;
+      this.station.openFlag=null;
     },
     getStationLegal(stationUuid) {
       getStationLegal(stationUuid).then((res) => {
@@ -143,11 +156,15 @@ export default {
           this.user.mobile = res.data.data.mobile
           this.user.address = res.data.data.address
           this.user.createTime = res.data.data.createTime
-          console.log(res.data.data.realName)
+          console.log(res.data.realName)
         }
       }).catch((res) => {
         console.log(res.message)
       })
+    },
+    changeStatus(status) {
+      // status=='开启'?this.statusSwitch=true:this.statusSwitch=false
+
     }
   }
 }
