@@ -27,6 +27,17 @@ import './mock'
 import axios from 'axios'
 import {devServer} from '../vue.config'
 
+import VueAMap from 'vue-amap'
+Vue.use(VueAMap)
+// 初始化vue-amap
+VueAMap.initAMapApiLoader({
+  key: '36945e2c1ec9fcd3ecd5d953d4169592',
+  // 高德 sdk 版本，默认为 1.4.4
+  v: '1.4.4'
+})
+
+
+
 Vue.use(ElementUI, {
   size: 'medium',
   i18n: (key, value) => i18n.t(key, value)
