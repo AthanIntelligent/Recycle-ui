@@ -6,12 +6,22 @@
       <el-step title="步骤 3"></el-step>
     </el-steps>
     <el-button style="margin-top: 12px;" @click="next">下一步</el-button>
+    <div class="threeAllClass">
+      <one />
+      <two />
+      <three />
+    </div>
+
   </div>
 </template>
 
 <script>
+import One from './one'
+import Two from './two'
+import Three from './three'
 export default {
   name: "threeAll",
+  components: {Three, One,Two},
   data() {
     return {
       active: 0
@@ -26,5 +36,9 @@ export default {
 </script>
 
 <style scoped>
-
+.threeAllClass {
+  display: flex;
+  flex: 3;
+  margin-top: 50px;
+}
 </style>

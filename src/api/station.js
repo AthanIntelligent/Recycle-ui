@@ -11,3 +11,7 @@ export function getStationLegal(userId) {
 export function updStation(station) {
   return axios.post('/station/updStation',station)
 }
+
+export function addStation(station) {
+  return axios.post('/station/addStation',station)
+}
