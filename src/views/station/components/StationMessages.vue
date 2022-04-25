@@ -5,7 +5,7 @@
         <el-input v-model="station.stationName" placeholder="基站名称"></el-input>
       </el-form-item>
       <el-form-item label="基站地址">
-        <el-input v-model="station.address" placeholder="基站地址"></el-input>
+        <el-input v-model="station.stationAddress" placeholder="基站地址"></el-input>
       </el-form-item>
       <!--开启状态-->
       <el-form-item label="开启状态">
@@ -28,7 +28,7 @@
         width="180">
         <template slot-scope="scope">
           <el-button
-            @click="drawer = true, getStationLegal(scope.row.uuid)" type="text"
+            @click="drawer = true, getStationLegal(scope.row.stationLegal)" type="text"
             size="middle">
             查看详细信息
           </el-button>
@@ -48,17 +48,26 @@
         label="创建时间">
       </el-table-column>
       <el-table-column
+        prop="check"
+        label="审核状态">
+        <template slot-scope="scope">
+          <el-button @click="openCheck(scope.row.check,scope.row)" v-if="scope.row.check=='审核中'">待审批</el-button>
+          <span v-else >{{scope.row.check}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
         prop="openFlag"
         label="开启状态">
-<!--        <template slot-scope="scope">-->
-<!--          <el-switch-->
-<!--            v-model="statusSwitch"-->
-<!--            active-color="#13ce66"-->
-<!--            inactive-color="#ff4949"-->
-<!--            @click="changeStatus(scope.row.openFlag)"-->
-<!--          >-->
-<!--          </el-switch>-->
-<!--        </template>-->
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.openFlag"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            active-value="1"
+            inactive-value="2"
+            @change="changeStatus(scope.row.openFlag,scope.row)">
+          </el-switch>
+        </template>
       </el-table-column>
     </el-table>
 
@@ -66,7 +75,7 @@
       title="基站法人详细信息"
       :visible.sync="drawer"
       :with-header="false">
-      <station-legal-dialog-bar />
+      <station-legal-dialog-bar :userRight = "user"></station-legal-dialog-bar>
     </el-drawer>
 
     <el-pagination
@@ -84,23 +93,12 @@
 
 <script>
 import stationDialogBar from './stationDialogBar'
-import {dirStation , getStationLegal} from '@/api/station'
+import {dirStation , getStationLegal ,updStation} from '@/api/station'
 import StationLegalDialogBar from "./stationLegalDialogBar";
 
 export default {
   name: 'StationMessages',
   components: {StationLegalDialogBar, stationDialogBar},
-  props: {
-    user: {
-      realName : '',
-      id : '',
-      sex: '',
-      age : null,
-      mobile : '',
-      address : '',
-      createTime : ''
-    }
-  },
   data() {
     return {
       station: {
@@ -112,7 +110,16 @@ export default {
       drawer: false,
       currentPage: 1,
       pagesize: 10,
-      statusSwitch: fasle
+      value: [1],
+      user: {
+        realName : null,
+        id : null,
+        sex: null,
+        age : null,
+        mobile : null,
+        address : null,
+        createTime : null
+      }
     }
   },
   created() {
@@ -129,12 +136,9 @@ export default {
       dirStation(this.station).then((res) => {
         if (res.data.status === 200) {
           this.stationList = res.data.data
-          // for (let sta of this.stationList){
-          //   sta.openFlag == "1"?sta.openFlag = "开启":sta.openFlag = "关闭"
-          // }
         }
       }).catch((res) => {
-        console.log(res.data.message)
+        console.log(res.data.data.message)
       })
     },
     onSubmit() {
@@ -147,24 +151,75 @@ export default {
     },
     getStationLegal(stationUuid) {
       getStationLegal(stationUuid).then((res) => {
-        console.log(res.data)
         if (res.data.status === 200) {
-          this.user.realName = res.data.data.realName
-          this.user.id = res.data.data.id
-          this.user.sex = res.data.data.sex
-          this.user.age = res.data.data.age
-          this.user.mobile = res.data.data.mobile
-          this.user.address = res.data.data.address
-          this.user.createTime = res.data.data.createTime
+          var res = res.data
+          this.user.realName = res.data.realName
+          this.user.id = res.data.id
+          this.user.sex = res.data.sex
+          this.user.age = res.data.age
+          this.user.mobile = res.data.mobile
+          this.user.address = res.data.address
+          this.user.createTime = res.data.createTime
+          console.log(res.data)
           console.log(res.data.realName)
+          console.log(this.user)
         }
       }).catch((res) => {
         console.log(res.message)
       })
     },
-    changeStatus(status) {
-      // status=='开启'?this.statusSwitch=true:this.statusSwitch=false
-
+    updStation(station) {
+      updStation(station).then((res) => {
+        if (res.data.status === 200) {
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+          this.getAllStations()
+        }
+      }).catch((res) => {
+        console.log(res.data.data.message)
+        this.$message({
+          type: 'info',
+          message: '操作失败!'
+        });
+      })
+    },
+    changeStatus(status,row) {
+      if (status == 1){
+        row.openFlag=1
+      }
+      if (status == 2){
+        row.openFlag=2
+      }
+      this.updStation(row)
+    },
+    openCheck(check,row) {
+      this.$confirm('是否同意该基站的审核申请?', '提示', {
+        confirmButtonText: '同意',
+        cancelButtonText: '不同意',
+        showClose: false,
+        type: 'success',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true;
+            instance.confirmButtonText = '执行中...';
+            setTimeout(() => {
+              done();
+              setTimeout(() => {
+                instance.confirmButtonLoading = false;
+              }, 300);
+            }, 3000);
+          } else {
+            row.check="审核失败"
+            this.updStation(row)
+            done()
+          }
+        }
+      }).then((res) => {
+        row.check="审核成功"
+        this.updStation(row)
+      });
     }
   }
 }

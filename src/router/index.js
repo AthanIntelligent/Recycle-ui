@@ -276,6 +276,24 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '/threesteps',
+    component: Layout,
+    redirect: '/threesteps/index',
+    // alwaysShow: true,
+    meta: {
+      icon: 'svg-aperture',
+      title: '基站三部曲'
+    },
+    children: [
+      {
+        path: 'index',
+        name: 'ThreeSteps',
+        component: () => import('@/views/threesteps/index'),
+        meta: {icon: 'svg-aperture', title: '基站三部曲'}
+      }
+    ]
+  },
+  {
     path: '/theme',
     component: Layout,
     meta: {
