@@ -196,11 +196,32 @@ export default {
     },
     //注册
     register() {
-      this.registerForm.address = this.address1 + "," + this.address2;
+      if(this.address1.length > 0 || this.address2.length > 0){
+        this.registerForm.address = this.address1 + "," + this.address2;
+      }else {
+        this.registerForm.address = ''
+      }
       register(this.registerForm).then(res => {
         console.log(res)
+        if(res.data.status == 200){
+          this.accountTip('成功','success','注册成功')
+          this.$router.push({path:'/login'})
+        }else if(res.data.status == 400){
+          this.accountTip('错误','error',res.data.message)
+        }
       }).cache(err => {
         console.log(err)
+        this.accountTip('失败','error','服务器报错')
+      })
+    },
+    accountTip(title,type,info) {
+      this.$notify({
+        title: title,
+        dangerouslyUseHTMLString: true,
+        message: '<strong>提示：<i>'+info+'</i></strong>',
+        type: type,
+        position: 'top-right',
+        offset: 80
       })
     }
   }

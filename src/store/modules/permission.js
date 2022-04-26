@@ -30,7 +30,7 @@ const permission = {
         const { permissions: p } = routers
         const routersMap = p.split(',')
         let accessedRouters = filterAsyncRouter(asyncRouterMap, routersMap)
-        commit(SET_ROUTERS, accessedRouters)
+        commit(SET_ROUTERS,accessedRouters)
         resolve()
       })
     }

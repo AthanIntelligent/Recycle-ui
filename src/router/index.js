@@ -3,6 +3,7 @@ import Router from 'vue-router'
 
 import Login from '@/views/login'
 import Register from '@/views/register'
+import nearBaseStation from '@/views/nearBaseStation'
 import Layout from '@/layout/layout'
 
 Vue.use(Router)
@@ -323,6 +324,23 @@ export const asyncRouterMap = [
         component: () => import('@/views/nearBaseStation/index'),
         name: '附件的基站',
         meta: { title: '附件的基站', icon: 'svg-pifu' }
+      }
+    ]
+  },
+  {
+    path: '/nearBaseStation',
+    component: Layout,
+    alwaysShow: false,
+    meta: {
+      icon: 'document',
+      title: '附件的基站'
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/nearBaseStation/index'),
+        name: '附件的基站',
+        meta: { title: '附件的基站', icon: 'document' }
       }
     ]
   },

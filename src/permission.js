@@ -27,6 +27,7 @@ router.beforeEach((to, from, next) => {
           const permissions = resp.permissions
           store.dispatch('GenerateRoutes', { permissions }).then(() => {
             // 动态添加可访问路由表
+            // console.log(JSON.parse(JSON.stringify(store.getters.addRouters)),"321")
             router.addRoutes(store.getters.addRouters)
             // console.log(to)
             // console.log({...to})
