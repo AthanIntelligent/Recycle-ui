@@ -19,3 +19,7 @@ export function updGoods(goods, file) {
 export function getGoods(uuid) {
   return axios.get('/goods/getGoods?uuid='+uuid)
 }
+
+export function getGoodsTypeAndGoods() {
+  return axios.get('/goods/getGoodsTypeAndGoods')
+}

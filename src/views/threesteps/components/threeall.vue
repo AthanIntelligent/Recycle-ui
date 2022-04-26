@@ -1,17 +1,17 @@
 <template>
   <div class="app-container">
     <el-steps :active="active" finish-status="success">
-      <el-step title="步骤 1"></el-step>
-      <el-step title="步骤 2"></el-step>
-      <el-step title="步骤 3"></el-step>
+      <el-step title="注册基站"></el-step>
+      <el-step title="绑定支付方式"></el-step>
+      <el-step title="基站状态"></el-step>
     </el-steps>
-    <el-button style="margin-top: 12px;" @click="next">下一步</el-button>
+
     <div class="threeAllClass">
       <one />
       <two />
       <three />
     </div>
-
+    <el-button style="margin-top: 12px" @click="next">下一步</el-button>
   </div>
 </template>
 

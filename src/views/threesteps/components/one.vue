@@ -1,31 +1,33 @@
 <template>
   <div class="app-container">
-    <el-form :model="station" :rules="rules" ref="ruleForm" label-width="100px" class="oneClass">
-      <el-form-item label="基站名称" prop="name" placeholder="请输入基站名称">
-        <el-input v-model="station.stationName"></el-input>
-      </el-form-item>
-      <el-form-item label="基站地址" prop="region" placeholder="请选择基站地址">
-        <el-input v-model="station.stationAddress"></el-input>
-      </el-form-item>
-      <el-form-item label="经营物品类型" prop="type">
-        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChangeB">全选</el-checkbox>
-        <div style="margin: 15px 0;"></div>
-        <el-checkbox-group v-model="typeOptions"   @change="handleCheckedCitiesChangeB">
-          <el-checkbox v-for="goodsType in goodsTypeList" :label="goodsType.goodsType" @change="handleCheckedCitiesChangeB(goodsType)" :key="goodsType.uuid" :value="goodsType.uuid">{{goodsType.goodsType}}</el-checkbox>
-<!--          <el-checkbox v-for="goodsType in typeOptions" :label="goodsType" :key="goodsType">{{goodsType}}</el-checkbox>-->
-        </el-checkbox-group>
-      </el-form-item>
+    <div class="oneClass">
+      <el-form :model="station" :rules="rules" ref="ruleForm" label-width="100px">
+        <el-form-item label="基站名称" prop="name" placeholder="请输入基站名称">
+          <el-input v-model="station.stationName"></el-input>
+        </el-form-item>
+        <el-form-item label="基站地址" prop="address" placeholder="请选择基站地址">
+          <el-input v-model="station.stationAddress"></el-input>
+        </el-form-item>
+        <el-form-item label="经营物品" prop="type">
+          <el-checkbox-group v-model="checkedLists"  @change="handleCheckedCitiesChange" >
+            <div v-for="goodsall in goodsAllList">
+              <el-button type="text" plain>{{goodsall.goodsType}}:</el-button>
+              <el-checkbox v-for="goods in goodsall.goodsList" :label="goods.uuid"  :key="goods.uuid" :value="goods.uuid">{{goods.goodsName}}</el-checkbox>
+            </div>
+          </el-checkbox-group>
+        </el-form-item>
 
-      <el-form-item>
-        <el-button type="primary" @click="submitForm('station')">立即创建</el-button>
-        <el-button @click="resetForm('station')">重置</el-button>
-      </el-form-item>
-    </el-form>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm()">注册基站</el-button>
+          <el-button @click="resetForm()">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
   </div>
 </template>
 
 <script>
-import {dirGoodsType} from '@/api/goodstype'
+import {getGoodsTypeAndGoods} from '@/api/goods'
 import {addStation} from '@/api/station'
 export default {
   name: "one",
@@ -36,59 +38,74 @@ export default {
         stationName: null,
         stationAddress: null,
       },
-      selectType: [],
+      goods: {},
+      goodsAllList: [],
       goodsTypeList: [],
-      typeOptions: [],
-      checkAll: false,
-      isIndeterminate: true
+      checkedLists: [],
+      isIndeterminate: true,
+      oneSubmitData:{
+        station:{},
+        goodsIds:''
+      },
+      rules: {
+        name: [
+          { required: true, message: '请输入基站名称', trigger: 'blur' },
+          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        ],
+        address: [
+          { required: true, message: '请输入基站地址', trigger: 'change' }
+        ],
+        type: [
+          { type: 'array', required: true, message: '请至少选择一个经营物品类型', trigger: 'change' }
+        ]
+      }
     };
   },
   created() {
-    this.getAllGoodsTypeList()
+    this.getAllGoodsTypeAndGoods();
   },
   methods: {
-    getAllGoodsTypeList() {
-      dirGoodsType().then((res) => {
+    getAllGoodsTypeAndGoods() {
+      getGoodsTypeAndGoods().then((res) => {
         if (res.data.status === 200) {
-            this.goodsTypeList = res.data.data
-            console.log(JSON.parse(JSON.stringify(this.goodsTypeList)))
+            this.goodsAllList = res.data.data
+            console.log(JSON.parse(JSON.stringify(this.goodsAllList)))
         }
       }).catch((res) => {
         console.log(res.message)
       })
     },
-    handleCheckAllChangeB(val) {
-      this.goodsTypeList = val ? this.goodsTypeList : [];
-      this.isIndeterminate = false;
+    handleCheckedCitiesChange(value) {
+      console.log(value)
     },
-    handleCheckedCitiesChangeB(value) {
-      let checkedCount = value.length;
-      this.checkAll = checkedCount === this.goodsTypeList.length;
-      this.isIndeterminate = checkedCount > 0 && checkedCount < this.goodsTypeList.length;
-    },
-    submitForm(station) {
-      alert(123)
-      addStation(station).then((res) => {
+    submitForm() {
+      let goodsIds = "";
+      for (let i=0;i<this.checkedLists.length;i++){
+        if (i==this.checkedLists.length-1){
+          goodsIds += this.checkedLists[i]
+        }else {
+          goodsIds += this.checkedLists[i]+","
+        }
+      }
+      this.oneSubmitData.station = this.station;
+      this.oneSubmitData.goodsIds = goodsIds;
+      addStation(this.oneSubmitData).then((res) => {
         if (res.data.status == 200) {
           this.$message.success("注册成功")
+
         }
         if (res.data.status != 200) {
           this.$message.success("注册失败")
         }
       }).catch((res) => {
         console.log(res.message)
-      })
-      // this.$refs[station].validate((valid) => {
-      //   if (valid) {
-      //     alert('submit!');
-      //   } else {
-      //     console.log('error submit!!');
-      //     return false;
-      //   }
-      // });
+      });
+
     },
-    resetForm(station) {
-      this.$refs[station].resetFields();
+    resetForm() {
+      this.station.stationName = null,
+      this.station.stationAddress = null,
+      this.checkedLists = []
     }
   }
 }
@@ -96,8 +113,7 @@ export default {
 
 <style scoped>
 .oneClass{
-  width: 500px;
-  height: 300px;
   border:3px solid #00ac95;
+  padding: 15px;
 }
 </style>

@@ -12,6 +12,6 @@ export function updStation(station) {
   return axios.post('/station/updStation',station)
 }
 
-export function addStation(station) {
-  return axios.post('/station/addStation',station)
+export function addStation(data) {
+  return axios.post('/station/addStation',data)
 }
