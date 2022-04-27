@@ -5,7 +5,7 @@ export function dirStation(station) {
 }
 
 export function getStationLegal(userId) {
-  return axios.get('/station/getStationLegal?stationUuid='+userId)
+  return axios.get('/station/getStationLegal?userId='+userId)
 }
 
 export function updStation(station) {

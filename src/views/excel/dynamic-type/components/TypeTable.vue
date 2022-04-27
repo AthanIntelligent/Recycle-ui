@@ -101,6 +101,7 @@ export default {
             message: '添加成功!'
           })
           this.getAllList()
+          this.goodsType.goodsType = null
         }
         if (res.data.status != 200){
           this.$message({

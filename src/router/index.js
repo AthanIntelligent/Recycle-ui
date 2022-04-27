@@ -97,24 +97,6 @@ export const constantRouterMap = [
       }
     ]
   },
-  // 自定义组件 放到 用户预订基站时间
-  {
-    path: '/custom-component',
-    component: Layout,
-    meta: {
-      icon: 'question',
-      title: '自定义组件'
-    },
-    redirect: '/custom-component/index',
-    children: [
-      {
-        path: 'index',
-        name: 'CustomComponent',
-        component: () => import('@/views/custom-component/index'),
-        meta: {icon: 'guide', title: '自定义组件'}
-      }
-    ]
-  },
   {
     path: '/echarts',
     component: Layout,
@@ -291,6 +273,23 @@ export const asyncRouterMap = [
         name: 'ThreeSteps',
         component: () => import('@/views/threesteps/index'),
         meta: {icon: 'svg-aperture', title: '基站三部曲'}
+      }
+    ]
+  },
+  {
+    path: '/goods-of-station',
+    component: Layout,
+    meta: {
+      icon: 'question',
+      title: '基站经营物品'
+    },
+    redirect: '/goods-of-station/index',
+    children: [
+      {
+        path: 'index',
+        name: 'StationPeopleGoods',
+        component: () => import('@/views/goods-of-station/index'),
+        meta: {icon: 'guide', title: '基站经营物品'}
       }
     ]
   },

@@ -18,14 +18,12 @@ export default {
   name: 'goodsTypeDialogBar',
   props: {
     goodsType: {
-      uuid: '',
       goodsType: ''
     }
   },
   data() {
     return {
       goodsType: {
-        uuid: '',
         goodsType: ''
       }
     }

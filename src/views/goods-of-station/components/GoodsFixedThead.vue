@@ -14,10 +14,7 @@
         <el-button type="primary" @click="clearTwo()">清空</el-button>
       </el-form-item>
     </el-form>
-    <el-button @click="dialogVisible = true">添加</el-button>
-    <el-button @click="">导入物品</el-button>
-    <el-button @click="">导出物品</el-button>
-    <el-button @click.prevent="getTemplate">下载模板</el-button>
+    <el-button @click="dialogVisible = true">追加</el-button>
     <el-table :key="key" :data="goodsList.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;font-size: 16px">
       <el-table-column type="index" width="100" label="序号">
       </el-table-column>
@@ -45,7 +42,7 @@
         <template slot-scope="scope">
           <img
             class="el-upload-list__item-thumbnail"
-           :src='path+scope.row.pic' alt="" width="50%"
+            :src='path+scope.row.pic' alt="" width="50%"
           >
         </template>
       </el-table-column>
@@ -67,12 +64,14 @@
         width="120">
         <template slot-scope="scope">
           <el-button
+            v-if="scope.row.isVisible===true"
             @click="dialogVisible = true, getGoods(scope.row.uuid)"
             type="text"
             size="middle">
             修改
           </el-button>
           <el-button
+            v-if="scope.row.isVisible===true"
             @click="delGoods(scope.row.uuid)"
             type="text"
             size="middle">
@@ -94,10 +93,10 @@
 
     <!--物品添加 物品修改-->
     <el-dialog
-      :title="goodsDeal.uuid == ''?'添加物品':'修改物品'"
+      :title="goodsDeal.uuid == ''?'追加物品':'修改物品'"
       :visible.sync="dialogVisible"
       width="30%">
-      <goodsDialogBar v-bind:goods="goodsDeal"></goodsDialogBar>
+      <goodsDialogBar2 v-bind:goods="goodsDeal"></goodsDialogBar2>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="dialogVisible = false,addGoods()"
@@ -109,13 +108,14 @@
 </template>
 
 <script>
-import goodsDialogBar from './goodsDialogBar'
+import goodsDialogBar2 from './goodsDialogBar2'
 import {dirGoods, addGoods, delGoods, updGoods, getGoods} from '@/api/goods'
 import {dirGoodsType} from '@/api/goodstype'
 import {getTemplate, importG} from '@/api/goodsexcel'
 
 export default {
-  components: {'goodsDialogBar': goodsDialogBar},
+  name: "GoodsFixedThead",
+  components: {'goodsDialogBar2': goodsDialogBar2},
   data() {
     return {
       goods: {
@@ -303,5 +303,6 @@ export default {
 .app-container
   padding 20px
 </style>
+
 
 
