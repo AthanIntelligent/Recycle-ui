@@ -33,6 +33,7 @@ export default {
   name: "one",
   data() {
     return {
+      flag:null,
       station: {
         uuid: null,
         stationName: null,
@@ -92,7 +93,7 @@ export default {
       addStation(this.oneSubmitData).then((res) => {
         if (res.data.status == 200) {
           this.$message.success("注册成功")
-
+          this.$emit('flagOne',true)
         }
         if (res.data.status != 200) {
           this.$message.success("注册失败")
@@ -107,6 +108,9 @@ export default {
       this.station.stationAddress = null,
       this.checkedLists = []
     }
+  },
+  mounted() {
+
   }
 }
 </script>

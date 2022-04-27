@@ -344,5 +344,44 @@ export const asyncRouterMap = [
       }
     ]
   },
+  {
+    path: '/my-trade',
+    component: Layout,
+    alwaysShow: false,
+    meta: {
+      icon: 'guide',
+      title: '我的交易'
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/my-trade/index'),
+        name: '流水统计',
+        meta: { title: '流水统计', icon: 'guide' }
+      },{
+        path: 'goods-type',
+        component: () => import('@/views/my-trade/goods-type'),
+        name: '类别统计',
+        meta: { title: '类别统计', icon: 'guide' }
+      }
+    ]
+  },
+  {
+    path: '/my-booking',
+    component: Layout,
+    alwaysShow: false,
+    meta: {
+      icon: 'document',
+      title: '我的预约'
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/my-booking/index'),
+        name: '我的预约',
+        meta: { title: '我的预约', icon: 'svg-pifu' }
+      }
+    ]
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]
