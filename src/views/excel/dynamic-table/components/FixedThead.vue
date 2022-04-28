@@ -9,6 +9,11 @@
           <el-option v-for="item in goodsTypeList" :key="item.uuid" :value="item.goodsType"></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="创建人">
+        <el-select v-model="goods.createUser" placeholder="创建人">
+          <el-option v-for="item in stationUserList" :key="item.uuid" :value="item.uuid" :label="item.realName">{{item.realName}}</el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit(goods)">查询</el-button>
         <el-button type="primary" @click="clearTwo()">清空</el-button>
@@ -113,6 +118,7 @@ import goodsDialogBar from './goodsDialogBar'
 import {dirGoods, addGoods, delGoods, updGoods, getGoods} from '@/api/goods'
 import {dirGoodsType} from '@/api/goodstype'
 import {getTemplate, importG} from '@/api/goodsexcel'
+import {dirStationUserList} from '@/api/userA'
 
 export default {
   components: {'goodsDialogBar': goodsDialogBar},
@@ -120,7 +126,8 @@ export default {
     return {
       goods: {
         goodsType: null,
-        goodsName: null
+        goodsName: null,
+        createUser: null
       },
       goodsDeal: {
         uuid: '',
@@ -133,6 +140,7 @@ export default {
       },
       goodsList: [],
       goodsTypeList: [],
+      stationUserList: [],
       currentPage: 1,
       pagesize: 10,
       dialogVisible: false,
@@ -143,6 +151,7 @@ export default {
   created() {
     this.getAllGoods()
     this.getAllGoodsType()
+    this.getStationUserList()
   },
   methods: {
     // import() {
@@ -162,6 +171,16 @@ export default {
     },
     handleCurrentChange: function(currentPage) {
       this.currentPage = currentPage
+    },
+    getStationUserList() {
+      dirStationUserList().then((res) => {
+        if (res.data.status === 200) {
+          this.stationUserList = res.data.data
+          console.log(res.data)
+        }
+      }).catch((res) => {
+        console.log(res.message)
+      })
     },
     getAllGoods() {
       dirGoods(this.goods).then((res) => {

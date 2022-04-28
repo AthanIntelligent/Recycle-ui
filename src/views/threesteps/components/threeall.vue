@@ -1,25 +1,28 @@
 <template>
   <div class="app-container">
-    <el-steps :active="active" finish-status="success">
+    <el-steps :active="active" finish-status="success" align-center="true" style="margin-top: 40px">
       <el-step title="注册基站"></el-step>
       <el-step title="绑定支付方式"></el-step>
       <el-step title="基站状态"></el-step>
     </el-steps>
 
-    <div class="threeAllClass" v-show="vis1">
+    <div class="oneClass" v-show="vis1">
       <one @flagOne="getFlagOne" />
     </div>
-    <div class="threeAllClass" v-show="vis2">
+    <div class="twoClass" v-show="vis2">
       <two :flagTow="two" />
     </div>
-    <div class="threeAllClass" v-show="vis3">
+    <!--todo：注册基站完成后返回基站id，从one组件向父组件传过来；走到第三步的时候去根据这个基站id获取基站状态；显示对应的问题 -->
+    <!--todo：在管理员审核都通过的情况下，用户登录可以直接看到相应菜单 或者 看到的还是状态页面显示“审核通过” 提示重新登录；没通过基站用户下次登录的时候看到的还是这个状态的页面-->
+    <div class="threeClass" v-show="vis3">
       <three :flagThree="three" />
     </div>
-    <el-button style="margin-top: 12px" @click="next">下一步</el-button>
+    <el-button class="nextClass" @click="next">下一步</el-button>
   </div>
 </template>
 
 <script>
+import {getStationDetail} from '@/api/station'
 import One from './one'
 import Two from './two'
 import Three from './three'
@@ -34,7 +37,8 @@ export default {
       vis3:false,
       one:false,
       two:true,
-      three:true
+      three:true,
+      stationId: null
     };
   },
   methods: {
@@ -68,9 +72,29 @@ export default {
 </script>
 
 <style scoped>
-.threeAllClass {
-  display: flex;
-  flex: 3;
-  margin-top: 50px;
+.nextClass {
+  position: absolute;
+  left: 55%;
+  top: 90%;
+}
+.oneClass {
+  width: 600px;
+  position: absolute;
+  left: 40%;
+  top: 30%;
+}
+.twoClass {
+  width: auto;
+  position: absolute;
+  left: 50%;
+  top: 30%;
+}
+.threeClass {
+  width: auto;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-size: 25px;
+  color: #00b4aa;
 }
 </style>

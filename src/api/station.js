@@ -15,3 +15,8 @@ export function updStation(station) {
 export function addStation(data) {
   return axios.post('/station/addStation',data)
 }
+
+export function getStationDetail(uuid) {
+  return axios.post('/station/getStationDetail?uuid=',uuid)
+}
+

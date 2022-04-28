@@ -7,3 +7,8 @@ export function dirUserInfo(user) {
 export function updUserInfo(user) {
   return axios.post('/user/updUserInfo',user)
 }
+
+export function dirStationUserList() {
+  return axios.get('/user/dirStationUserList')
+}
+

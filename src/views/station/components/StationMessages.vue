@@ -7,11 +7,10 @@
       <el-form-item label="基站地址">
         <el-input v-model="station.stationAddress" placeholder="基站地址"></el-input>
       </el-form-item>
-      <!--开启状态-->
-      <el-form-item label="开启状态">
-        <el-select v-model="station.openFlag" placeholder="开启状态">
-          <el-option label="开启" value="开启"></el-option>
-          <el-option label="关闭" value="关闭"></el-option>
+      <el-form-item label="创建人">
+        <el-select v-model="station.createUser" placeholder="创建人">
+          <el-option label="系统管理员" value="系统管理员"></el-option>
+          <el-option label="我自己" value="我自己"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -19,7 +18,8 @@
         <el-button type="primary" @click="clearThem()">清空</el-button>
       </el-form-item>
     </el-form>
-    <el-table :data="stationList.slice((currentPage-1)*pagesize,currentPage*pagesize)" border fit highlight-current-row style="width: 100%">
+    <el-table :data="stationList.slice((currentPage-1)*pagesize,currentPage*pagesize)" border fit highlight-current-row
+              style="width: 100%">
       <el-table-column type="index" width="100" label="序号">
       </el-table-column>
       <el-table-column
@@ -28,7 +28,7 @@
         width="180">
         <template slot-scope="scope">
           <el-button
-            @click="drawer = true, getStationLegal(scope.row.stationLegal)" type="text"
+            @click="drawer = true, getStationLegal(scope.row)" type="text"
             size="middle">
             查看详细信息
           </el-button>
@@ -52,7 +52,7 @@
         label="审核状态">
         <template slot-scope="scope">
           <el-button @click="openCheck(scope.row.check,scope.row)" v-if="scope.row.check=='审核中'">待审批</el-button>
-          <span v-else >{{scope.row.check}}</span>
+          <span v-else>{{ scope.row.check }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -75,7 +75,7 @@
       title="基站法人详细信息"
       :visible.sync="drawer"
       :with-header="false">
-      <station-legal-dialog-bar :userRight = "user"></station-legal-dialog-bar>
+      <station-legal-dialog-bar :userRight="user" :goodsTypeAndGoodsListRight="goodsTypeAndGoodsList"></station-legal-dialog-bar>
     </el-drawer>
 
     <el-pagination
@@ -93,7 +93,8 @@
 
 <script>
 import stationDialogBar from './stationDialogBar'
-import {dirStation , getStationLegal ,updStation} from '@/api/station'
+import {dirStation, getStationLegal, updStation} from '@/api/station'
+import {getGoodsOfStationByStationId} from '@/api/goodsofstation'
 import StationLegalDialogBar from "./stationLegalDialogBar";
 
 export default {
@@ -104,7 +105,7 @@ export default {
       station: {
         stationName: null,
         stationAddress: null,
-        openFlag: null
+        createUser: null
       },
       stationList: [],
       drawer: false,
@@ -112,14 +113,15 @@ export default {
       pagesize: 10,
       value: [1],
       user: {
-        realName : null,
-        id : null,
+        realName: null,
+        id: null,
         sex: null,
-        age : null,
-        mobile : null,
-        address : null,
-        createTime : null
-      }
+        age: null,
+        mobile: null,
+        address: null,
+        createTime: null
+      },
+      goodsTypeAndGoodsList: []
     }
   },
   created() {
@@ -129,7 +131,7 @@ export default {
     handleSizeChange: function (size) {
       this.pagesize = size
     },
-    handleCurrentChange: function(currentPage) {
+    handleCurrentChange: function (currentPage) {
       this.currentPage = currentPage
     },
     getAllStations() {
@@ -145,12 +147,12 @@ export default {
       this.getAllStations()
     },
     clearThem() {
-      this.station.stationName=null;
-      this.station.stationAddress=null;
-      this.station.openFlag=null;
+      this.station.stationName = null;
+      this.station.stationAddress = null;
+      this.station.openFlag = null;
     },
-    getStationLegal(stationUuid) {
-      getStationLegal(stationUuid).then((res) => {
+    getStationLegal(row) {
+      getStationLegal(row.stationLegal).then((res) => {
         if (res.data.status === 200) {
           var res = res.data
           this.user.realName = res.data.realName
@@ -160,12 +162,18 @@ export default {
           this.user.mobile = res.data.mobile
           this.user.address = res.data.address
           this.user.createTime = res.data.createTime
-          console.log(res.data)
-          console.log(res.data.realName)
-          console.log(this.user)
         }
       }).catch((res) => {
         console.log(res.message)
+      });
+      alert(row.uuid)
+      getGoodsOfStationByStationId(row.uuid).then((res) => {
+        if (res.data.status === 200) {
+          this.goodsTypeAndGoodsList = res.data.data
+          console.log(res.data.data)
+        }
+      }).catch((res) => {
+        console.log(res.data.data.message)
       })
     },
     updStation(station) {
@@ -185,16 +193,16 @@ export default {
         });
       })
     },
-    changeStatus(status,row) {
-      if (status == 1){
-        row.openFlag=1
+    changeStatus(status, row) {
+      if (status == 1) {
+        row.openFlag = 1
       }
-      if (status == 2){
-        row.openFlag=2
+      if (status == 2) {
+        row.openFlag = 2
       }
       this.updStation(row)
     },
-    openCheck(check,row) {
+    openCheck(check, row) {
       this.$confirm('是否同意该基站的审核申请?', '提示', {
         confirmButtonText: '同意',
         cancelButtonText: '不同意',
@@ -211,13 +219,13 @@ export default {
               }, 300);
             }, 3000);
           } else {
-            row.check="审核失败"
+            row.check = "审核失败"
             this.updStation(row)
             done()
           }
         }
       }).then((res) => {
-        row.check="审核成功"
+        row.check = "审核成功"
         this.updStation(row)
       });
     }

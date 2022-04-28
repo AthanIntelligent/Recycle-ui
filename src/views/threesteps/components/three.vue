@@ -7,8 +7,12 @@
 </template>
 
 <script>
+import {getStationDetail} from '@/api/station'
 export default {
-  name: "three"
+  name: "three",
+  methods: {
+
+  }
 }
 </script>
 

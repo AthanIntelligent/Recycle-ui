@@ -48,6 +48,7 @@ export default {
         station:{},
         goodsIds:''
       },
+      stationId: null,
       rules: {
         name: [
           { required: true, message: '请输入基站名称', trigger: 'blur' },
@@ -92,6 +93,8 @@ export default {
       this.oneSubmitData.goodsIds = goodsIds;
       addStation(this.oneSubmitData).then((res) => {
         if (res.data.status == 200) {
+          this.stationId = res.data
+          //把这个stationId像父组件传，用于最后的查看状态
           this.$message.success("注册成功")
           this.$emit('flagOne',true)
         }
@@ -117,7 +120,8 @@ export default {
 
 <style scoped>
 .oneClass{
-  border:3px solid #00ac95;
+  border:2px solid #00ac95;
   padding: 15px;
+  width: auto;
 }
 </style>
