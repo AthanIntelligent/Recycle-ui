@@ -9,13 +9,22 @@
           <el-option v-for="item in goodsTypeList" :key="item.uuid" :value="item.goodsType"></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="创建人">
+        <el-select v-model="goods.createUser" placeholder="创建人">
+          <el-option v-for="item in stationUserList" :key="item.uuid" :value="item.uuid" :label="item.realName">{{item.realName}}</el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit(goods)">查询</el-button>
         <el-button type="primary" @click="clearTwo()">清空</el-button>
       </el-form-item>
     </el-form>
     <el-button @click="dialogVisible = true">追加</el-button>
-    <el-table :key="key" :data="goodsList.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;font-size: 16px">
+    <el-table :key="key"
+              v-loading="loading"
+              element-loading-text="玩命加载中"
+              element-loading-spinner="el-icon-loading"
+              :data="goodsList.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;font-size: 16px">
       <el-table-column type="index" width="100" label="序号">
       </el-table-column>
       <el-table-column
@@ -35,6 +44,9 @@
       <el-table-column
         prop="perMoney"
         label="单价">
+        <template slot-scope="scope">
+          {{scope.row.perMoney+''+scope.row.unit}}
+        </template>
       </el-table-column>
       <el-table-column
         prop="pic"
@@ -112,6 +124,7 @@ import goodsDialogBar2 from './goodsDialogBar2'
 import {dirGoods, addGoods, delGoods, updGoods, getGoods} from '@/api/goods'
 import {dirGoodsType} from '@/api/goodstype'
 import {getTemplate, importG} from '@/api/goodsexcel'
+import {dirStationUserList} from '@/api/userA'
 
 export default {
   name: "GoodsFixedThead",
@@ -120,7 +133,8 @@ export default {
     return {
       goods: {
         goodsType: null,
-        goodsName: null
+        goodsName: null,
+        createUser: null
       },
       goodsDeal: {
         uuid: '',
@@ -129,6 +143,7 @@ export default {
         pic: '',
         recycleDetail: '',
         perMoney: null,
+        unit: null,
         remark: ''
       },
       goodsList: [],
@@ -137,14 +152,27 @@ export default {
       pagesize: 10,
       dialogVisible: false,
       key: 1, // table key
-      path: "/static/image/goodImg/"
+      path: "/static/image/goodImg/",
+      stationUserList: [],
+      loading: true
     }
   },
   created() {
     this.getAllGoods()
     this.getAllGoodsType()
+    this.getStationUserList()
   },
   methods: {
+    getStationUserList() {
+      dirStationUserList().then((res) => {
+        if (res.data.status === 200) {
+          this.stationUserList = res.data.data
+          console.log(res.data)
+        }
+      }).catch((res) => {
+        console.log(res.message)
+      })
+    },
     // import() {
     //   importG().then((res) => {
     //   }).catch((res) => {
@@ -167,6 +195,7 @@ export default {
       dirGoods(this.goods).then((res) => {
         if (res.data.status === 200) {
           this.goodsList = res.data.data
+          this.loading = false
         }
       }).catch((res) => {
         console.log(res.message)
@@ -193,6 +222,7 @@ export default {
     clearTwo() {
       this.goods.goodsType = null
       this.goods.goodsName = null
+      this.goods.createUser = null
     },
     addGoods() {
       alert("add")
@@ -293,6 +323,7 @@ export default {
         this.goodsDeal.pic = '',
         this.goodsDeal.recycleDetail = '',
         this.goodsDeal.perMoney = null,
+        this.goodsDeal.unit = null,
         this.goodsDeal.remark = ''
     }
   }

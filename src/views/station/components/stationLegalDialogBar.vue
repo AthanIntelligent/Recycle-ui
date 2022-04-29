@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-descriptions class="margin-top" title="基站法人信息" :column="1" size="medium " border
-                     style="margin-top: 20px;color: palevioletred">
+                     style="margin-top: 20px;color: palevioletred;font-size: 18px">
       <el-descriptions-item>
         <template slot="label">
           <i class="el-icon-user"></i>
@@ -44,7 +44,7 @@
           <i class="el-icon-tickets"></i>
           注册时间
         </template>
-        <el-tag size="small"><span>{{ userRight.createTime }}</span></el-tag>
+        <el-tag size="medium"><span>{{ userRight.createTime }}</span></el-tag>
       </el-descriptions-item>
       <el-descriptions-item>
         <template slot="label">
@@ -55,14 +55,14 @@
       </el-descriptions-item>
 
     </el-descriptions>
-    <el-card class="box-card" style="margin-top: 100px">
+    <el-card class="box-card" style="margin-top: 50px">
       <div slot="header" class="clearfix" style="color: palevioletred;font-size: 16px;font-weight:bold;">
         <span>基站经营物品</span>
       </div>
       <div v-for="goods in goodsTypeAndGoodsListRight" :key="goods" class="text item">
         <el-button type="text" plain style="margin-bottom: 3px">{{ goods.goodsType }}</el-button>
         <el-checkbox-group v-model="goods.goodsList">
-          <el-checkbox v-for="good in goods.goodsList" :label="goods.uuid" :key="goods.uuid" :value="goods.uuid">
+          <el-checkbox v-for="good in goods.goodsList" :checked="good.isVisible === true" v-if="good.isVisible ===true || good.isVisible === null" onclick="return  false;" :disabled="good.isVisible != true" :label="good.uuid" :key="good.uuid" :value="good.uuid">
             {{ good.goodsName }}
           </el-checkbox>
         </el-checkbox-group>

@@ -7,10 +7,10 @@
       <el-form-item label="基站地址">
         <el-input v-model="station.stationAddress" placeholder="基站地址"></el-input>
       </el-form-item>
-      <el-form-item label="创建人">
-        <el-select v-model="station.createUser" placeholder="创建人">
-          <el-option label="系统管理员" value="系统管理员"></el-option>
-          <el-option label="我自己" value="我自己"></el-option>
+      <el-form-item label="开启状态">
+        <el-select v-model="station.openFlag" placeholder="开启状态">
+          <el-option label="开启" value="开启"></el-option>
+          <el-option label="关闭" value="关闭"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -24,7 +24,7 @@
       </el-table-column>
       <el-table-column
         prop="legal"
-        label="基站法人"
+        label="基站详情"
         width="180">
         <template slot-scope="scope">
           <el-button
@@ -72,7 +72,7 @@
     </el-table>
 
     <el-drawer
-      title="基站法人详细信息"
+      title="基站详细"
       :visible.sync="drawer"
       :with-header="false">
       <station-legal-dialog-bar :userRight="user" :goodsTypeAndGoodsListRight="goodsTypeAndGoodsList"></station-legal-dialog-bar>
@@ -105,7 +105,7 @@ export default {
       station: {
         stationName: null,
         stationAddress: null,
-        createUser: null
+        openFlag: null
       },
       stationList: [],
       drawer: false,
@@ -166,7 +166,6 @@ export default {
       }).catch((res) => {
         console.log(res.message)
       });
-      alert(row.uuid)
       getGoodsOfStationByStationId(row.uuid).then((res) => {
         if (res.data.status === 200) {
           this.goodsTypeAndGoodsList = res.data.data

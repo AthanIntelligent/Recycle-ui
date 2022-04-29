@@ -23,7 +23,11 @@
     <el-button @click="">导入物品</el-button>
     <el-button @click="">导出物品</el-button>
     <el-button @click.prevent="getTemplate">下载模板</el-button>
-    <el-table :key="key" :data="goodsList.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;font-size: 16px">
+    <el-table :key="key"
+              v-loading="loading"
+              element-loading-text="玩命加载中"
+              element-loading-spinner="el-icon-loading"
+              :data="goodsList.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;font-size: 16px">
       <el-table-column type="index" width="100" label="序号">
       </el-table-column>
       <el-table-column
@@ -43,6 +47,9 @@
       <el-table-column
         prop="perMoney"
         label="单价">
+        <template slot-scope="scope">
+          {{scope.row.perMoney+''+scope.row.unit}}
+        </template>
       </el-table-column>
       <el-table-column
         prop="pic"
@@ -136,6 +143,7 @@ export default {
         pic: '',
         recycleDetail: '',
         perMoney: null,
+        unit: null,
         remark: ''
       },
       goodsList: [],
@@ -145,7 +153,8 @@ export default {
       pagesize: 10,
       dialogVisible: false,
       key: 1, // table key
-      path: "/static/image/goodImg/"
+      path: "/static/image/goodImg/",
+      loading: true
     }
   },
   created() {
@@ -186,6 +195,7 @@ export default {
       dirGoods(this.goods).then((res) => {
         if (res.data.status === 200) {
           this.goodsList = res.data.data
+          this.loading = false
         }
       }).catch((res) => {
         console.log(res.message)
@@ -201,6 +211,7 @@ export default {
       })
     },
     onSubmit(goods) {
+      console.log(goods)
       dirGoods(goods).then((res) => {
         if (res.data.status === 200) {
           this.goodsList = res.data.data
@@ -256,14 +267,14 @@ export default {
             type: 'success',
             message: '修改成功!'
           })
-          this.getAllGoods()
-          this.clearGoodsDeal()
         }
         if (res.data.status != 200){
           this.$message({
             type: 'info',
             message: res.data.message
           });
+          this.getAllGoods()
+          this.clearGoodsDeal()
         }
       }).catch((res) => {
         console.log(res.data.message)
@@ -276,6 +287,7 @@ export default {
         this.goodsDeal.goodsType = res.data.data.goodsType
         this.goodsDeal.recycleDetail = res.data.data.recycleDetail
         this.goodsDeal.perMoney = res.data.data.perMoney
+        this.goodsDeal.unit = res.data.data.unit
         this.goodsDeal.remark = res.data.data.remark
         this.goodsDeal.pic = res.data.data.pic
         console.log(this.goodsDeal)

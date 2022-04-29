@@ -12,7 +12,11 @@
       <el-input type="textarea" v-model="goods.recycleDetail"></el-input>
     </el-form-item>
     <el-form-item label="单价" prop="perMoney">
-      <el-input type="text" v-model="goods.perMoney"></el-input>
+      <el-input type="text" v-model="goods.perMoney" style="width: 275px"></el-input>
+      <el-select v-model="goods.unit" placeholder="单位"  style="width: 150px">
+        <el-option label="元/斤" value="元/斤"></el-option>
+        <el-option label="元/个" value="元/斤"></el-option>
+      </el-select>
     </el-form-item>
     <el-form-item label="备注" prop="remark">
       <el-input type="text" v-model="goods.remark"></el-input>
@@ -43,7 +47,11 @@
       <el-input type="textarea" v-model="goods.recycleDetail"></el-input>
     </el-form-item>
     <el-form-item label="单价" prop="perMoney">
-      <el-input type="text" v-model="goods.perMoney"></el-input>
+      <el-input type="text" v-model="goods.perMoney" style="width: 275px"></el-input>
+      <el-select v-model="goods.unit" placeholder="单位" style="width: 150px">
+        <el-option :key="goods.uuid" value="元/斤"></el-option>
+        <el-option :key="goods.uuid" value="元/个"></el-option>
+      </el-select>
     </el-form-item>
     <el-form-item label="备注" prop="remark">
       <el-input type="text" v-model="goods.remark"></el-input>
@@ -68,6 +76,7 @@ export default {
       pic: '',
       recycleDetail: '',
       perMoney: null,
+      unit: null,
       remark: ''
     }
   },
@@ -80,6 +89,7 @@ export default {
         pic: '',
         recycleDetail: '',
         perMoney: null,
+        unit: null,
         remark: ''
       },
       goodsTypeList: [],

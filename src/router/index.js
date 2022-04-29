@@ -294,6 +294,22 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '/reservationManage',
+    component: Layout,
+    meta: {
+      icon: 'svg-layers',
+      title: '预约管理'
+    },
+    children: [
+      {
+        path: 'index',
+        name: 'Reservation',
+        component: () => import('@/views/reservation/index'),
+        meta: {icon: 'star-on', title: '预约管理'}
+      }
+    ]
+  },
+  {
     path: '/theme',
     component: Layout,
     meta: {
