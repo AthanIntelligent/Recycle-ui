@@ -42,6 +42,7 @@
 </template>
 <script>
 import { isValidLoginName } from '@/utils/validate'
+import {getStationStatus} from '@/api/station'
 import LangSelect from '@/components/lang-select'
 import { saveToLocal, loadFromLocal } from '@/common/local-storage'
 import { mapActions } from 'vuex'
@@ -117,6 +118,11 @@ export default {
         if (valid) {
           this.loading = true
           this.login(this.loginForm).then((res) => {
+            if(res.data.data.openFlag == 2){
+              this.accountTip("error",'账户错误',"账户已被加入黑名单,请联系管理员");
+              this.loading = false
+              return
+            }
             // 保存账号
             if(res.data.status === 200){
               if (this.remember) {
@@ -128,9 +134,21 @@ export default {
                 saveToLocal('password', '')
                 saveToLocal('remember', false)
               }
-              this.$router.push({ path: '/home' })
+              if(res.data.data.userType == 2){
+                getStationStatus(res.data.data.uuid).then(sta => {
+                  if(sta.data.data != null && sta.data.data.check != '审核成功' || sta.data.data.openFlag == '2'){
+                    this.$router.push({path: '/joinStation'})
+                  }else {
+                    this.$router.push({ path: '/home' })
+                  }
+                }).cache(err => {
+                  this.loading = false
+                })
+              }else {
+                this.$router.push({ path: '/home' })
+              }
             }else {
-              this.accountTip("error",res.data.message);
+              this.accountTip("error","输入错误",res.data.message);
               this.loading = false
             }
           }).catch(() => {
@@ -141,9 +159,9 @@ export default {
         }
       })
     },
-    accountTip(type,info) {
+    accountTip(type,title,info) {
       this.$notify({
-        title: '输入错误',
+        title: title,
         dangerouslyUseHTMLString: true,
         message: '<strong>提示：<i>'+info+'</i></strong>',
         type: type,

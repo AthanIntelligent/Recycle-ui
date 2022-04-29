@@ -48,6 +48,7 @@ router.beforeEach((to, from, next) => {
       }
     }
   } else {
+    debugger
     if (whiteList.includes(to.path)) { // 白名单，免密登录
       next()
     } else { // 否则就跳动登录页面

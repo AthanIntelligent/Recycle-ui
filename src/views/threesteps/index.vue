@@ -6,13 +6,28 @@
 
 <script>
 import ThreeAll from './components/threeall'
+
 export default {
   name: "index",
-  components: {ThreeAll}
+  components: {ThreeAll},
+  data(){
+    return {
+
+    }
+  },
+  methods:{
+
+  },
+  mounted() {
+
+
+  }
+
 }
 </script>
 
 <style scoped>
+
 
 </style>
 

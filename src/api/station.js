@@ -20,3 +20,7 @@ export function getStationDetail(uuid) {
   return axios.post('/station/getStationDetail?uuid=',uuid)
 }
 
+export function getStationStatus(userId) {
+  return axios.get('/station/getStationStatus?userId='+userId)
+}
+

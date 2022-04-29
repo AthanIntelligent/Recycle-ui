@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 import Login from '@/views/login'
 import Register from '@/views/register'
-import nearBaseStation from '@/views/nearBaseStation'
+import JoinStation from '@/views/threesteps'
 import Layout from '@/layout/layout'
 
 Vue.use(Router)
@@ -32,6 +32,15 @@ export const constantRouterMap = [
     component: Login,
     meta: {
       title: '登录'
+    }
+  },
+  {
+    path: '/joinStation',
+    name: 'station',
+    hidden: true,
+    component: JoinStation,
+    meta: {
+      title: '入驻基站'
     }
   },
   {
@@ -258,24 +267,24 @@ export const asyncRouterMap = [
       }
     ]
   },
-  {
-    path: '/threesteps',
-    component: Layout,
-    redirect: '/threesteps/index',
-    // alwaysShow: true,
-    meta: {
-      icon: 'svg-aperture',
-      title: '基站三部曲'
-    },
-    children: [
-      {
-        path: 'index',
-        name: 'ThreeSteps',
-        component: () => import('@/views/threesteps/index'),
-        meta: {icon: 'svg-aperture', title: '基站三部曲'}
-      }
-    ]
-  },
+  // {
+  //   path: '/threesteps',
+  //   component: Layout,
+  //   redirect: '/threesteps/index',
+  //   // alwaysShow: true,
+  //   meta: {
+  //     icon: 'svg-aperture',
+  //     title: '基站三部曲'
+  //   },
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'ThreeSteps',
+  //       component: () => import('@/views/threesteps/index'),
+  //       meta: {icon: 'svg-aperture', title: '基站三部曲'}
+  //     }
+  //   ]
+  // },
   {
     path: '/goods-of-station',
     component: Layout,

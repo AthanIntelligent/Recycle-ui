@@ -1,6 +1,7 @@
 import { login, userInfo, logout } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/common/auth'
 
+const SET_UUID = 'SET_UUID'
 const SET_ACCOUNT = 'SET_ACCOUNT'
 const SET_TOKEN = 'SET_TOKEN'
 const SET_REALNAME = 'SET_REALNAME'
@@ -14,6 +15,7 @@ const SET_PERMISSIONS = 'PERMISSIONS'
 const SET_ALL = 'SET_ALL'
 const user = {
   state: {
+    uuid: '',
     token: getToken(),
     account: '',
     realName: '',
@@ -26,6 +28,9 @@ const user = {
     permissions: ''
   },
   mutations: {
+    [SET_UUID](state,uuid){
+      state.uuid = uuid
+    },
     [SET_ACCOUNT](state, account) {
       state.account = account
     },
@@ -83,6 +88,7 @@ const user = {
         userInfo().then(resp => {
           let user = resp.data.data
           let data = user.userInfo
+          commit(SET_UUID, data.uuid)
           commit(SET_ACCOUNT, data.loginName)
           commit(SET_REALNAME, data.realName)
           commit(SET_AGE, data.age)

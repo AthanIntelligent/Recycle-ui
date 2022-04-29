@@ -13,65 +13,74 @@
       </el-form-item>
     </el-form>
     <el-table :key="key" :data="stationUserList.slice((currentPage-1)*pagesize,currentPage*pagesize)"
-              highlight-current-row style="width: 100%;font-size: 16px">
-      <el-table-column type="index" width="100" label="序号">
+              highlight-current-row style="width: 100%;font-size: 16px;" :cell-style="rowStyle" >
+      <el-table-column type="index" width="100" label="序号" align="center">
       </el-table-column>
       <el-table-column
         prop="loginName"
         label="登录名"
         width="150"
+        align="center"
       >
       </el-table-column>
       <el-table-column
         prop="realName"
         label="真实姓名"
         width="150"
+        align="center"
       >
       </el-table-column>
       <el-table-column
         prop="mobile"
         label="手机号"
         width="200"
+        align="center"
       >
       </el-table-column>
       <el-table-column
         prop="address"
         label="家庭住址"
         width="200"
+        align="center"
       >
       </el-table-column>
       <el-table-column
         prop="sex"
         label="性别"
         width="100"
+        align="center"
       >
       </el-table-column>
       <el-table-column
         prop="age"
         label="年龄"
         width="100"
+        align="center"
       >
       </el-table-column>
       <el-table-column
         prop="id"
         label="身份证号码"
         width="200"
+        align="center"
       >
       </el-table-column>
       <el-table-column
         prop="createTime"
         label="注册时间"
         width="200"
+        align="center"
       >
       </el-table-column>
       <el-table-column
         prop="openFlag"
         label="状态"
-        width="100"
+        width="200"
+        align="center"
       >
         <template slot-scope="scope">
-          <el-button type="success" v-if="scope.row.openFlag == '1'" @click="changeOpenFlag(scope.row)">开启</el-button>
-          <el-button type="info" v-if="scope.row.openFlag == '2'" @click="changeOpenFlag(scope.row)">关闭</el-button>
+          <el-button type="info" v-if="scope.row.openFlag == '1'" @click="changeOpenFlag(scope.row)">加入黑名单</el-button>
+          <el-button type="success" v-if="scope.row.openFlag == '2'" @click="changeOpenFlag(scope.row)">还原</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -156,7 +165,6 @@ export default {
     changeOpenFlag(user) {
       if (user.openFlag == '1'){
         user.openFlag = '2'
-        alert(user.openFlag);
       } else if (user.openFlag == '2'){
         user.openFlag = '1'
       }
@@ -170,6 +178,9 @@ export default {
         console.log(res.data.message)
       })
 
+    },
+    rowStyle(){
+      return "text-align:center"
     }
   }
 }
