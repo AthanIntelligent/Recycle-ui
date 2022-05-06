@@ -1,16 +1,21 @@
 <template>
   <div :style="{ height: windowHeight+ 'px',width:windowWidth + 'px' }">
     <div id="container" v-loading="loading"></div>
+    <infoWindowComponent ref="infoWindowComponent"></infoWindowComponent>
   </div>
 </template>
 
 <script>
 import {positionData} from "./positionData";
 import goodsType from "./../my-trade/goods-type"
+import infoWindowComponent from "./infowindow";
+import {dirStation,getStationLegal} from '@/api/station'
+import {getGoodsOfStationByStationId} from '@/api/goodsofstation'
 const val = true;
 export default {
   name: "index",
   components:{
+    infoWindowComponent,
     goodsType
   },
   data() {
@@ -21,7 +26,12 @@ export default {
       currLng:null,
       currLat:null,
       loading:true,
-      bookingFlag:false
+      station:{
+        openFlag:'开启'
+      },
+      stationList:[],
+      userInfo:null,
+      goodsInfo:[]
     }
   },
   methods:{
@@ -76,7 +86,7 @@ export default {
             that.setMarkers(map);
             that.loading=false
           }else {
-            window.location.reload();
+            that.init();
           }
 
         },1500)
@@ -96,7 +106,7 @@ export default {
       var that = this;
       var markers =[];
       var clickHandler = [];
-
+      var positionData = JSON.parse(JSON.stringify(that.stationList));
       for(var i=0;i<positionData.length;i++){
         // 创建一个 Marker 实例：
         var marker = new AMap.Marker({
@@ -104,17 +114,23 @@ export default {
           title: positionData[i].title, // 鼠标移上去时显示的内容
           offset: new AMap.Pixel(-70, -50),
           icon:that.mapIcon,
-          extData: positionData[i].id
+          extData: {
+            stationInfo: positionData[i].stationInfo,
+            userInfo: positionData[i].userInfo,
+            goodsInfo: positionData[i].goodsInfo
+          }
         });
         clickHandler = function(e) {
-          // console.log(e.target.w,111)
+          console.log(e.target,111)
           // console.log(marker)
           myMap.getCenter().lng=e.lnglat.lng;
           myMap.getCenter().Q=e.lnglat.lat;
           myMap.getCenter().R=e.lnglat.lng;
           myMap.getCenter().lat=e.lnglat.lat;
           // console.log(myMap.getCenter())
-          that.setInfoWindow(myMap,e.target.w.extData)
+          // console.log(marker)
+          // that.setInfoWindow(myMap,e.target.w.extData)
+          that.openInfo(myMap,e.target.w.extData,e.target.w.position)
         };
         // marker.on('mousemove', clickHandler);
         marker.on('click', clickHandler);
@@ -123,119 +139,86 @@ export default {
 
       myMap.add(markers)
     },
-    setInfoWindow(myMap,data){
-      var that = this;
-      //信息窗体的标题
-      var title = '<span >基站名称'+data+'</span>';
-      // // 信息窗体的内容
-      var content = [];
-      // content.push("<div class='input-card content-window-card'><div><img style=\"float:left;\" src=\" https://webapi.amap.com/images/autonavi.png \"/></div> ");
-      // content.push("<div  style=\"width: 400px;height: 600px;position: relative;background-color: #888888\"><h2 style=\"color:lightblue\">基站名称"+data+"</h2>");
-      content.push("<div style=\"width: 98%;height: 93%;position: absolute;top: 22px;padding-left: 5px\">");
-      content.push("<p class='input-item'>电话 : <span style='color: grey'>010-84107000</span>   邮编 : <span style='color: grey'>100102</span></p>");
-      content.push("<p class='input-item'>地址 :<span style='color: grey'>北京市朝阳区望京阜荣街10号首开广场4层</span></p>");
-      content.push("<div style=\"display: flex;\"><span style=\"display: flex;width: 120px\">可回收物品:</span><div class=\"spanStyle\" style=\"margin-left: 0px;color: grey;line-height: 1.4;\">纸盒、衣服、烟头、头发、酒瓶、酒瓶、酒瓶 <a href='javascript:void(0)' style=\"color: #1d7ac2\">详情</a></div></div>")
-      content.push("<p class='input-item'>营业时间:<span style=\"color: grey\">"+new Date()+"</span></p>")
-      content.push("<div style=\"display: flex;justify-content: right;\"><button type='button' style=\"margin-right: 10px\">💭咨询</button><button type='button' style=\"margin-right: 10px\">＋追加</button><button onclick=function booking(val) {alert(val);}'>🕓预约</button></div>")
-      content.push("<p class='input-item' style=\"position: absolute;bottom: 5px;left: 5px;font-size: 15px;color: grey\">距离你直线距离：xxxkm</p></div>")
-      var infoWindow = new AMap.InfoWindow({
-        // content: content.join("<br>")  //传入 dom 对象，或者 html 字符串
-        isCustom: true,  //使用自定义窗体
-        content: that.createInfoWindow(title, content.join("<br/>"),myMap),
-        // offset: new AMap.Pixel(16, -45)
+    openInfo(myMap,extData,target){
+      var that = this
+      let infoWindow = new AMap.InfoWindow({
+        isCustom:true,
+        content: that.$refs.infoWindowComponent.$el,
+        // offset: new AMap.Pixel(0, -25)
       });
-//鼠标点击marker弹出自定义的信息窗体
-//       AMap.event.addListener(marker, 'click', function () {
-//         infoWindow.open(myMap, marker.getPosition());
-//       });
       infoWindow.open(myMap, myMap.getCenter());
-      // this.info = infoWindow
+      this.infoWindow = infoWindow;
+      // 调用组件方法，初始化组件页面的infoWindow等数据
+      that.$refs.infoWindowComponent.initialize({
+        overlay: target,
+        infoWindow: that.infoWindow,
+        extData: extData
+      });
     },
-    //构建自定义信息窗体
-    createInfoWindow(title, content,myMap) {
+    // 获取附件的基站信息和位置
+    getStationInfo(){
       var that = this;
-      var info = document.createElement("div");
-      info.className = "custom-info input-card content-window-card";
-      info.style.position = 'relative';
-      info.style.boxShadow = 'none';
-      info.style.bottom = '0';
-      info.style.left = '0';
-      // info.style.width = 'auto';
-      info.style.padding = '0';
-      //可以通过下面的方式修改自定义窗体的宽高
-      info.style.width = "400px";
-      info.style.height = "320px";
-      info.style.backgroundColor = "white"
-      // 定义顶部标题
-      var top = document.createElement("div");
-      var titleD = document.createElement("div");
-      var closeX = document.createElement("img");
-      top.className = "info-top";
-      top.style.position = 'relative';
-      top.style.background = 'white';
-      top.style.borderBottom = '1px solid #CCC';
-      top.style.borderRadius = '5px 5px 0 0';
-      titleD.style.display = 'inline-block';
-      titleD.style.color = '#0099FF';
-      titleD.style.fontSize = '19px';
-      titleD.style.fontWeight = 'bold';
-      titleD.style.lineHeight = '31px';
-      titleD.style.padding = '0 10px';
-      closeX.style.position = 'absolute';
-      closeX.style.top = '10px';
-      closeX.style.right = '10px';
-      closeX.style.transitionDuration = '0.25s'
-      // closeX:setHoverStyle.style.boxShadow = '0px 0px 5px #000'
-      titleD.innerHTML = title;
-      closeX.src = "https://webapi.amap.com/images/close2.gif";
-      closeX.style.zIndex = '100'
-      closeX.onclick = function (){
-        myMap.clearInfoWindow()
+      dirStation(this.station).then(res => {
+        var sta = res.data.data
+        console.log(sta,"sta")
+        for(var i=0;i<sta.length;i++){
+          console.log(sta[i])
+          that.getStaUserInfo(sta[i].stationLegal)
+          that.getGoodsInfo(sta[i].uuid)
+          console.log(that.userInfo)
+          var stationInfo = {
+            lnglat: that.getStationLngLat(sta[i].stationAddress),
+            title: sta[i].stationName,
+            stationInfo: sta[i],
+            userInfo: that.userInfo,
+            goodsInfo: that.goodsInfo
+          };
+          that.stationList.push(stationInfo)
+        }
+      }).catch(err => {
+        alert(err.message)
+      })
+    },
+    getStationLngLat(address){
+      var position = [];
+      var xmlhttp;
+      if(window.XMLHttpRequest){
+        xmlhttp = new XMLHttpRequest();
+      }else{
+        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
       }
-
-      top.appendChild(titleD);
-      top.appendChild(closeX);
-      info.appendChild(top);
-
-      // 定义中部内容
-      var middle = document.createElement("div");
-      middle.className = "info-middle";
-      middle.style.color = 'black'
-      middle.style.backgroundColor = 'gray';
-      middle.style.fontSize = '17px';
-      middle.style.height = 'auto'
-      middle.innerHTML = content;
-      info.appendChild(middle);
-
-      // 定义底部内容
-      var bottom = document.createElement("div");
-      bottom.style.position = 'absolute';
-      bottom.style.bottom = '0px';
-      bottom.style.margin = '0 auto';
-      bottom.style.height = '0px';
-      bottom.style.width = '100%';
-      bottom.style.clear = 'both';
-      bottom.style.textAlign = 'center';
-      var sharp = document.createElement("img");
-      sharp.src = "https://webapi.amap.com/images/sharp.png";
-      sharp.style.position = 'relative';
-      sharp.style.zIndex = '104';
-      bottom.appendChild(sharp);
-      info.appendChild(bottom);
-
-      return info;
+      xmlhttp.onreadystatechange=function (){
+        if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
+          var data = JSON.parse(xmlhttp.responseText)
+          position = data.geocodes[0].location.split(",");
+        }
+      }
+      var getPositionQuire = "http://restapi.amap.com/v3/geocode/geo?key=389880a06e3f893ea46036f030c94700&s=rsv3&city=35&address="+address;
+      xmlhttp.open("GET",getPositionQuire,false);
+      xmlhttp.send();
+      return position;
     },
-    toBooking(){
-      alert('123')
+    getStaUserInfo(userId){
+      var that =this;
+      getStationLegal(userId).then(res => {
+        that.userInfo = res.data.data;
+      }).catch(err => {
+        alert(err.message)
+      })
     },
+    getGoodsInfo(stationId){
+      var that = this;
+      getGoodsOfStationByStationId(stationId).then(res => {
+        that.goodsInfo = res.data.data;
+      }).catch(err => {
+        alert(err.message)
+      })
+    }
   },
   mounted() {
+    this.getStationInfo();
     this.init();
-
   }
-}
-function booking(){
-  alert(123)
 }
 </script>
 
