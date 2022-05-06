@@ -35,7 +35,7 @@
         <el-button type="primary" @click="clearThem()">清空</el-button>
       </el-form-item>
     </el-form>
-
+    <el-button @click="dialogVisible = true">预约</el-button>
     <el-table :key="key"
               v-loading="loading"
               element-loading-text="玩命加载中"
@@ -65,13 +65,29 @@
       </el-table-column>
     </el-table>
 
+    <el-dialog
+      :title="reservationAdd.uuid == ''?'预约':'修改预约'"
+      :visible.sync="dialogVisible"
+      width="30%">
+      <!--这里需要把选中的基站id或名称传过去-->
+      <reservation-dialog-bar v-bind:reservationD="reservationAdd"></reservation-dialog-bar>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false,addReservation()"
+                   v-if="reservationAdd.uuid == ''">确 定</el-button>
+        <el-button type="primary" @click="dialogVisible = false,updReservation()" v-else>确 定</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
-import {dirReservation} from '@/api/reservation'
+import {dirReservation, addReservation} from '@/api/reservation'
+import ReservationDialogBar from "./reservationDialogBar";
 export default {
   name: "ReservationList",
+  components: {ReservationDialogBar},
   data() {
     return {
       reservation: {
@@ -79,10 +95,22 @@ export default {
         time: null,
         isCome: null
       },
+      reservationAdd: {
+        uuid: '',
+        day: null,
+        time: null,
+        appointmentStation: null
+      },
       reservationList: [],
       currentPage: 1,
       pagesize: 10,
-      loading: false
+      loading: false,
+      dialogVisible: false,
+      reservationAndStation: {
+        reservation: {},
+        stationLegal: null,
+        stationId: null
+      }
     }
   },
   created() {
@@ -106,6 +134,21 @@ export default {
       this.reservation.day = null,
       this.reservation.time = null,
       this.reservation.isCome = null
+    },
+    addReservation() {
+      this.reservationAndStation.reservation =this.reservationAdd
+      addReservation(this.reservationAndStation).then((res) => {
+        if (res.data.status === 200) {
+          this.$message({
+            type: 'success',
+            message: '预约!'
+          })
+          this.getAllReservationList()
+          this.clearThem()
+        }
+      }).catch((res) => {
+        console.log(res.message)
+      })
     }
   }
 }
