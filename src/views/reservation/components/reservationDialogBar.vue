@@ -39,6 +39,11 @@ export default {
       appointmentStation: null
     }
   },
+  data() {
+    return {
+      threeDays: []
+    }
+  },
   methods: {
     getNowFormatDate() {
       let date = new Date();
@@ -46,31 +51,36 @@ export default {
       let year = date.getFullYear();
       let month = date.getMonth() + 1;
       let strDate = date.getDate();
-      let strDate2 = date.getDate()+1;
-      let strDate3 = date.getDate()+2;
       if (month >= 1 && month <= 9) {
         month = "0" + month;
       }
       if (strDate >= 0 && strDate <= 9) {
         strDate = "0" + strDate;
       }
-      if (strDate2 >= 0 && strDate2 <= 9) {
-        strDate2 = "0" + strDate2;
-      }
-      if (strDate3 >= 0 && strDate3 <= 9) {
-        strDate3 = "0" + strDate3;
-      }
       let currentdate = year + seperator1 + month + seperator1 + strDate;
-      let currentdate2 = year + seperator1 + month + seperator1 + strDate2;
-      let currentdate3 = year + seperator1 + month + seperator1 + strDate3;
-      let threeDays = [currentdate,currentdate2,currentdate3]
-      return threeDays;
+      return currentdate;
     },
     afterThreeDays() {
-      let threeDays = this.getNowFormatDate();
-      console.log(threeDays)
-
+      // console.log('前天：', this.getDateStr(-2));
+      // console.log('昨天：', this.getDateStr(-1));
+      // console.log('今天：', this.getDateStr(0));
+      // console.log('明天：', this.getDateStr(1));
+      // console.log('后天：', this.getDateStr(2));
+      this.threeDays = [this.getDateStr(0),this.getDateStr(1),this.getDateStr(2)]
+      console.log(this.threeDays)
+    },
+    getDateStr(AddDayCount) {
+      var dd = new Date();
+      dd.setDate(dd.getDate() + AddDayCount);//获取AddDayCount天后的日期
+      var y = dd.getFullYear();
+      var m = dd.getMonth() + 1;//获取当前月份的日期
+      var d = dd.getDate();
+      if (d >= 0 && d <= 9) {
+        d = "0" + d;
+      }
+      return y + '-' + (m < 10 ? '0' + m : m) + '-' + d;
     }
+
   }
 }
 </script>
