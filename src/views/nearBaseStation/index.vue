@@ -106,37 +106,39 @@ export default {
       var that = this;
       var markers =[];
       var clickHandler = [];
+      for(var i=0;i<that.stationList.length;i++){
+        that.stationList[i]["distance"] = that.getDistance(that.currLng,that.currLat,that.stationList[i].lnglat[0],that.stationList[i].lnglat[1])
+      }
       var positionData = JSON.parse(JSON.stringify(that.stationList));
       for(var i=0;i<positionData.length;i++){
         // 创建一个 Marker 实例：
-        var marker = new AMap.Marker({
-          position: positionData[i].lnglat, // 地理位置经纬度
-          title: positionData[i].title, // 鼠标移上去时显示的内容
-          offset: new AMap.Pixel(-70, -50),
-          icon:that.mapIcon,
-          extData: {
-            stationInfo: positionData[i].stationInfo,
-            userInfo: positionData[i].userInfo,
-            goodsInfo: positionData[i].goodsInfo
-          }
-        });
-        clickHandler = function(e) {
-          console.log(e.target,111)
-          // console.log(marker)
-          myMap.getCenter().lng=e.lnglat.lng;
-          myMap.getCenter().Q=e.lnglat.lat;
-          myMap.getCenter().R=e.lnglat.lng;
-          myMap.getCenter().lat=e.lnglat.lat;
-          // console.log(myMap.getCenter())
-          // console.log(marker)
-          // that.setInfoWindow(myMap,e.target.w.extData)
-          that.openInfo(myMap,e.target.w.extData,e.target.w.position)
-        };
-        // marker.on('mousemove', clickHandler);
-        marker.on('click', clickHandler);
-        markers.push(marker)
+        if(positionData[i].distance!=undefined && positionData[i].distance<20){
+          var marker = new AMap.Marker({
+            position: positionData[i].lnglat, // 地理位置经纬度
+            title: positionData[i].title, // 鼠标移上去时显示的内容
+            offset: new AMap.Pixel(-70, -50),
+            icon:that.mapIcon,
+            extData: {
+              stationInfo: positionData[i].stationInfo,
+              userInfo: positionData[i].userInfo,
+              goodsInfo: positionData[i].goodsInfo,
+              distance: positionData[i].distance
+            }
+          });
+          clickHandler = function(e) {
+            console.log(e.target,111)
+            // console.log(marker)
+            myMap.getCenter().lng=e.lnglat.lng;
+            myMap.getCenter().Q=e.lnglat.lat;
+            myMap.getCenter().R=e.lnglat.lng;
+            myMap.getCenter().lat=e.lnglat.lat;
+            that.openInfo(myMap,e.target.w.extData,e.target.w.position)
+          };
+          // marker.on('mousemove', clickHandler);
+          marker.on('click', clickHandler);
+          markers.push(marker)
+        }
       }
-
       myMap.add(markers)
     },
     openInfo(myMap,extData,target){
@@ -165,15 +167,18 @@ export default {
           console.log(sta[i])
           that.getStaUserInfo(sta[i].stationLegal)
           that.getGoodsInfo(sta[i].uuid)
-          console.log(that.userInfo)
           var stationInfo = {
             lnglat: that.getStationLngLat(sta[i].stationAddress),
             title: sta[i].stationName,
-            stationInfo: sta[i],
-            userInfo: that.userInfo,
-            goodsInfo: that.goodsInfo
+            stationInfo: sta[i]
           };
-          that.stationList.push(stationInfo)
+          setTimeout(()=>{
+            stationInfo["userInfo"] = JSON.parse(JSON.stringify(that.userInfo))
+            stationInfo["goodsInfo"] = JSON.parse(JSON.stringify(that.goodsInfo))
+            that.stationList.push(stationInfo)
+          },2000)
+
+
         }
       }).catch(err => {
         alert(err.message)
@@ -213,6 +218,18 @@ export default {
       }).catch(err => {
         alert(err.message)
       })
+    },
+    getDistance(longitude1,latitude1, longitude2,  latitude2) {
+      console.log(longitude1+","+latitude1+","+longitude2+","+latitude2)
+      var radLat1 = latitude1*Math.PI / 180.0;
+      var radLat2 = latitude2*Math.PI / 180.0;
+      var a = radLat1 - radLat2;
+      var  b = longitude1*Math.PI / 180.0 - longitude2*Math.PI / 180.0;
+      var s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a/2),2) +
+        Math.cos(radLat1)*Math.cos(radLat2)*Math.pow(Math.sin(b/2),2)));
+      s = s *6378.137 ;// EARTH_RADIUS;
+      s = Math.round(s * 10000) / 10000;
+      return s;
     }
   },
   mounted() {
