@@ -319,6 +319,22 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '/transactionManage',
+    component: Layout,
+    meta: {
+      icon: 'svg-layers',
+      title: '交易管理'
+    },
+    children: [
+      {
+        path: 'index',
+        name: 'Transaction',
+        component: () => import('@/views/transaction/index'),
+        meta: {icon: 'star-on', title: '交易管理'}
+      }
+    ]
+  },
+  {
     path: '/theme',
     component: Layout,
     meta: {
