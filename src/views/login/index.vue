@@ -136,6 +136,9 @@ export default {
               }
               if(res.data.data.userType == 2){
                 getStationStatus(res.data.data.uuid).then(sta => {
+                  if(sta.data.data == null){
+                    this.$router.push({path: '/joinStation'})
+                  }
                   if(sta.data.data != null && sta.data.data.check != '审核成功' || sta.data.data.openFlag == '2'){
                     this.$router.push({path: '/joinStation'})
                   }else {

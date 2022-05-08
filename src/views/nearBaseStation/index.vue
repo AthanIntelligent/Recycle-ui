@@ -48,6 +48,9 @@ export default {
           buttonOffset: new AMap.Pixel(10, 20),
           //  定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
           zoomToAccuracy: true,
+          showButton: true, //显示定位按钮，默认：true
+          showMarker: true, //定位成功后在定位到的位置显示点标记，默认：true
+          panToLocation: true, //定位成功后将定位到的位置作为地图中心点，默认：true
           //  定位按钮的排放位置,  RB表示右下
           buttonPosition: 'RB'
         })
