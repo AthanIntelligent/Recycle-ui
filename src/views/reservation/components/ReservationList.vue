@@ -35,7 +35,6 @@
         <el-button type="primary" @click="clearThem()">清空</el-button>
       </el-form-item>
     </el-form>
-    <el-button @click="dialogVisible = true">预约</el-button>
     <el-table :key="key"
               v-loading="loading"
               element-loading-text="玩命加载中"
@@ -63,31 +62,39 @@
         prop="createTime"
         label="创建时间">
       </el-table-column>
+
+      <el-table-column
+        prop="createTime"
+        label="记录交易">
+        <template slot-scope="scope">
+          <el-button
+            @click="dialogVisible = true" type="text"
+            size="middle">
+            开始称重
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
     <el-dialog
-      :title="reservationAdd.uuid == ''?'预约':'修改预约'"
+      :title="'交易记录'"
       :visible.sync="dialogVisible"
-      width="30%">
-      <!--这里需要把选中的基站id或名称传过去-->
-      <reservation-dialog-bar v-bind:reservationD="reservationAdd"></reservation-dialog-bar>
+      width="40%">
+      <transaction-dialog-bar v-bind:transactionAndGoodsRight="transactionAndGoods"></transaction-dialog-bar>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false,addReservation()"
-                   v-if="reservationAdd.uuid == ''">确 定</el-button>
-        <el-button type="primary" @click="dialogVisible = false,updReservation()" v-else>确 定</el-button>
+        <el-button type="primary" @click="dialogVisible = false,addTransaction()">确 认 支 付</el-button>
       </span>
     </el-dialog>
-
   </div>
 </template>
 
 <script>
 import {dirReservation, addReservation} from '@/api/reservation'
-import ReservationDialogBar from "./reservationDialogBar";
+import TransactionDialogBar from './transactionDialogBar'
 export default {
-  name: "ReservationList",
-  components: {ReservationDialogBar},
+  name: 'ReservationList',
+  components: {TransactionDialogBar},
   data() {
     return {
       reservation: {
@@ -110,6 +117,10 @@ export default {
         reservation: {},
         stationLegal: null,
         stationId: null
+      },
+      transactionAndGoods: {
+        transaction: {},
+        transactionGoodsList: []
       }
     }
   },
