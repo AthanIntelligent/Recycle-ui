@@ -13,12 +13,17 @@
       <el-form-item label="用户姓名">
         <el-input v-model="transactionSelect.userId"></el-input>
       </el-form-item>
+      <el-form-item label="支付状态">
+        <el-select v-model="transactionSelect.payFlag">
+          <el-option value="未支付">未支付</el-option>
+          <el-option value="已支付">已支付</el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit()">查询</el-button>
         <el-button type="primary" @click="clearThem()">清空</el-button>
       </el-form-item>
     </el-form>
-    <el-button @click="dialogVisible = true">添加</el-button>
     <el-table :key="key"
               v-loading="loading"
               element-loading-text="玩命加载中"
@@ -47,6 +52,14 @@
         label="基站法人">
       </el-table-column>
       <el-table-column
+        prop="allMoney"
+        label="总交易金额">
+      </el-table-column>
+      <el-table-column
+        prop="payFlag"
+        label="支付状态">
+      </el-table-column>
+      <el-table-column
         prop="transactionTime"
         label="交易时间">
       </el-table-column>
@@ -58,27 +71,12 @@
       :with-header="false">
       <transaction-goods-dialog-bar :transactionGoodsListRight="transactionGoodsList"></transaction-goods-dialog-bar>
     </el-drawer>
-
-<!--    <el-dialog-->
-<!--      :title="reservationAdd.uuid == ''?'预约':'修改预约'"-->
-<!--      :visible.sync="dialogVisible"-->
-<!--      width="30%">-->
-<!--      &lt;!&ndash;这里需要把选中的基站id或名称传过去&ndash;&gt;-->
-<!--      <reservation-dialog-bar v-bind:reservationD="reservationAdd"></reservation-dialog-bar>-->
-<!--      <span slot="footer" class="dialog-footer">-->
-<!--        <el-button @click="dialogVisible = false">取 消</el-button>-->
-<!--        <el-button type="primary" @click="dialogVisible = false,addReservation()"-->
-<!--                   v-if="reservationAdd.uuid == ''">确 定</el-button>-->
-<!--        <el-button type="primary" @click="dialogVisible = false,updReservation()" v-else>确 定</el-button>-->
-<!--      </span>-->
-<!--    </el-dialog>-->
   </div>
 </template>
 
 <script>
-import {dirTransaction, getTransactionGoods, addTransaction} from '@/api/transaction'
+import {dirTransaction, getTransactionGoods} from '@/api/transaction'
 import Transaction from "../index";
-import transactionGoodsDialogBar from "./transactionGoodsDialogBar";
 import TransactionGoodsDialogBar from "./transactionGoodsDialogBar";
 export default {
 name: "TransactionList",
@@ -87,14 +85,17 @@ name: "TransactionList",
     return {
       transactionSelect: {
         transactionTime: null,
-        userId: null
+        userId: null,
+        payFlag: null
       },
       transaction: {
         uuid: '',
         userId: null,
         stationId: null,
         transactionTime: null,
-        stationLegal: null
+        stationLegal: null,
+        allMoney: null,
+        payFlag: null
       },
       transactionList: [],
       transactionGoodsList: [],
@@ -125,6 +126,7 @@ name: "TransactionList",
     clearThem() {
       this.transactionSelect.transactionTime = null,
         this.transactionSelect.userId = null
+        this.transactionSelect.payFlag = null
     },
     getTransactionGoods(uuid) {
       getTransactionGoods(uuid).then((res) => {

@@ -57,6 +57,14 @@
                     @keyup.enter.native="goToPasswordInput"
                     maxlength="50" />
         </el-form-item>
+        <el-form-item :label="$t('register.id')" prop="id" label-width="80px">
+          <el-input
+                    onkeyup="this.value=this.value.replace(/[^\X0-9]/g, '')"
+                    style="width: 76%"
+                    v-model="registerForm.id"
+                    maxlength="18" />
+
+        </el-form-item>
         <el-form-item :label="$t('register.mobile')" prop="mobile" label-width="80px">
           <el-input type="number"
                     style="width: 76%"
@@ -64,14 +72,6 @@
                     @keyup.enter.native="goToPasswordInput"
                     maxlength="11" />
 
-        </el-form-item>
-        <el-form-item :label="$t('register.verifyCode')" label-width="80px">
-          <el-input type="text"
-                    style="width: 50%"
-                    v-model="verifyCode"
-                    @keyup.enter.native="goToPasswordInput"
-                    maxlength="6" />
-          <el-button style="background-color: white;color: gray">获取验证码</el-button>
         </el-form-item>
         <el-form-item label-width="0px">
           <div style="display: flex;justify-content: space-around">
@@ -117,11 +117,89 @@ export default {
     }
       //mobile 验证
     const validateMobile = (rule,value,callback) => {
-      if(!/^1[3456789]\d{9}$/.test(value)){
+      if(value!='' && !/^1[3456789]\d{9}$/.test(value)){
         callback(new Error('请输入正确的手机号码'))
       } else {
         callback()
       }
+    }
+    //身份证号码验证
+    let validateID = (rule,value,callback) => {
+      if (!value) {
+        return callback(new Error("身份证号不能为空"));
+      }
+      if (!/(^\d{15}$)|(^\d{17}(\d|X|x)$)/.test(value)) {
+        callback(new Error("你输入的身份证长度或格式错误"));
+      }
+      //身份证城市
+      var aCity = {
+        11: "北京",
+        12: "天津",
+        13: "河北",
+        14: "山西",
+        15: "内蒙古",
+        21: "辽宁",
+        22: "吉林",
+        23: "黑龙江",
+        31: "上海",
+        32: "江苏",
+        33: "浙江",
+        34: "安徽",
+        35: "福建",
+        36: "江西",
+        37: "山东",
+        41: "河南",
+        42: "湖北",
+        43: "湖南",
+        44: "广东",
+        45: "广西",
+        46: "海南",
+        50: "重庆",
+        51: "四川",
+        52: "贵州",
+        53: "云南",
+        54: "西藏",
+        61: "陕西",
+        62: "甘肃",
+        63: "青海",
+        64: "宁夏",
+        65: "新疆",
+        71: "台湾",
+        81: "香港",
+        82: "澳门",
+        91: "国外"
+      };
+      if (!aCity[parseInt(value.substr(0, 2))]) {
+        callback(new Error("你的身份证地区非法"));
+      }
+      // 出生日期验证
+      var sBirthday = (
+          value.substr(6, 4) +
+          "-" +
+          Number(value.substr(10, 2)) +
+          "-" +
+          Number(value.substr(12, 2))
+        ).replace(/-/g, "/"),
+        d = new Date(sBirthday);
+      if (
+        sBirthday !=
+        d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate()
+      ) {
+        callback(new Error("身份证上的出生日期非法"));
+      }
+
+      // 身份证号码校验
+      var sum = 0,
+        weights = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2],
+        codes = "10X98765432";
+      for (var i = 0; i < value.length - 1; i++) {
+        sum += value[i] * weights[i];
+      }
+      var last = codes[sum % 11]; //计算出来的最后一位身份证号码
+      if (value[value.length - 1] != last) {
+        callback(new Error("你输入的身份证号非法"));
+      }
+      callback();
     }
     return {
       registerForm: {
@@ -156,6 +234,11 @@ export default {
           { required: true, message: '请输入手机号码', trigger: 'blur' },
           { required: true, trigger: 'blur', validator: validateMobile },
           { required: true, trigger: 'change', validator: validateMobile }
+        ],
+        id: [
+          { required: true, message: '请输入身份证号', trigger: 'blur' },
+          { required: true, trigger: 'blur', validator: validateID },
+          { required: true, trigger: 'change', validator: validateID }
         ]
       },
       options: regionData,
