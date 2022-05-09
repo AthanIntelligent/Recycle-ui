@@ -24,3 +24,7 @@ export function getStationStatus(userId) {
   return axios.get('/station/getStationStatus?userId='+userId)
 }
 
+export function updateJoinStationActive(station) {
+  return axios.post('/station/updateJoinStationActive',station)
+}
+

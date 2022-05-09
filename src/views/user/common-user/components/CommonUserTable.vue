@@ -89,7 +89,7 @@ export default {
         loginName: null,
         realName: null,
         address: null,
-        userType: '2',
+        userType: '1',
         openFlag: null
 
       },

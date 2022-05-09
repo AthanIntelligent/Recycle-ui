@@ -4,16 +4,16 @@
       <div class="titleD">
         {{extData.stationInfo.stationName}}
       </div>
-      <img class="closeX" src="https://webapi.amap.com/images/close2.gif">
+      <img class="closeX" @click="infoWindow.close()" src="https://webapi.amap.com/images/close2.gif">
     </div>
     <div class="middle">
       <div class="mid-div" style="width: 98%;height: 93%;position: absolute;top: 45px;padding-left: 5px">
-        <p class='input-item'>电话 : <span style='color: grey'>010-84107000</span>  邮编 : <span style='color: grey'>100102</span></p>
+        <p class='input-item'>电话 : <span style='color: grey'>{{ extData.userInfo.mobile }}</span>  联系人 : <span style='color: grey'>{{ extData.userInfo.realName }}</span></p>
         <p class='input-item'>地址 :<span style='color: grey'>{{extData.stationInfo.stationAddress}}</span>
-        <div style="display: flex;"><span style="display: flex;width: 120px">可回收物品:</span><div style="margin-left: 0px;color: grey;line-height: 1.4;">纸盒、衣服、烟头、头发、酒瓶、酒瓶、酒瓶 <a href='javascript:void(0)' style="color: #1d7ac2">详情</a></div></div>
+        <div style="display: flex;"><span style="display: flex;width: 120px">可回收物品:</span><div style="margin-left: 0px;color: grey;line-height: 1.4;"><span v-for="(goodsType,i) in extData.goodsInfo">{{i==extData.goodsInfo.length-1?goodsType.goodsType:goodsType.goodsType+"、"}}</span>&nbsp;<a href='javascript:void(0)' @click="isShowDetail" style="color: #1d7ac2">详情</a></div></div>
         <p class='input-item'>营业状态:<span style="color: grey">{{new Date().getHours()>18 || new Date().getHours()<8?'休息中':'正在营业'}}</span></p>
         <div style="display: flex;justify-content: right;position: absolute;right: 10px;margin-top: 15px"><button type='button' style="margin-right: 10px">💭咨询</button><button type='button' style="margin-right: 10px">＋追加</button><button >🕓预约</button></div>
-        <p class='input-item' style="position: absolute;bottom: 5px;left: 5px;font-size: 15px;color: grey">距离你直线离：xxxkm</p>
+        <p class='input-item' style="position: absolute;bottom: 5px;left: 5px;font-size: 15px;color: grey">距离你直线距离：{{extData.distance}}km</p>
       </div>
     </div>
     <div class="bottom">
@@ -39,6 +39,9 @@ export default {
       this.extData = e.extData
       console.log(this.extData)
     },
+    isShowDetail(){
+
+    }
   }
 }
 </script>

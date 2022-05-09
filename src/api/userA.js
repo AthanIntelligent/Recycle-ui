@@ -12,3 +12,13 @@ export function dirStationUserList() {
   return axios.get('/user/dirStationUserList')
 }
 
+export function sendMessage(phone) {
+  return axios.post('user/sendPhoneMessage',phone)
+}
+
+export function verifyPhoneCode(verifyCode) {
+  return axios.post('user/verifyPhoneCode',verifyCode)
+}
+
+
+

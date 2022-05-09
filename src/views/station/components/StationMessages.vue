@@ -95,7 +95,7 @@
 import stationDialogBar from './stationDialogBar'
 import {dirStation, getStationLegal, updStation} from '@/api/station'
 import {getGoodsOfStationByStationId} from '@/api/goodsofstation'
-import StationLegalDialogBar from "./stationLegalDialogBar";
+import StationLegalDialogBar from './stationLegalDialogBar';
 
 export default {
   name: 'StationMessages',

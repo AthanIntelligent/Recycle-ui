@@ -1,27 +1,30 @@
 <template>
   <div class="app-container">
     <div class="oneClass">
-      <el-form :model="station" :rules="rules" ref="ruleForm" label-width="100px">
-        <el-form-item label="基站名称" prop="name" placeholder="请输入基站名称">
+      <el-form :model="station" :rules="rules" ref="station" label-width="100px">
+        <el-form-item label="基站名称" prop="stationName" placeholder="请输入基站名称">
           <el-input v-model="station.stationName"></el-input>
         </el-form-item>
-        <el-form-item label="基站地址" prop="address" placeholder="请选择基站地址">
+        <el-form-item label="基站地址" prop="stationAddress" placeholder="请选择基站地址">
           <el-input v-model="station.stationAddress"></el-input>
         </el-form-item>
-        <el-form-item label="经营物品" prop="type">
+        <el-form-item label="经营物品" >
           <el-checkbox-group v-model="checkedLists"  @change="handleCheckedCitiesChange" >
             <div v-for="goodsall in goodsAllList">
               <el-button type="text" plain>{{goodsall.goodsType}}:</el-button>
-              <el-checkbox v-for="goods in goodsall.goodsList" :label="goods.uuid"  :key="goods.uuid" :value="goods.uuid">{{goods.goodsName}}</el-checkbox>
+              <el-checkbox  v-for="goods in goodsall.goodsList" :label="goods.uuid"  :key="goods.uuid" :value="goods.uuid">{{goods.goodsName}}</el-checkbox>
             </div>
+            <span style="display: block;font-size: 12px;font-family: '新宋体';color: red;" v-show="goodsListShow">请至少选择一个经营物品类型</span>
           </el-checkbox-group>
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="submitForm()">注册基站</el-button>
           <el-button @click="resetForm()">重置</el-button>
         </el-form-item>
       </el-form>
+    </div>
+    <div style="width: 100%;display:flex;justify-content: center;margin-top: 20px">
+      <el-button type="primary" @click="submitForm()"  plain>下一步</el-button>
     </div>
   </div>
 </template>
@@ -32,12 +35,28 @@ import {addStation} from '@/api/station'
 export default {
   name: "one",
   data() {
+    const validateStationName = (rule, value, callback) => {
+      if (value == undefined || value == null || value.toString().trim() === "") {
+        callback(new Error('请输入基站名称'))
+      } else {
+        callback()
+      }
+    }
+    const validateTypeSelect = (rule, value, callback) => {
+      console.log(value,"13")
+      if (value == null || !value.length>0) {
+        callback(new Error('请至少选择一个经营物品类型'))
+      } else {
+        callback()
+      }
+    }
     return {
       flag:null,
       station: {
         uuid: null,
         stationName: null,
         stationAddress: null,
+        active: 1
       },
       goods: {},
       goodsAllList: [],
@@ -50,23 +69,26 @@ export default {
       },
       stationId: null,
       rules: {
-        name: [
+        stationName: [
           { required: true, message: '请输入基站名称', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { required: true, trigger: 'blur', validator: validateStationName },
+          { required: true, trigger: 'change', validator: validateStationName },
+          { min: 3, max: 20, message: '长度在 3 到 5 个字符', trigger: 'blur' }
         ],
-        address: [
+        stationAddress: [
           { required: true, message: '请输入基站地址', trigger: 'change' }
-        ],
-        type: [
-          { type: 'array', required: true, message: '请至少选择一个经营物品类型', trigger: 'change' }
         ]
-      }
+      },
+      goodsListShow:false
     };
   },
   created() {
     this.getAllGoodsTypeAndGoods();
   },
   methods: {
+    validateStationName(){
+
+    },
     getAllGoodsTypeAndGoods() {
       getGoodsTypeAndGoods().then((res) => {
         if (res.data.status === 200) {
@@ -78,10 +100,26 @@ export default {
       })
     },
     handleCheckedCitiesChange(value) {
-      console.log(value)
+      if(this.checkedLists.length<=0){
+        this.goodsListShow = true
+      }else{
+        this.goodsListShow = false
+      }
     },
     submitForm() {
       let goodsIds = "";
+      if(this.station.stationName == undefined || this.station.stationName == null || this.station.stationName.toString().trim() === ""){
+        this.accountTip('warning','提示','基站名称不能为空')
+        return;
+      }
+      if(this.station.stationAddress == undefined || this.station.stationAddress == null || this.station.stationAddress.toString().trim() === ""){
+        this.accountTip('warning','提示','基站地址不能为空')
+        return;
+      }
+      if(this.checkedLists.length<=0){
+        this.goodsListShow = true
+        return;
+      }
       for (let i=0;i<this.checkedLists.length;i++){
         if (i==this.checkedLists.length-1){
           goodsIds += this.checkedLists[i]
@@ -92,6 +130,7 @@ export default {
       this.oneSubmitData.station = this.station;
       this.oneSubmitData.goodsIds = goodsIds;
       addStation(this.oneSubmitData).then((res) => {
+        console.log(res)
         if (res.data.status == 200) {
           this.stationId = res.data
           //把这个stationId像父组件传，用于最后的查看状态
@@ -106,6 +145,16 @@ export default {
       });
 
     },
+    accountTip(type,title,info) {
+      this.$notify({
+        title: title,
+        dangerouslyUseHTMLString: true,
+        message: '<strong>提示：<i>'+info+'</i></strong>',
+        type: type,
+        position: 'top-right',
+        offset: 150
+      })
+    },
     resetForm() {
       this.station.stationName = null,
       this.station.stationAddress = null,
@@ -113,7 +162,9 @@ export default {
     }
   },
   mounted() {
-
+    if(this.checkedLists.length<=0){
+      this.goodsListShow = true
+    }
   }
 }
 </script>
