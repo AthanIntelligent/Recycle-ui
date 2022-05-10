@@ -80,7 +80,7 @@
       :title="'交易记录'"
       :visible.sync="dialogVisible"
       width="40%">
-      <transaction-dialog-bar v-bind:transactionAndGoodsRight="transactionAndGoods"></transaction-dialog-bar>
+      <transaction-dialog-bar v-bind:reservationInfo="reservationList"></transaction-dialog-bar>
 
     </el-dialog>
   </div>

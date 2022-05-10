@@ -3,6 +3,7 @@ import Router from 'vue-router'
 
 import Login from '@/views/login'
 import Register from '@/views/register'
+import Alipay from "@/views/AliPay";
 import JoinStation from '@/views/threesteps'
 import Layout from '@/layout/layout'
 
@@ -70,6 +71,15 @@ export const constantRouterMap = [
         meta: {icon: 's-home', title: '首页'}
       }
     ]
+  },
+  {
+    path: '/alipay',
+    name: 'alipay',
+    component: Alipay,
+    hidden: true,
+    meta: {
+      title: '支付'
+    }
   },
   {
     path: '/user',

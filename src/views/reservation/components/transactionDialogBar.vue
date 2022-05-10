@@ -68,9 +68,8 @@ import {dirGoods} from '@/api/goods'
 export default {
   name: 'transactionDialogBar',
   props: {
-    transactionAndGoodsRight: {
-      transaction: {},
-      transactionGoodsList: []
+    reservationInfo: {
+      reservationList: []
     }
   },
   data() {
@@ -88,9 +87,11 @@ export default {
   methods: {
     toPay(){
       if(this.totalAmount==null||this.totalAmount<=0){
+        this.accountTip('warning','提示','你还没有添加任何物品');
         return;
       }
-      this.$router.push({path: '/alipay',query: {totalAmount: this.totalAmount,goodsInfo:this.tranSelectedGoods}})
+      // console.log(this.$props.reservationInfo)
+      this.$router.push({path: '/alipay',query: {totalAmount: this.totalAmount,goodsInfo:this.tranSelectedGoods,reservationInfo:this.$props.reservationInfo}})
     },
     getAllGoods() {
       dirGoods(this.goods).then((res) => {
@@ -140,6 +141,16 @@ export default {
       }
       this.tranSelectedGoods = JSON.parse(JSON.stringify(this.tranSelectedGoods))
       console.log(this.tranSelectedGoods)
+    },
+    accountTip(type,title,info) {
+      this.$notify({
+        title: title,
+        dangerouslyUseHTMLString: true,
+        message: '<strong>提示：<i>'+info+'</i></strong>',
+        type: type,
+        position: 'top-right',
+        offset: 80
+      })
     }
   }
 }
