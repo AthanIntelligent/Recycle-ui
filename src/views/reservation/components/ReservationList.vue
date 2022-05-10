@@ -78,6 +78,7 @@
             size="middle">
             开始称重
           </el-button>
+          <span v-show="false">{{reservationInfo=scope.row}}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -86,8 +87,7 @@
       :title="'操作'"
       :visible.sync="dialogVisible"
       width="40%">
-      <template slot-scope=""></template>
-      <transaction-dialog-bar v-bind:reservationInfo="reservationList"></transaction-dialog-bar>
+      <transaction-dialog-bar @closeDialog="toCloseDialog" v-bind:reservationInfo="reservationInfo"></transaction-dialog-bar>
     </el-dialog>
 
     <el-pagination
@@ -123,6 +123,7 @@ export default {
         appointmentStation: null
       },
       reservationList: [],
+      reservationInfo: {},
       currentPage: 1,
       pagesize: 10,
       loading: false,
@@ -147,6 +148,9 @@ export default {
     },
     handleCurrentChange: function (currentPage) {
       this.currentPage = currentPage
+    },
+    toCloseDialog(v){
+      this.dialogVisible = !v
     },
     getAllReservationList() {
       dirReservation(this.reservation).then((res) => {
