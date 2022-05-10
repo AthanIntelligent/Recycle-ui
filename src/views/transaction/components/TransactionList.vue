@@ -116,6 +116,9 @@ name: "TransactionList",
           this.transactionList = res.data.data
           this.loading = false
         }
+        if (res.data.status !== 200) {
+          this.accountTip('warning','提示','请输入列表中存在的用户');
+        }
       }).catch((res) => {
         console.log(res.message)
       })
@@ -135,6 +138,16 @@ name: "TransactionList",
         }
       }).catch((res) => {
         console.log(res.message)
+      })
+    },
+    accountTip(type,title,info) {
+      this.$notify({
+        title: title,
+        dangerouslyUseHTMLString: true,
+        message: '<strong>提示：<i>'+info+'</i></strong>',
+        type: type,
+        position: 'top-right',
+        offset: 80
       })
     }
   }

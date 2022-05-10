@@ -1,53 +1,87 @@
 <template>
   <div class="container">
     <div class="queryDiv">
-      <el-input placeholder="请输入基站地址" v-model="stationName" style="width: 180px"></el-input>
-      <el-date-picker
-        v-model="date"
-        align="right"
-        type="date"
-        placeholder="预约的时间">
-      </el-date-picker>
-      <el-button type="primary">查询</el-button>
+      <el-form :inline="true" :model="reservation" class="demo-form-inline">
+        <el-input placeholder="请输入基站名称" v-model="reservation.stationName" style="width: 180px"></el-input>
+        <el-date-picker
+          v-model="reservation.day"
+          type="date"
+          placeholder="预约日期"
+          format="yyyy 年 MM 月 dd 日"
+          value-format="yyyy-MM-dd">
+        </el-date-picker>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit()">查询</el-button>
+          <el-button type="primary" @click="clearThem()">清空</el-button>
+        </el-form-item>
+      </el-form>
     </div>
-    <div class="bookingDiv">
-      <div class="station-name">垃圾回收基站1</div>
-      <div class="station-address"><b>基站地址:</b>北京市海淀区苏家屯镇柳林村</div>
-      <div class="station-address"><b>预约的时间:</b>2022-5-30 20:00:00</div>
-      <div class="station-address"><b>预约回收的废品:</b>衣服（￥1.2元/kg）、纸盒（￥0.5元/kg）</div>
-      <div class="cancel-booking"><el-button  type="primary" plain>取消预约</el-button></div>
+    <div class="bookingDiv" v-for="item in reservationList">
+      <div class="station-name">{{item.stationName}}</div>
+      <div class="station-address"><b>基站地址:</b>{{item.stationAddress}}</div>
+      <div class="station-address"><b>预约的时间:</b>{{item.createTime}}</div>
+      <div class="cancel-booking">
+        <el-button type="primary" plain>取消预约</el-button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import {dirReservation} from '@/api/reservation'
+
 export default {
   name: "index",
-  data(){
-    return{
-      stationName:'',
-      date:''
+  data() {
+    return {
+      reservation: {
+        stationName: '',
+        day: ''
+      },
+      reservationList: []
+
     }
   },
-  methods:{
-
+  created() {
+    this.getAllReservationList()
+  },
+  methods: {
+    getAllReservationList() {
+      dirReservation(this.reservation).then((res) => {
+        if (res.data.status === 200) {
+          this.reservationList = res.data.data
+          this.loading = false
+        }
+      }).catch((res) => {
+        console.log(res.message)
+      })
+    },
+    onSubmit() {
+      this.getAllReservationList()
+    },
+    clearThem() {
+      this.reservation.stationName = null,
+        this.reservation.day = null
+    },
   }
 }
 </script>
 
 <style scoped>
-.container{
+.container {
   width: 100%;
   height: auto;
   background-color: white;
-  padding:20px;
+  padding: 20px;
 
 }
-.queryDiv{
+
+.queryDiv {
   width: 100%;
   height: 65px;
 }
-.bookingDiv{
+
+.bookingDiv {
   width: 460px;
   height: 255px;
   /*background-color: gainsboro;*/
@@ -56,22 +90,27 @@ export default {
   padding: 10px;
   position: relative;
 }
-.bookingDiv div{
+
+.bookingDiv div {
   margin-bottom: 10px;
 }
-span{
+
+span {
 
 }
-.station-name{
+
+.station-name {
   font-size: 24px;
   font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
   font-weight: bold;
   color: #00b4aa;
 }
-.station-address{
+
+.station-address {
   font-size: 20px;
 }
-.cancel-booking{
+
+.cancel-booking {
   position: absolute;
   right: 5px;
   bottom: 2px;
