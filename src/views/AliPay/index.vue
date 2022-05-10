@@ -17,7 +17,7 @@ import {toPay} from "@/api/alipay";
 			return {
         totalAmount:'',
 				goodsInfo: [],
-        reservationInfo: []
+        reservationInfo: {}
 			};
 		},
 		created() {
@@ -40,7 +40,7 @@ import {toPay} from "@/api/alipay";
 			},
 
 			getData:function(){
-        toPay({goodsInfo:this.goodsInfo,reservationInfo:this.reservationInfo})
+        toPay(this.goodsInfo,this.reservationInfo)
         .then(response => {
           console.log(response.data);
           let divForm = document.getElementsByTagName('divbody1');

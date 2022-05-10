@@ -1,5 +1,5 @@
 import axios from "axios";
 
-export function toPay (data) {
-  return axios.post('/api/pay/alipay', data)
+export function toPay (data,data1) {
+  return axios.post('/pay/alipay', {data,data1})
 }

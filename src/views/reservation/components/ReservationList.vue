@@ -44,28 +44,34 @@
       </el-table-column>
       <el-table-column
         prop="appointmentHolder"
-        label="预约人">
+        label="预约人"
+        align="center">
       </el-table-column>
       <el-table-column
         prop="day"
-        label="预约日期">
+        label="预约日期"
+        align="center">
       </el-table-column>
       <el-table-column
         prop="time"
-        label="预约时间">
+        label="预约时间"
+        align="center">
       </el-table-column>
       <el-table-column
         prop="isCome"
-        label="到访状态">
+        label="到访状态"
+        align="center">
       </el-table-column>
       <el-table-column
         prop="createTime"
-        label="创建时间">
+        label="创建时间"
+        align="center">
       </el-table-column>
 
       <el-table-column
         prop="createTime"
-        label="记录交易">
+        label="操作"
+      align="center">
         <template slot-scope="scope">
           <el-button
             @click="dialogVisible = true" type="text"
@@ -77,10 +83,11 @@
     </el-table>
 
     <el-dialog
-      :title="'交易记录'"
+      :title="'操作'"
       :visible.sync="dialogVisible"
       width="40%">
-      <transaction-dialog-bar v-bind:transactionAndGoodsRight="transactionAndGoods"></transaction-dialog-bar>
+      <template slot-scope=""></template>
+      <transaction-dialog-bar v-bind:reservationInfo="reservationList"></transaction-dialog-bar>
     </el-dialog>
 
     <el-pagination

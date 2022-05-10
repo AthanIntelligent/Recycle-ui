@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="transactionAndGoodsRight" ref="goodsType" label-width="80px" class="demo-ruleForm">
+    <el-form  label-width="80px" class="demo-ruleForm">
       <el-form-item label="交易物品" prop="type">
         <el-select
           v-model="selectedGoods"
@@ -55,10 +55,14 @@
       <el-form-item label="总金额：" prop="type">
         <div v-if="totalAmount>=0&&totalAmount!=null">￥{{totalAmount}}</div>
       </el-form-item>
+      <el-form-item label="是否已付款:" label-width="280">
+        <el-radio v-model="payStatus" label="1" value="已付款">已付款</el-radio>
+        <el-radio v-model="payStatus" label="2" value="未付款">未付款</el-radio>
+      </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="toPay()">确 认 支 付</el-button>
+        <el-button type="primary" @click="toPay()">录入交易</el-button>
     </span>
   </div>
 </template>
@@ -78,7 +82,8 @@ export default {
       goodsList: [],
       selectedGoods: [],
       tranSelectedGoods:[],
-      totalAmount:null
+      totalAmount:null,
+      payStatus:''
     }
   },
   created() {
@@ -90,8 +95,12 @@ export default {
         this.accountTip('warning','提示','你还没有添加任何物品');
         return;
       }
+      if(this.payStatus.toString().trim() == ''){
+        this.accountTip('warning','提示','请选择付款状态');
+        return;
+      }
       // console.log(this.$props.reservationInfo)
-      this.$router.push({path: '/alipay',query: {totalAmount: this.totalAmount,goodsInfo:this.tranSelectedGoods,reservationInfo:this.$props.reservationInfo}})
+      //this.$router.push({path: '/alipay',query: {totalAmount: this.totalAmount,goodsInfo:this.tranSelectedGoods,reservationInfo:this.$props.reservationInfo}})
     },
     getAllGoods() {
       dirGoods(this.goods).then((res) => {
