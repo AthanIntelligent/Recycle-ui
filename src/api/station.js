@@ -17,7 +17,7 @@ export function addStation(data) {
 }
 
 export function getStationDetail(uuid) {
-  return axios.post('/station/getStationDetail?uuid=',uuid)
+  return axios.get('/station/getStationDetail?uuid='+uuid)
 }
 
 export function getStationStatus(userId) {

@@ -80,9 +80,19 @@
       :title="'交易记录'"
       :visible.sync="dialogVisible"
       width="40%">
-      <transaction-dialog-bar v-bind:reservationInfo="reservationList"></transaction-dialog-bar>
-
+      <transaction-dialog-bar v-bind:transactionAndGoodsRight="transactionAndGoods"></transaction-dialog-bar>
     </el-dialog>
+
+    <el-pagination
+      style="position: absolute;right:660px;bottom:15px;"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="currentPage"
+      :page-sizes="[5, 10, 15]"
+      :page-size="pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="reservationList.length">
+    </el-pagination>
   </div>
 </template>
 
@@ -125,6 +135,12 @@ export default {
     this.getAllReservationList()
   },
   methods: {
+    handleSizeChange: function (size) {
+      this.pagesize = size
+    },
+    handleCurrentChange: function (currentPage) {
+      this.currentPage = currentPage
+    },
     getAllReservationList() {
       dirReservation(this.reservation).then((res) => {
         if (res.data.status === 200) {
