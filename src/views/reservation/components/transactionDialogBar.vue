@@ -123,20 +123,17 @@ export default {
           if(!isAdded) {
             this.tranSelectedGoods[len - 1] = str
           }else{
-            this.tranSelectedGoods = []
-            for(var i=0;i<this.selectedGoods.length;i++){
-              let goodsItem = []
-              goodsItem = this.selectedGoods[i].toString().split(',')
-              let str = {
-                uuid: goodsItem[0],
-                goodsName: goodsItem[1],
-                goodsPrice: goodsItem[2],
-                goodsUnit: goodsItem[3],
-                goodsWeight: null,
-                amount: null
+            var tran = []
+            this.totalAmount = null
+            for(var i=0;i<this.tranSelectedGoods.length;i++){
+              for(var j=0;j<this.selectedGoods.length;j++){
+                if(this.tranSelectedGoods[i].uuid===this.selectedGoods[j].toString().split(',')[0]){
+                  tran.push(this.tranSelectedGoods[i])
+                  this.totalAmount += this.tranSelectedGoods[i].amount
+                }
               }
-              this.tranSelectedGoods[i]=str;
             }
+            this.tranSelectedGoods=tran;
           }
       }else{
         this.tranSelectedGoods = []
