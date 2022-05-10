@@ -1,13 +1,13 @@
 <template>
   <div class="top-navbar">
     <el-menu
-      mode="horizontal" 
+      mode="horizontal"
       text-color="#fff"
       active-text-color="#fff">
       <router-link to="/home" style="display: table;">
         <el-menu-item index="1" class="title-name">{{$t('navbar.title')}}</el-menu-item>
       </router-link>
-      
+
       <change-theme class="theme-container"></change-theme>
 
       <el-tooltip effect="dark" :content="$t('navbar.screenfull')" placement="bottom">
@@ -17,33 +17,27 @@
       <div class="lang-select">
         <lang-select></lang-select>
       </div>
-
       <div class="avatar-container">
         <el-dropdown trigger="click">
           <div class="avatar-wrapper">
-            <img class="user-avatar" :src="avatar">
+<!--            <img class="user-avatar" :src="avatar">-->
             <div class="username-wrapper">
-              <span class="user-name">{{name}}</span>
+              <span class="user-name" style="font-size: 16px">{{ $props.realName = $props.realName.length>6?$props.realName.substring(0,6)+'...':$props.realName }}</span>
               <i class="el-icon-caret-bottom"></i>
             </div>
           </div>
           <el-dropdown-menu class="user-dropdown" slot="dropdown">
-            <router-link class='inlineBlock' to="/user/profile">
-              <el-dropdown-item>
-                {{$t('navbar.profile')}}
-              </el-dropdown-item>
-            </router-link>
-            <a target='_blank' href="https://github.com/Neveryu/vue-cms">
-              <el-dropdown-item>
-                {{$t('navbar.github')}}
-              </el-dropdown-item>
-            </a>
+<!--            <router-link class='inlineBlock' to="/user/profile">-->
+<!--              <el-dropdown-item>-->
+<!--                {{$t('navbar.profile')}}-->
+<!--              </el-dropdown-item>-->
+<!--            </router-link>-->
             <el-dropdown-item @click.native="logout">
               <span style="display:block;">{{$t('navbar.logOut')}}</span>
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-      </div>  
+      </div>
     </el-menu>
   </div>
 </template>
@@ -55,6 +49,11 @@ import Screenfull from '@/components/screenfull'
 import ChangeTheme from '@/components/theme'
 export default {
   name: '',
+  props: {
+    realName: {
+      realName: ''
+    }
+  },
   components: {
     LangSelect,
     Screenfull,
@@ -65,6 +64,11 @@ export default {
       'name',
       'avatar'
     ])
+  },
+  data(){
+    return{
+      loginName : ''
+    }
   },
   methods: {
     ...mapActions({
@@ -83,7 +87,7 @@ export default {
       }).finally(() => {
         loading.close()
       })
-    }
+    },
   }
 }
 </script>
@@ -103,7 +107,7 @@ export default {
       top 18px
       right 150px
     .lang-select /deep/ .el-dropdown
-      font-size 20px  
+      font-size 20px
       color #fff
     .avatar-container
       position absolute

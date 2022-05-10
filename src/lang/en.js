@@ -21,11 +21,10 @@ export default {
     id: 'CardId'
   },
   navbar: {
-    title: 'vue-cms',
+    title: 'Garbage Classification And Recycling Background Management System Based On SpringBoot',
     screenfull: 'screenfull',
     profile: 'Profile',
     avatar: 'Avatar',
-    github: 'GitHub',
     logOut: 'Log Out'
   },
   introduction: {

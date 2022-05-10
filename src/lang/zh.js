@@ -27,7 +27,6 @@ export default {
     screenfull: '全屏',
     profile: '个人中心',
     avatar: '修改头像',
-    github: '项目仓库',
     logOut: '退出登录'
   },
   introduction: {

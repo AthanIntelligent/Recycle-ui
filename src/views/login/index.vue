@@ -134,6 +134,7 @@ export default {
                 saveToLocal('password', '')
                 saveToLocal('remember', false)
               }
+              localStorage.setItem('realName',res.data.data.realName)
               if(res.data.data.userType == 2){
                 getStationStatus(res.data.data.uuid).then(sta => {
                   if(sta.data.data == null){
@@ -142,13 +143,17 @@ export default {
                   if(sta.data.data != null && sta.data.data.check != '审核成功' || sta.data.data.openFlag == '2'){
                     this.$router.push({path: '/joinStation'})
                   }else {
-                    this.$router.push({ path: '/home' })
+                    this.$router.push('/home')
+
                   }
                 }).cache(err => {
                   this.loading = false
                 })
-              }else {
-                this.$router.push({ path: '/home' })
+              }else if(res.data.data.userType == 3){
+                this.$router.push('/home' )
+
+              }else{
+                this.$router.push({path: '/nearBaseStation'})
               }
             }else {
               this.accountTip("error","输入错误",res.data.message);

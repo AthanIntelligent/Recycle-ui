@@ -73,7 +73,7 @@ export default {
   name: 'transactionDialogBar',
   props: {
     reservationInfo: {
-      reservationList: []
+      reservation: {}
     }
   },
   data() {

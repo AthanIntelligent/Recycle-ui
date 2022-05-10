@@ -3,7 +3,6 @@ import Router from 'vue-router'
 
 import Login from '@/views/login'
 import Register from '@/views/register'
-import Alipay from "@/views/AliPay";
 import JoinStation from '@/views/threesteps'
 import Layout from '@/layout/layout'
 
@@ -59,29 +58,6 @@ export const constantRouterMap = [
     hidden: true
   },
   {
-    path: '/',
-    // hidden: true,
-    component: Layout,
-    redirect: '/home',
-    children: [
-      {
-        path: 'home',
-        name: 'home',
-        component: () => import('@/views/homepage'),
-        meta: {icon: 's-home', title: '首页'}
-      }
-    ]
-  },
-  {
-    path: '/alipay',
-    name: 'alipay',
-    component: Alipay,
-    hidden: true,
-    meta: {
-      title: '支付'
-    }
-  },
-  {
     path: '/user',
     component: Layout,
     hidden: true,
@@ -98,42 +74,42 @@ export const constantRouterMap = [
       }
     ]
   },
-  {
-    path: '/introduction',
-    component: Layout,
-    redirect: '/introduction/index',
-    // alwaysShow: true,
-    meta: {
-      icon: 'svg-aperture',
-      title: '简述'
-    },
-    children: [
-      {
-        path: 'index',
-        name: 'Introduction',
-        component: () => import('@/views/introduction/index'),
-        meta: {icon: 'svg-aperture', title: '简述'}
-      }
-    ]
-  },
-  {
-    path: '/echarts',
-    component: Layout,
-    redirect: 'index',
-    alwaysShow: true,
-    meta: {
-      title: '可视化',
-      icon: 'svg-droplet'
-    },
-    children: [
-      {
-        path: 'index',
-        name: '数量统计',
-        component: () => import('@/views/echarts'),
-        meta: {title: '数量统计', icon: 'svg-heart'}
-      }
-    ]
-  },
+  // {
+  //   path: '/introduction',
+  //   component: Layout,
+  //   redirect: '/introduction/index',
+  //   // alwaysShow: true,
+  //   meta: {
+  //     icon: 'svg-aperture',
+  //     title: '简述'
+  //   },
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'Introduction',
+  //       component: () => import('@/views/introduction/index'),
+  //       meta: {icon: 'svg-aperture', title: '简述'}
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/echarts',
+  //   component: Layout,
+  //   redirect: 'index',
+  //   alwaysShow: true,
+  //   meta: {
+  //     title: '可视化',
+  //     icon: 'svg-droplet'
+  //   },
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: '数量统计',
+  //       component: () => import('@/views/echarts'),
+  //       meta: {title: '数量统计', icon: 'svg-heart'}
+  //     }
+  //   ]
+  // },
   // {
   //   path: '/rich-editor',
   //   component: Layout,
@@ -152,29 +128,29 @@ export const constantRouterMap = [
   //     }
   //   ]
   // },
-  {
-    path: '/futures',
-    component: Layout,
-    alwaysShow: true,
-    meta: {
-      icon: 's-grid',
-      title: '更多功能'
-    },
-    children: [
-      {
-        path: 'draggable',
-        name: 'draggable',
-        component: () => import('@/views/futures/draggable'),
-        meta: {icon: 'thumb', title: '拖拽'}
-      },
-      {
-        path: '/clipboard',
-        name: 'clipBoard',
-        component: () => import('@/views/clipboard'),
-        meta: {title: '剪切板示例', icon: 'document'}
-      }
-    ]
-  }
+  // {
+  //   path: '/futures',
+  //   component: Layout,
+  //   alwaysShow: true,
+  //   meta: {
+  //     icon: 's-grid',
+  //     title: '更多功能'
+  //   },
+  //   children: [
+  //     {
+  //       path: 'draggable',
+  //       name: 'draggable',
+  //       component: () => import('@/views/futures/draggable'),
+  //       meta: {icon: 'thumb', title: '拖拽'}
+  //     },
+  //     {
+  //       path: '/clipboard',
+  //       name: 'clipBoard',
+  //       component: () => import('@/views/clipboard'),
+  //       meta: {title: '剪切板示例', icon: 'document'}
+  //     }
+  //   ]
+  // }
 ]
 
 export default new Router({
@@ -188,6 +164,24 @@ export default new Router({
  * @type {Array}
  */
 export const asyncRouterMap = [
+  {
+    path: '/home',
+    component: Layout,
+    alwaysShow: false,
+    meta: {
+      icon: 'document',
+      title: '首页'
+    },
+    redirect: '/home/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/homepage/index'),
+        name: '首页',
+        meta: { title: '首页', icon: 's-home' }
+      }
+    ]
+  },
   {
     path: '/userManage',
     component: Layout,
@@ -344,39 +338,23 @@ export const asyncRouterMap = [
       }
     ]
   },
-  {
-    path: '/theme',
-    component: Layout,
-    meta: {
-      icon: 'document',
-      title: 'theme'
-    },
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/theme/index'),
-        name: 'Theme',
-        meta: { title: '主题', icon: 'svg-pifu' }
-      }
-    ]
-  },
-  {
-    path: '/nearBaseStation',
-    component: Layout,
-    alwaysShow: false,
-    meta: {
-      icon: 'document',
-      title: '附件的基站'
-    },
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/nearBaseStation/index'),
-        name: '附件的基站',
-        meta: { title: '附件的基站', icon: 'svg-pifu' }
-      }
-    ]
-  },
+  // {
+  //   path: '/nearBaseStation',
+  //   component: Layout,
+  //   alwaysShow: false,
+  //   meta: {
+  //     icon: 'document',
+  //     title: '附件的基站'
+  //   },
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/nearBaseStation/index'),
+  //       name: '附件的基站',
+  //       meta: { title: '附件的基站', icon: 'svg-pifu' }
+  //     }
+  //   ]
+  // },
   {
     path: '/nearBaseStation',
     component: Layout,
@@ -385,6 +363,7 @@ export const asyncRouterMap = [
       icon: 'document',
       title: '附件的基站'
     },
+    redirect: '/nearBaseStation/index',
     children: [
       {
         path: 'index',
@@ -429,7 +408,23 @@ export const asyncRouterMap = [
         path: 'index',
         component: () => import('@/views/my-booking/index'),
         name: '我的预约',
-        meta: { title: '我的预约', icon: 'svg-pifu' }
+        meta: { title: '我的预约', icon: 'star-on' }
+      }
+    ]
+  },
+  {
+    path: '/theme',
+    component: Layout,
+    meta: {
+      icon: 'document',
+      title: 'theme'
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/theme/index'),
+        name: 'Theme',
+        meta: { title: '主题', icon: 'svg-pifu' }
       }
     ]
   },

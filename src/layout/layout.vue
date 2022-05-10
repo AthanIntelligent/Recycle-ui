@@ -1,7 +1,7 @@
 <template>
   <!-- <div class="app-wrapper"> -->
   <el-scrollbar class="app-wrapper">
-    <navbar></navbar>
+    <navbar v-bind:realName="realName"></navbar>
     <sidebar></sidebar>
     <div class="main-container">
       <tabs-view></tabs-view>
@@ -21,6 +21,15 @@ export default {
     Sidebar,
     TabsView,
     AppMain
+  },
+  data(){
+    return{
+      realName:''
+    }
+  },
+  mounted() {
+    this.realName = localStorage.getItem('realName')
+
   }
 }
 </script>
