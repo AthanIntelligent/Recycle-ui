@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import {toPay} from "@/api/alipay";
 	export default {
 		name: "",
 		data() {
@@ -39,21 +40,34 @@
 			},
 
 			getData:function(){
-
-				this.$axios.post("/api/pay/alipay",{goodsInfo:this.goodsInfo,reservationInfo:this.reservationInfo}
-				).then(response => {
-					console.log(response.data);
-						let divForm = document.getElementsByTagName('divbody1');
-						if (divForm.length) {
-							document.body.removeChild(divForm[0]);
-						}
-						const div = document.createElement('divform');
-						div.innerHTML = response.data; // res.data就是sb支付宝返回给你的form
-						document.body.appendChild(div);
-						document.getElementsByName('punchout_form')[0].submit();
-					}).catch(error => {
-					console.log(error)
-					})
+        toPay({goodsInfo:this.goodsInfo,reservationInfo:this.reservationInfo})
+        .then(response => {
+          console.log(response.data);
+          let divForm = document.getElementsByTagName('divbody1');
+          if (divForm.length) {
+            document.body.removeChild(divForm[0]);
+          }
+          const div = document.createElement('divform');
+          div.innerHTML = response.data; // res.data就是sb支付宝返回给你的form
+          document.body.appendChild(div);
+          document.getElementsByName('punchout_form')[0].submit();
+        }).catch(error => {
+          console.log(error)
+        })
+				// this.$axios.post("/api/pay/alipay",{goodsInfo:this.goodsInfo,reservationInfo:this.reservationInfo}
+				// ).then(response => {
+				// 	console.log(response.data);
+				// 		let divForm = document.getElementsByTagName('divbody1');
+				// 		if (divForm.length) {
+				// 			document.body.removeChild(divForm[0]);
+				// 		}
+				// 		const div = document.createElement('divform');
+				// 		div.innerHTML = response.data; // res.data就是sb支付宝返回给你的form
+				// 		document.body.appendChild(div);
+				// 		document.getElementsByName('punchout_form')[0].submit();
+				// 	}).catch(error => {
+				// 	console.log(error)
+				// 	})
 
 			}
 		}
