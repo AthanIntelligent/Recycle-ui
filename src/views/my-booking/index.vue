@@ -35,8 +35,8 @@ export default {
   data() {
     return {
       reservation: {
-        stationName: '',
-        day: ''
+        stationName: null,
+        day: null
       },
       reservationList: []
 
