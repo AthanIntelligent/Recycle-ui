@@ -39,7 +39,7 @@
               v-loading="loading"
               element-loading-text="玩命加载中"
               element-loading-spinner="el-icon-loading"
-              :data="reservationList.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+              :data="reservationList"
               highlight-current-row
               style="width: 100%;font-size: 16px">
       <el-table-column type="index" width="100" label="序号">
@@ -63,6 +63,12 @@
         prop="isCome"
         label="到访状态"
         align="center">
+        <template slot-scope="scope">
+          <span v-if="scope.row.isCome=='已签到'" style="color: #13ce66">{{scope.row.isCome}}</span>
+          <span v-if="scope.row.isCome=='已预约'" style="color: #1d7ac2">{{scope.row.isCome}}</span>
+          <span v-if="scope.row.isCome=='已撤销'" style="color: #6c757d">{{scope.row.isCome}}</span>
+          <span v-if="scope.row.isCome=='未到场'" style="color: #555555">{{scope.row.isCome}}</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="createTime"
@@ -77,11 +83,10 @@
         <template slot-scope="scope">
           <el-button
             v-if="scope.row.isCome=='已预约' && scope.row.day == today"
-            @click="dialogVisible = true" type="text"
+            @click="toComputeWeight(scope.row)" type="text"
             size="middle">
             开始称重
           </el-button>
-          <span v-show="false">{{reservationInfo=scope.row}}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -131,7 +136,7 @@ export default {
       reservationInfo: {},
       currentPage: 1,
       pagesize: 10,
-      loading: false,
+      loading: true,
       dialogVisible: false,
       reservationAndStation: {
         reservation: {},
@@ -165,6 +170,10 @@ export default {
       this.today = currentdate;
       console.log(this.today)
     },
+    toComputeWeight(val){
+      this.reservationInfo = val;
+      this.dialogVisible = true;
+    },
     handleSizeChange: function (size) {
       this.pagesize = size
     },
@@ -173,11 +182,13 @@ export default {
     },
     toCloseDialog(v){
       this.dialogVisible = !v
+      this. getAllReservationList();
     },
     getAllReservationList() {
       dirReservation(this.reservation).then((res) => {
         if (res.data.status == 200) {
           this.reservationList = res.data.data
+            this.reservationList.slice((this.currentPage-1)*this.pagesize,this.currentPage*this.pagesize)
           this.loading = false
         }
       }).catch((res) => {
