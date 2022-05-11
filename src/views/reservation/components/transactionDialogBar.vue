@@ -57,7 +57,7 @@
       <el-form-item label="总金额：" prop="type">
         <div v-if="totalAmount>=0&&totalAmount!=null">￥{{ totalAmount }}</div>
       </el-form-item>
-      <el-form-item label="是否已付款:" label-width="280">
+      <el-form-item label="是否已付款:" label-width="280" required>
         <el-radio v-model="payStatus" label="已支付" value="已支付">已支付</el-radio>
         <el-radio v-model="payStatus" label="未支付" value="未支付">未支付</el-radio>
       </el-form-item>
@@ -72,7 +72,6 @@
 <script>
 import {dirGoods} from '@/api/goods'
 import {addTransaction} from '@/api/transaction'
-
 export default {
   name: 'transactionDialogBar',
   props: {

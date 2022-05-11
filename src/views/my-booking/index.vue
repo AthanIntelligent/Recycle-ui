@@ -2,7 +2,6 @@
   <div class="container">
     <div class="queryDiv">
       <el-form :inline="true" :model="reservation" class="demo-form-inline">
-        <el-input placeholder="请输入基站名称" v-model="reservation.stationName" style="width: 180px"></el-input>
         <el-date-picker
           v-model="reservation.day"
           type="date"
@@ -17,29 +16,31 @@
       </el-form>
     </div>
     <div class="bookingDiv" v-for="item in reservationList">
-      <div class="station-name">{{item.stationName}}</div>
+      <div class="station-name">基站名称:{{item.stationName}}</div>
       <div class="station-address"><b>基站地址:</b>{{item.stationAddress}}</div>
-      <div class="station-address"><b>预约的时间:</b>{{item.createTime}}</div>
+      <div class="station-address"><b>基站法人:</b>{{item.stationLegal}}</div>
+      <div class="station-address"><b>联系电话:</b>{{item.mobile}}</div>
+      <div class="station-address"><b>预约日期:</b>{{item.day}}</div>
+      <div class="station-address"><b>预约时间:</b>{{item.time}}</div>
+      <div class="station-address"><b>到访状态:</b>{{item.isCome}}</div>
       <div class="cancel-booking">
-        <el-button type="primary" plain>取消预约</el-button>
+        <el-button type="primary" plain v-if="item.isCome=='已预约'" @click="cancelReservation(item)">取消预约</el-button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import {dirReservation} from '@/api/reservation'
-
+import {dirReservation, updReservation} from '@/api/reservation'
+import {getStationDetail} from '@/api/station'
 export default {
   name: "index",
   data() {
     return {
       reservation: {
-        stationName: null,
         day: null
       },
       reservationList: []
-
     }
   },
   created() {
@@ -63,6 +64,27 @@ export default {
       this.reservation.stationName = null,
         this.reservation.day = null
     },
+    getStationDetail(stationId) {
+      getStationDetail(stationId).then((res) => {
+        if (res.data.status === 200) {
+          console.log(res.data.data)
+        }
+      }).catch((res) => {
+        console.log(res.message)
+      })
+    },
+    cancelReservation(item) {
+      console.log(item)
+      updReservation(item).then((res) => {
+        console.log(item)
+        if (res.data.status === 200) {
+          console.log(res.data.data)
+          this.getAllReservationList()
+        }
+      }).catch((res) => {
+        console.log(res.message)
+      })
+    }
   }
 }
 </script>
