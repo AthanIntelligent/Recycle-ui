@@ -65,7 +65,6 @@ export default {
     },
     toBooking(){
       if(this.extData != null){
-        this.reservation.appointmentHolder = this.extData.userInfo.uuid;
         this.reservation.appointmentStation = this.extData.stationInfo.uuid;
         this.reservation.stationLegal = this.extData.stationInfo.stationLegal;
         this.reservation.appointmentStationName = this.extData.stationInfo.stationName;
