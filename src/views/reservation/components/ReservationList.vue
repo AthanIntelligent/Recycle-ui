@@ -35,11 +35,13 @@
         <el-button type="primary" @click="clearThem()">清空</el-button>
       </el-form-item>
     </el-form>
-    <el-table :key="key"
+    <el-table
               v-loading="loading"
               element-loading-text="玩命加载中"
               element-loading-spinner="el-icon-loading"
-              :data="reservationList.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;font-size: 16px">
+              :data="reservationList.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+              highlight-current-row
+              style="width: 100%;font-size: 16px">
       <el-table-column type="index" width="100" label="序号">
       </el-table-column>
       <el-table-column
@@ -74,7 +76,7 @@
       align="center">
         <template slot-scope="scope">
           <el-button
-            v-if="scope.row.isCome=='已预约'"
+            v-if="scope.row.isCome=='已预约' && scope.row.day == today"
             @click="dialogVisible = true" type="text"
             size="middle">
             开始称重
@@ -88,7 +90,7 @@
       :title="'操作'"
       :visible.sync="dialogVisible"
       width="40%">
-      <transaction-dialog-bar @closeDialog="toCloseDialog" v-bind:reservationInfo="reservationInfo" v-if=""></transaction-dialog-bar>
+      <transaction-dialog-bar @closeDialog="toCloseDialog" v-bind:reservationInfo="reservationInfo"></transaction-dialog-bar>
     </el-dialog>
 
     <el-pagination
@@ -105,13 +107,15 @@
 </template>
 
 <script>
-import {dirReservation, addReservation} from '@/api/reservation'
+import {dirReservation} from '@/api/reservation'
 import TransactionDialogBar from './transactionDialogBar'
 export default {
   name: 'ReservationList',
   components: {TransactionDialogBar},
   data() {
     return {
+      today: null,
+      key: 1,
       reservation: {
         day: null,
         time: null,
@@ -142,8 +146,25 @@ export default {
   },
   created() {
     this.getAllReservationList()
+    this.getToday()
   },
   methods: {
+    getToday() {
+      var date = new Date();
+      var year = date.getFullYear();
+      var month = date.getMonth() + 1;
+      var strDate = date.getDate();
+
+      if (month >= 1 && month <= 9) {
+        month = "0" + month;
+      }
+      if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+      }
+      var currentdate = year + "-" + month + "-" + strDate;
+      this.today = currentdate;
+      console.log(this.today)
+    },
     handleSizeChange: function (size) {
       this.pagesize = size
     },
@@ -155,7 +176,7 @@ export default {
     },
     getAllReservationList() {
       dirReservation(this.reservation).then((res) => {
-        if (res.data.status === 200) {
+        if (res.data.status == 200) {
           this.reservationList = res.data.data
           this.loading = false
         }
@@ -170,21 +191,6 @@ export default {
       this.reservation.day = null,
       this.reservation.time = null,
       this.reservation.isCome = null
-    },
-    addReservation() {
-      this.reservationAndStation.reservation =this.reservationAdd
-      addReservation(this.reservationAndStation).then((res) => {
-        if (res.data.status === 200) {
-          this.$message({
-            type: 'success',
-            message: '预约!'
-          })
-          this.getAllReservationList()
-          this.clearThem()
-        }
-      }).catch((res) => {
-        console.log(res.message)
-      })
     }
   }
 }
