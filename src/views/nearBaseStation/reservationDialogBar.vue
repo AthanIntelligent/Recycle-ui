@@ -30,6 +30,7 @@
     <el-form-item label="预约时间" prop="time">
       <el-time-select
         placeholder="预约时间点"
+        v-if="isShowBut1 == false"
         v-model="$props.reservationD.time"
         :picker-options="{
             start: '09:00',
@@ -38,6 +39,18 @@
            }"
       >
       </el-time-select>
+      <el-time-select
+        placeholder="预约时间点"
+        v-else-if="isShowBut1==true && isJudgeBooking==false"
+        v-model="$props.reservationD.time"
+        :picker-options="{
+            start: currTime,
+            step: '00:60',
+            end: '17:00'
+           }"
+      >
+      </el-time-select>
+      <span v-if="isShowBut1==true && isJudgeBooking==true">今天不能预约了</span>
     </el-form-item>
     <el-form-item label="预约基站" prop="appointmentStation">
       <el-input type="text" style="width: 290px" v-model="$props.reservationD.appointmentStationName" disabled></el-input>
@@ -62,7 +75,9 @@ export default {
     return {
       isShowBut1:false,
       isShowBut2:false,
-      isShowBut3:false
+      isShowBut3:false,
+      currTime:null,
+      isJudgeBooking:false
     }
   },
   methods: {
@@ -87,6 +102,12 @@ export default {
         this.isShowBut1 = true;
         this.isShowBut2 = false;
         this.isShowBut3 = false;
+        if((new Date().getHours()+2)>17){
+          this.isJudgeBooking = true;
+        }else{
+          this.isJudgeBooking = false;
+          this.currTime = new Date().getHours()+2+":00";
+        }
       }else if(val == 1){
         this.isShowBut2 = true
         this.isShowBut1 = false;
@@ -118,6 +139,11 @@ export default {
       return y + '-' + (m < 10 ? '0' + m : m) + '-' + d;
     },
     toBooking(){
+      if(this.isJudgeBooking = true){
+        this.accountTip('warning','提示','今天不能预约了')
+        this.cancelBooking();
+        return;
+      }
       if(this.$props.reservationD.appointmentStationName==null || this.$props.reservationD.appointmentStationName == ''){
         this.accountTip('warning','提示','未能获取到基站，请重新打开预约')
         this.cancelBooking();
