@@ -29,9 +29,7 @@ export default {
       station:{
         openFlag:'开启'
       },
-      stationList:[],
-      userInfo:null,
-      goodsInfo:[]
+      stationList:[]
     }
   },
   methods:{
@@ -81,7 +79,7 @@ export default {
         setTimeout(()=>{
           if(that.currLng != null && that.currLat != null){
             var map = new AMap.Map("container", {
-              zoom: 20, //级别
+              zoom: 13, //级别
               center: [that.currLng, that.currLat], //中心点坐标
               viewMode: "3D", //使用3D视图
             });
@@ -115,7 +113,7 @@ export default {
       var positionData = JSON.parse(JSON.stringify(that.stationList));
       for(var i=0;i<positionData.length;i++){
         // 创建一个 Marker 实例：
-        if(positionData[i].distance!=undefined && positionData[i].distance<20){
+        if(positionData[i].distance!=undefined && positionData[i].distance<50){
           var marker = new AMap.Marker({
             position: positionData[i].lnglat, // 地理位置经纬度
             title: positionData[i].title, // 鼠标移上去时显示的内容
@@ -161,31 +159,26 @@ export default {
       });
     },
     // 获取附件的基站信息和位置
-    getStationInfo(){
+    async getStationInfo(){
       var that = this;
-      dirStation(this.station).then(res => {
-        var sta = res.data.data
-        console.log(sta,"sta")
+      that.stationList = []
+      await dirStation(this.station).then(res => {
+        var sta = JSON.parse(JSON.stringify(res.data.data))
         for(var i=0;i<sta.length;i++){
-          console.log(sta[i])
-          that.getStaUserInfo(sta[i].stationLegal)
-          that.getGoodsInfo(sta[i].uuid)
           var stationInfo = {
             lnglat: that.getStationLngLat(sta[i].stationAddress),
             title: sta[i].stationName,
             stationInfo: sta[i]
           };
-          setTimeout(()=>{
-            stationInfo["userInfo"] = JSON.parse(JSON.stringify(that.userInfo))
-            stationInfo["goodsInfo"] = JSON.parse(JSON.stringify(that.goodsInfo))
-            that.stationList.push(stationInfo)
-          },2000)
-
-
+          that.toSetUserInfoAndGoodsInfo(stationInfo,sta[i].stationLegal,sta[i].uuid).then(res=>{
+            that.stationList.push(res)
+          })
         }
+
       }).catch(err => {
         alert(err.message)
       })
+      console.log(that.stationList,"1234")
     },
     getStationLngLat(address){
       var position = [];
@@ -206,21 +199,22 @@ export default {
       xmlhttp.send();
       return position;
     },
-    getStaUserInfo(userId){
-      var that =this;
-      getStationLegal(userId).then(res => {
-        that.userInfo = res.data.data;
+    async toSetUserInfoAndGoodsInfo(stationInfo,stationLegal,uuid){
+      let userInfo = {}
+      await getStationLegal(stationLegal).then(res => {
+        userInfo = res.data.data;
       }).catch(err => {
         alert(err.message)
       })
-    },
-    getGoodsInfo(stationId){
-      var that = this;
-      getGoodsOfStationByStationId(stationId).then(res => {
-        that.goodsInfo = res.data.data;
+      let goodsInfo = []
+      await getGoodsOfStationByStationId(uuid).then(res => {
+        goodsInfo = res.data.data
       }).catch(err => {
         alert(err.message)
       })
+      stationInfo['userInfo'] = JSON.parse(JSON.stringify(userInfo));
+      stationInfo['goodsInfo'] = JSON.parse(JSON.stringify(goodsInfo));
+      return stationInfo;
     },
     getDistance(longitude1,latitude1, longitude2,  latitude2) {
       console.log(longitude1+","+latitude1+","+longitude2+","+latitude2)

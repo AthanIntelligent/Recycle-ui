@@ -12,24 +12,45 @@
         <p class='input-item'>地址 :<span style='color: grey'>{{extData.stationInfo.stationAddress}}</span>
         <div style="display: flex;"><span style="display: flex;width: 120px">可回收物品:</span><div style="margin-left: 0px;color: grey;line-height: 1.4;"><span v-for="(goodsType,i) in extData.goodsInfo">{{i==extData.goodsInfo.length-1?goodsType.goodsType:goodsType.goodsType+"、"}}</span>&nbsp;<a href='javascript:void(0)' @click="isShowDetail" style="color: #1d7ac2">详情</a></div></div>
         <p class='input-item'>营业状态:<span style="color: grey">{{new Date().getHours()>18 || new Date().getHours()<8?'休息中':'正在营业'}}</span></p>
-        <div style="display: flex;justify-content: right;position: absolute;right: 10px;margin-top: 15px"><button type='button' style="margin-right: 10px">💭咨询</button><button type='button' style="margin-right: 10px">＋追加</button><button >🕓预约</button></div>
+        <div style="display: flex;justify-content: right;position: absolute;right: 10px;margin-top: 15px"><button type='button' style="margin-right: 10px">💭咨询</button><button type='button' style="margin-right: 10px">＋追加</button><button @click="toBooking()">🕓预约</button></div>
         <p class='input-item' style="position: absolute;bottom: 5px;left: 5px;font-size: 15px;color: grey">距离你直线距离：{{extData.distance}}km</p>
       </div>
     </div>
     <div class="bottom">
       <img class="sharp" src="https://webapi.amap.com/images/sharp.png">
     </div>
+    <div v-show="isShowBookingDialog" style="margin-left: 410px">
+      <reservationDialogBar
+        v-bind:reservationD="reservation"
+        @cancelBooking="toCloseDialog"
+      >
+      </reservationDialogBar>
+    </div>
   </div>
 </template>
 
 <script>
+import reservationDialogBar from "./reservationDialogBar";
 export default {
   name: "infowindow",
+  components:{
+    reservationDialogBar
+  },
   data(){
     return{
       overlay:'',
       infoWindow:'',
-      extData:{}
+      extData:{},
+      reservation:{
+        day:null,
+        time:null,
+        appointmentStation:'',
+        appointmentStationName:'',
+        appointmentHolder:'',
+        stationLegal:'',
+        isCome:'已预约'
+      },
+      isShowBookingDialog:false
     }
   },
   methods:{
@@ -41,6 +62,22 @@ export default {
     },
     isShowDetail(){
 
+    },
+    toBooking(){
+      if(this.extData != null){
+        this.reservation.appointmentHolder = this.extData.userInfo.uuid;
+        this.reservation.appointmentStation = this.extData.stationInfo.uuid;
+        this.reservation.stationLegal = this.extData.stationInfo.stationLegal;
+        this.reservation.appointmentStationName = this.extData.stationInfo.stationName;
+      }
+      if(!this.isShowBookingDialog){
+        this.isShowBookingDialog = true;
+      }else {
+        this.isShowBookingDialog = false;
+      }
+    },
+    toCloseDialog(v){
+      this.isShowBookingDialog = !v
     }
   }
 }
