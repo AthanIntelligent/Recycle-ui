@@ -20,9 +20,9 @@
       </el-form-item>
     </el-form>
     <el-button @click="dialogVisible = true">添加</el-button>
-    <el-button @click="">导入物品</el-button>
-    <el-button @click="">导出物品</el-button>
-    <el-button @click.prevent="getTemplate">下载模板</el-button>
+<!--    <el-button @click="">导入物品</el-button>-->
+<!--    <el-button @click="">导出物品</el-button>-->
+<!--    <el-button @click.prevent="getTemplate">下载模板</el-button>-->
     <el-table :key="key"
               v-loading="loading"
               element-loading-text="玩命加载中"

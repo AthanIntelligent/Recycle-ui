@@ -74,6 +74,7 @@
       align="center">
         <template slot-scope="scope">
           <el-button
+            v-if="scope.row.isCome=='已预约'"
             @click="dialogVisible = true" type="text"
             size="middle">
             开始称重
@@ -87,7 +88,7 @@
       :title="'操作'"
       :visible.sync="dialogVisible"
       width="40%">
-      <transaction-dialog-bar @closeDialog="toCloseDialog" v-bind:reservationInfo="reservationInfo"></transaction-dialog-bar>
+      <transaction-dialog-bar @closeDialog="toCloseDialog" v-bind:reservationInfo="reservationInfo" v-if=""></transaction-dialog-bar>
     </el-dialog>
 
     <el-pagination

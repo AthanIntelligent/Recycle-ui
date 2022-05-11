@@ -243,31 +243,47 @@ export const asyncRouterMap = [
         component: () => import('@/views/excel/dynamic-table/index'),
         name: 'DynamicTable',
         meta: { icon: 'set-up', title: '物品详情' }
-      },
+      }
+      // {
+      //   path: 'export-excel',
+      //   name: '导出表格',
+      //   component: () => import('@/views/excel/export-excel'),
+      //   meta: {icon: 'download', title: '导出表格'}
+      // },
+      // {
+      //   path: 'upload-excel',
+      //   name: '上传表格',
+      //   component: () => import('@/views/excel/upload-excel'),
+      //   meta: {icon: 'upload', title: '上传表格'}
+      // },
+      // // 放到 统计交易中 和 可视化一个目录
+      // {
+      //   path: 'merge-count',
+      //   name: '合并&统计',
+      //   component: () => import('@/views/excel/merge-count'),
+      //   meta: {icon: 'upload', title: '合并&统计'}
+      // },
+      // {
+      //   path: 'custom-design',
+      //   name: '自定义表格',
+      //   component: () => import('@/views/excel/custom-excel'),
+      //   meta: {icon: 's-promotion', title: '自定义表格'}
+      // }
+    ]
+  },
+  {
+    path: '/echarts',
+    component: Layout,
+    meta: {
+      title: '交易可视化',
+      icon: 'svg-droplet'
+    },
+    children: [
       {
-        path: 'export-excel',
-        name: '导出表格',
-        component: () => import('@/views/excel/export-excel'),
-        meta: {icon: 'download', title: '导出表格'}
-      },
-      {
-        path: 'upload-excel',
-        name: '上传表格',
-        component: () => import('@/views/excel/upload-excel'),
-        meta: {icon: 'upload', title: '上传表格'}
-      },
-      // 放到 统计交易中 和 可视化一个目录
-      {
-        path: 'merge-count',
-        name: '合并&统计',
-        component: () => import('@/views/excel/merge-count'),
-        meta: {icon: 'upload', title: '合并&统计'}
-      },
-      {
-        path: 'custom-design',
-        name: '自定义表格',
-        component: () => import('@/views/excel/custom-excel'),
-        meta: {icon: 's-promotion', title: '自定义表格'}
+        path: 'index',
+        name: '数量统计',
+        component: () => import('@/views/echarts'),
+        meta: {title: '交易可视化', icon: 'svg-heart'}
       }
     ]
   },
@@ -385,14 +401,15 @@ export const asyncRouterMap = [
       {
         path: 'index',
         component: () => import('@/views/my-trade/index'),
-        name: '流水统计',
-        meta: { title: '流水统计', icon: 'guide' }
-      },{
-        path: 'goods-type',
-        component: () => import('@/views/my-trade/goods-type'),
-        name: '类别统计',
-        meta: { title: '类别统计', icon: 'guide' }
+        name: '我的交易',
+        meta: { title: '我的交易', icon: 'guide' }
       }
+      // ,{
+      //   path: 'goods-type',
+      //   component: () => import('@/views/my-trade/goods-type'),
+      //   name: '类别统计',
+      //   meta: { title: '类别统计', icon: 'guide' }
+      // }
     ]
   },
   {
