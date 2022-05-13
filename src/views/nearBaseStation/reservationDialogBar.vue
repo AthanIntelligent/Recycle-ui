@@ -81,21 +81,6 @@ export default {
     }
   },
   methods: {
-    getNowFormatDate() {
-      let date = new Date();
-      let seperator1 = "-";
-      let year = date.getFullYear();
-      let month = date.getMonth() + 1;
-      let strDate = date.getDate();
-      if (month >= 1 && month <= 9) {
-        month = "0" + month;
-      }
-      if (strDate >= 0 && strDate <= 9) {
-        strDate = "0" + strDate;
-      }
-      let currentdate = year + seperator1 + month + seperator1 + strDate;
-      return currentdate;
-    },
     getDay(val){
       this.$props.reservationD.day = this.getDateStr(val)
       if(val==0){
@@ -112,20 +97,13 @@ export default {
         this.isShowBut2 = true
         this.isShowBut1 = false;
         this.isShowBut3 = false;
+        this.isJudgeBooking = false;
       }else{
         this.isShowBut3 = true
         this.isShowBut1 = false;
         this.isShowBut2 = false
+        this.isJudgeBooking = false;
       }
-    },
-    afterThreeDays() {
-      console.log('前天：', this.getDateStr(-2));
-      console.log('昨天：', this.getDateStr(-1));
-      console.log('今天：', this.getDateStr(0));
-      console.log('明天：', this.getDateStr(1));
-      console.log('后天：', this.getDateStr(2));
-      // this.threeDays = [this.getDateStr(0),this.getDateStr(1),this.getDateStr(2)]
-      // console.log(this.threeDays)
     },
     getDateStr(AddDayCount) {
       var dd = new Date();
@@ -139,7 +117,7 @@ export default {
       return y + '-' + (m < 10 ? '0' + m : m) + '-' + d;
     },
     toBooking(){
-      if(this.isJudgeBooking = true){
+      if(this.isJudgeBooking){
         this.accountTip('warning','提示','今天不能预约了')
         this.cancelBooking();
         return;
