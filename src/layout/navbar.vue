@@ -22,7 +22,7 @@
           <div class="avatar-wrapper">
 <!--            <img class="user-avatar" :src="avatar">-->
             <div class="username-wrapper">
-              <span class="user-name" style="font-size: 16px">{{ $props.realName = $props.realName.length>6?$props.realName.substring(0,6)+'...':$props.realName }}</span>
+              <span class="user-name" style="font-size: 16px">{{ $props.realName = $props.realName==undefined?real:$props.realName.length>6?$props.realName.substring(0,6)+'...':$props.realName }}</span>
               <i class="el-icon-caret-bottom"></i>
             </div>
           </div>
@@ -67,7 +67,8 @@ export default {
   },
   data(){
     return{
-      loginName : ''
+      loginName : '',
+      real:''
     }
   },
   methods: {
@@ -88,6 +89,9 @@ export default {
         loading.close()
       })
     },
+  },
+  mounted() {
+    this.real = localStorage.getItem('realName').toString();
   }
 }
 </script>

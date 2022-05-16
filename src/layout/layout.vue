@@ -29,7 +29,6 @@ export default {
   },
   mounted() {
     this.realName = localStorage.getItem('realName')
-
   }
 }
 </script>

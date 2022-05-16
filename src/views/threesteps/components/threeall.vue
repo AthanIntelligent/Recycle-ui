@@ -2,7 +2,7 @@
   <div class="app-container">
     <Navbar style="position: absolute;top: 0px;"></Navbar>
     <el-steps :active="active" finish-status="success" align-center="true" style="margin-top: 100px">
-      <el-step title="入驻基站"></el-step>
+      <el-step title="提交基站资料"></el-step>
       <el-step title="实名认证"></el-step>
       <el-step title="审批状态"></el-step>
     </el-steps>

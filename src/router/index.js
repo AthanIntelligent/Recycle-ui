@@ -272,6 +272,22 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '/manufacturers',
+    component: Layout,
+    meta: {
+      icon: 'svg-layers',
+      title: '厂商管理'
+    },
+    children: [
+      {
+        path: 'index',
+        name: 'Station',
+        component: () => import('@/views/manufacturers/index'),
+        meta: {icon: 's-promotion',title: '厂商管理'}
+      }
+    ]
+  },
+  {
     path: '/echarts',
     component: Layout,
     meta: {
