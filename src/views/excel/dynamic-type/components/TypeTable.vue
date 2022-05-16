@@ -8,14 +8,14 @@
       <el-table-column
         prop="goodsType"
         label="物品类型"
-        width="900"
+        width="750"
       >
       </el-table-column>
       <el-table-column
         prop="uuid"
         fixed="right"
         label="操作"
-        width="400">
+        width="350">
         <template slot-scope="scope">
           <el-button
             @click="delGoodsType(scope.row.uuid)"
