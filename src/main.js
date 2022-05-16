@@ -27,6 +27,9 @@ import './mock'
 import axios from 'axios'
 import {devServer} from '../vue.config'
 
+import vcharts from 'v-charts'
+Vue.use(vcharts)
+
 import VueAMap from 'vue-amap'
 Vue.use(VueAMap)
 // 初始化vue-amap
@@ -35,8 +38,6 @@ VueAMap.initAMapApiLoader({
   // 高德 sdk 版本，默认为 1.4.4
   v: '1.4.4'
 })
-
-
 
 Vue.use(ElementUI, {
   size: 'medium',
