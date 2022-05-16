@@ -3,10 +3,24 @@
     <div class="oneClass">
       <el-form :model="station" :rules="rules" ref="station" label-width="100px">
         <el-form-item label="基站名称" prop="stationName" placeholder="请输入基站名称">
-          <el-input v-model="station.stationName"></el-input>
+          <el-input v-model="station.stationName" style="width: 80%"></el-input>
         </el-form-item>
-        <el-form-item label="基站地址" prop="stationAddress" placeholder="请选择基站地址">
-          <el-input v-model="station.stationAddress"></el-input>
+<!--        <el-form-item label="基站地址" prop="stationAddress" placeholder="请选择基站地址">-->
+<!--          <el-input v-model="station.stationAddress"></el-input>-->
+<!--        </el-form-item>-->
+        <el-form-item label="所在城市" prop="stationAddress" label-width="100px" placeholder="请选择基站地址">
+          <el-cascader
+            style="width: 50%"
+            :options="options"
+            v-model="selectedOptions"
+            @change="handleChange">
+          </el-cascader>
+        </el-form-item>
+        <el-form-item label="详细地址"  label-width="100px">
+          <el-input type="text"
+                    style="width: 80%"
+                    v-model="address2"
+                    maxlength="50" />
         </el-form-item>
         <el-form-item label="经营物品" >
           <el-checkbox-group v-model="checkedLists"  @change="handleCheckedCitiesChange" >
@@ -32,12 +46,20 @@
 <script>
 import {getGoodsTypeAndGoods} from '@/api/goods'
 import {addStation} from '@/api/station'
+import {CodeToText, regionData} from "element-china-area-data";
 export default {
   name: "one",
   data() {
     const validateStationName = (rule, value, callback) => {
       if (value == undefined || value == null || value.toString().trim() === "") {
         callback(new Error('请输入基站名称'))
+      } else {
+        callback()
+      }
+    }
+    const validateStationAddress2 = (rule, value, callback) => {
+      if (value == undefined || value == null || value.toString().trim() === "") {
+        callback(new Error('请输入详细地址'))
       } else {
         callback()
       }
@@ -76,18 +98,29 @@ export default {
           { min: 3, max: 20, message: '长度在 3 到 5 个字符', trigger: 'blur' }
         ],
         stationAddress: [
-          { required: true, message: '请输入基站地址', trigger: 'change' }
+          { required: true, message: '', trigger: 'blue' }
+        ],
+        address2:[
+          { required: true, message: '', trigger: 'blur' }
         ]
       },
-      goodsListShow:false
+      goodsListShow:false,
+      options: regionData,
+      selectedOptions: [],
+      address1:'',
+      address2:''
     };
   },
   created() {
     this.getAllGoodsTypeAndGoods();
   },
   methods: {
-    validateStationName(){
-
+    handleChange() {
+      var loc = "";
+      for(let i=0;i<this.selectedOptions.length;i++){
+        loc += CodeToText[this.selectedOptions[i]];
+      }
+      this.address1 = loc;
     },
     getAllGoodsTypeAndGoods() {
       getGoodsTypeAndGoods().then((res) => {
@@ -112,8 +145,12 @@ export default {
         this.accountTip('warning','提示','基站名称不能为空')
         return;
       }
-      if(this.station.stationAddress == undefined || this.station.stationAddress == null || this.station.stationAddress.toString().trim() === ""){
-        this.accountTip('warning','提示','基站地址不能为空')
+      if(this.address1.toString().trim() === '' || this.address1 == null){
+        this.accountTip('warning','提示','请选择基站所在城市')
+        return;
+      }
+      if(this.address2.toString().trim() === '' || this.address2 == null){
+        this.accountTip('warning','提示','请填写详细地址')
         return;
       }
       if(this.checkedLists.length<=0){
@@ -127,6 +164,7 @@ export default {
           goodsIds += this.checkedLists[i]+","
         }
       }
+      this.station.stationAddress = this.address1+this.address2;
       this.oneSubmitData.station = this.station;
       this.oneSubmitData.goodsIds = goodsIds;
       addStation(this.oneSubmitData).then((res) => {
