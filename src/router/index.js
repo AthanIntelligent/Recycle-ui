@@ -165,6 +165,23 @@ export default new Router({
  */
 export const asyncRouterMap = [
   {
+    path: '/echarts',
+    component: Layout,
+    meta: {
+      title: '交易可视化',
+      icon: 'svg-droplet'
+    },
+    redirect: '/echarts/index',
+    children: [
+      {
+        path: 'index',
+        name: '数量统计',
+        component: () => import('@/views/echarts'),
+        meta: {title: '交易可视化', icon: 'svg-heart'}
+      }
+    ]
+  },
+  {
     path: '/home',
     component: Layout,
     alwaysShow: false,
@@ -284,23 +301,6 @@ export const asyncRouterMap = [
         name: 'Station',
         component: () => import('@/views/manufacturers/index'),
         meta: {icon: 's-promotion',title: '厂商管理'}
-      }
-    ]
-  },
-  {
-    path: '/echarts',
-    component: Layout,
-    meta: {
-      title: '交易可视化',
-      icon: 'svg-droplet'
-    },
-    redirect: '/echarts/index',
-    children: [
-      {
-        path: 'index',
-        name: '数量统计',
-        component: () => import('@/views/echarts'),
-        meta: {title: '交易可视化', icon: 'svg-heart'}
       }
     ]
   },
