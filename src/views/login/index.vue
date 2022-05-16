@@ -150,7 +150,7 @@ export default {
                   this.loading = false
                 })
               }else if(res.data.data.userType == 3){
-                this.$router.push('/home' )
+                this.$router.push('/echarts')
 
               }else{
                 this.$router.push({path: '/nearBaseStation'})
