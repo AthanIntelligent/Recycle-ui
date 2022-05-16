@@ -244,15 +244,8 @@ export default {
         }
       },
       chartData: {
-        columns: ["data", "number"],
-        rows: [
-          {data: "5.7", number: 200},
-          {data: "5.9", number: 30.8},
-          {data: "5.11", number: 50},
-          {data: "5.12", number: 236.3},
-          {data: "5.13", number: 40},
-          {data: "5.14", number: 3.5}
-        ]
+        columns: ["day", "money"],
+        rows: []
       }
     }
   },
@@ -260,8 +253,7 @@ export default {
     getAllMonthPay() {
       dirUandSTransaction().then((res) => {
         if (res.data.status === 200) {
-          this.monthPayList = res.data.data
-          console.log(res.data.data)
+          this.chartData.rows = res.data.data
         }
       }).catch((res) => {
         console.log(res.message)
