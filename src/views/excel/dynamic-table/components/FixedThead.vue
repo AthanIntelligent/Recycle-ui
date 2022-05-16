@@ -28,17 +28,17 @@
               element-loading-text="玩命加载中"
               element-loading-spinner="el-icon-loading"
               :data="goodsList.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;font-size: 16px">
-      <el-table-column type="index" width="100" label="序号">
+      <el-table-column type="index" width="70" label="序号">
       </el-table-column>
       <el-table-column
         prop="goodsName"
         label="物品名称"
-        width="130">
+        width="100">
       </el-table-column>
       <el-table-column
         prop="goodsType"
         label="物品类型"
-        width="130">
+        width="120">
       </el-table-column>
       <el-table-column
         prop="recycleDetail"
@@ -71,7 +71,8 @@
       </el-table-column>
       <el-table-column
         prop="createTime"
-        label="创建时间">
+        label="创建时间"
+      width="150px">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -225,7 +226,7 @@ export default {
       this.goods.goodsName = null
     },
     addGoods() {
-      alert("add")
+      // alert("add")
       addGoods(this.goodsDeal).then((res) => {
         if (this.goodsDeal.goodsName == ''){
           this.$message({
@@ -260,7 +261,7 @@ export default {
       })
     },
     updGoods() {
-      alert('upd')
+      // alert('upd')
       updGoods(this.goodsDeal).then((res) => {
         if (res.data.status == 200){
           this.$message({

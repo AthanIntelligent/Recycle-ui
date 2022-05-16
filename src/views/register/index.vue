@@ -77,7 +77,7 @@
           <div style="display: flex;justify-content: space-around">
             <el-radio v-model="registerForm.userType" label='1'>普通用户</el-radio>
             <el-radio v-model="registerForm.userType" label='2'>基站人员</el-radio>
-            <el-radio v-model="registerForm.userType" label='3'>系统管理员</el-radio>
+<!--            <el-radio v-model="registerForm.userType" label='3'>系统管理员</el-radio>-->
           </div>
 
         </el-form-item>

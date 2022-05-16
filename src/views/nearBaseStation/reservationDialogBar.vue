@@ -141,7 +141,7 @@ export default {
           this.accountTip('success','成功','预约成功')
           this.cancelBooking();
         }else{
-          this.accountTip('error','失败','服务器异常')
+          this.accountTip('error','失败','该时间段预约人数已满，请选择其他时间')
           this.cancelBooking();
         }
 
