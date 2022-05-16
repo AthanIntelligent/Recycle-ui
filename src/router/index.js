@@ -294,6 +294,7 @@ export const asyncRouterMap = [
       title: '交易可视化',
       icon: 'svg-droplet'
     },
+    redirect: '/echarts/index',
     children: [
       {
         path: 'index',
