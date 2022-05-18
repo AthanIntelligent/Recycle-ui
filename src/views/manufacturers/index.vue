@@ -12,7 +12,7 @@
         <el-button type="primary" @click="clear()">清空</el-button>
       </el-form-item>
     </el-form>
-    <el-button @click="dialogVisible = true">添加</el-button>
+    <el-button @click="isExistGoods"  :loading="goodsList.length>0?false:true">添加</el-button>
 <!--    <el-table -->
 <!--              v-loading="loading"-->
 <!--              element-loading-text="玩命加载中"-->
@@ -155,6 +155,24 @@ export default {
     },
     toCloseDialog(v){
       this.dialogVisible = !v
+    },
+    isExistGoods(){
+      if(this.goodsList.length>0){
+        this.dialogVisible = true
+      }else{
+        this.accountTip('warning','提示','还未获取到物品列表，请耐心等待');
+        this.dialogVisible = false
+      }
+    },
+    accountTip(type,title,info) {
+      this.$notify({
+        title: title,
+        dangerouslyUseHTMLString: true,
+        message: '<strong>提示：<i>'+info+'</i></strong>',
+        type: type,
+        position: 'top-right',
+        offset: 150
+      })
     }
   }
 }
