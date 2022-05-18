@@ -97,7 +97,7 @@
       title="添加厂商"
       :visible.sync="dialogVisible"
       width="45%">
-      <manufactureDialogBar v-bind:goodsList="goodsList"></manufactureDialogBar>
+      <manufactureDialogBar v-bind:goodsList="goodsList" @cancelFacture="toCloseDialog"></manufactureDialogBar>
 <!--      <span slot="footer" class="dialog-footer">-->
 <!--        <el-button @click="dialogVisible = false">取 消</el-button>-->
 <!--        <el-button type="primary" @click="dialogVisible = false,addGoods()"-->
@@ -112,6 +112,7 @@
 
 import {dirGoods} from "../../api/goods";
 import manufactureDialogBar from "./manufactureDialogBar"
+import {dirManufacture} from "@/api/manufacture"
 export default {
   components:{
     manufactureDialogBar
@@ -124,16 +125,22 @@ export default {
         factureName:'',
         recycleGoodsAndPrice:''
       },
+      manufactures:[],
       goodsList:[]
     }
   },
   mounted() {
     //获取所有的物品
     this.getGoods();
+    this.query(this.manufacture);
   },
   methods: {
     query(manufacture){
+      dirManufacture(manufacture).then(res => {
+        this.manufactures = res.data.data
+      }).catch(err => {
 
+      })
     },
     clear(){
       this.manufacture.factureName = ''
@@ -145,6 +152,9 @@ export default {
       }).catch(err=>{
 
       })
+    },
+    toCloseDialog(v){
+      this.dialogVisible = !v
     }
   }
 }
