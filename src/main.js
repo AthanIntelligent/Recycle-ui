@@ -30,6 +30,11 @@ import {devServer} from '../vue.config'
 import vcharts from 'v-charts'
 Vue.use(vcharts)
 
+// 引入饼状图
+import * as echarts from 'echarts'
+// 注册全局
+Vue.prototype.$echarts = echarts
+
 import VueAMap from 'vue-amap'
 Vue.use(VueAMap)
 // 初始化vue-amap

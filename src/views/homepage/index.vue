@@ -6,159 +6,17 @@
                     style="width: 100%;height: 150px"></ve-histogram>
     </el-row>
 
-    <el-row class="home-part1" :gutter="0">
-      <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
-        <div class="near-six-month">
-          <div class="title">
-            <p class="title-value">平台近6个月的交易记录</p>
-          </div>
-          <div class="content" ref="near-six-month-chart">
-            <near-six-month width="100%" height="100%"></near-six-month>
-          </div>
-        </div>
-      </el-col>
-      <el-col class="detail-item-wrapper" :xs="16" :sm="16" :md="16" :lg="8" :xl="8">
-        <div class="home-detail-item" :style="{ background: item.color}" v-for="(item, index) of homeDetailItem">
-          <div class="name">{{ item.name }}</div>
-          <div class="value">
-            <span class="num">{{ (item.value / 10000).toFixed(2) }}</span>万
-          </div>
-        </div>
-      </el-col>
-      <el-col :xs="8" :sm="8" :md="8" :lg="4" :xl="4">
-        <div class="rank">
-          <div class="title">
-            <p class="title-value">投资龙虎榜</p>
-          </div>
-          <div class="content" ref="rankContent">
-            <ul class="wrapper-user">
-              <li v-for="item of rankList" class="user-item">
-                <img class="avatar" :src="item.avatar" width="35" height="35" loading="lazy" alt="">
-                <div class="user-info">
-                  <p class="name">{{ item.name }}</p>
-                  <p class="value">{{ item.value }}</p>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </el-col>
-    </el-row>
+    <el-card style="margin-left: 150px;margin-right: 150px;margin-top: 20px;">
+        <div id="chartPie" style="width:100%; height:550px;"></div>
+    </el-card>
 
-    <el-row class="home-part2" :gutter="0">
-      <el-col :span="12">
-        <div class="financing-sprinkled">
-          <div class="title">
-            <p class="title-value">投资金额及融资期限分布图示</p>
-          </div>
-          <div class="content" ref="">
-            <!-- 投资 -->
-            <div class="investment">
-              <span class="title">投资金额比例</span>
-              <investment-pie width="100%" height="50%"></investment-pie>
-              <div class="detail">
-                <span class="detail-item">
-                  1万元以下
-                  <br>
-                  33.04%
-                </span>
-                <span class="detail-item">
-                  1-10万
-                  <br>
-                  30.57%
-                </span>
-                <span class="detail-item">
-                  10-40万
-                  <br>
-                  23.08%
-                </span>
-                <span class="detail-item">
-                  40万以上
-                  <br>
-                  13.31%
-                </span>
-              </div>
-            </div>
-            <!-- 融资 -->
-            <div class="financing">
-              <span class="title">融资期限</span>
-              <financing-pie width="100%" height="50%"></financing-pie>
-              <div class="detail">
-                <span class="detail-item">
-                  0-3个月
-                  <br>
-                  18.91%
-                </span>
-                <span class="detail-item">
-                  3-6个月
-                  <br>
-                  29.41%
-                </span>
-                <span class="detail-item">
-                  6-12个月
-                  <br>
-                  32.77%
-                </span>
-                <span class="detail-item">
-                  12个月以上
-                  <br>
-                  18.91%
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </el-col>
-
-      <el-col :span="12">
-        <div class="bad-debt">
-          <div class="title">
-            <p class="title-value">平台坏账及逾期情况</p>
-          </div>
-          <div class="content">
-            <div class="bad">
-              <div class="total">
-                <div class="total1">
-                  <p>坏账金额</p>
-                  <p><span class="num">0</span>元</p>
-                </div>
-                <div class="total2">
-                  <p>坏账比例</p>
-                  <p><span class="num">0</span>%</p>
-                </div>
-              </div>
-              <div class="chart">
-                <p class="title">本平台自2015年1月上线以来无坏账</p>
-                <p class="line"></p>
-                <p class="line"></p>
-              </div>
-            </div>
-            <div class="overdue">
-              <div class="total">
-                <div class="total1">
-                  <p>逾期金额</p>
-                  <p><span class="num">0</span>元</p>
-                </div>
-                <div class="total2">
-                  <p>逾期比例</p>
-                  <p><span class="num">0</span>%</p>
-                </div>
-              </div>
-              <div class="chart">
-                <p class="title">本平台自2015年1月上线以来无逾期</p>
-                <p class="line"></p>
-                <p class="line"></p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </el-col>
-    </el-row>
-
+    <el-card style="margin-left: 150px;margin-right: 150px;margin-top: 20px;">
+        <div id="chartRose" style="width:100%; height:550px;"></div>
+    </el-card>
   </div>
 </template>
 <script>
-import {dirUandSTransaction} from '@/api/userandstationtransaction'
+import {dirUandSTransaction, dirGoodsPercent, dirReservationPercent} from '@/api/userandstationtransaction'
 import CountUp from 'countup.js'
 import {getHomeTotal, getHomeDetailItem, getRank} from '@/api/homepage'
 import ColorLine from '@/components/color-line'
@@ -180,73 +38,91 @@ export default {
       homeDetailItem: [],
       rankList: [],
       numAnim: null,
+      chartPie: '',
+      chartRose: '',
+      typeName: [], // 帖子类型名称
+      typeNum: [], // 帖子类型数量
       extend: {
+        title: {
+          text: '当月每日支出统计(柱状图)',
+          x: 'center'
+        },
         // x轴的文字倾斜
         "xAxis.0.axisLabel.rotate": 45,
         yAxis: {
-          //是否显示y轴线条
+          type: "value",
+          // 是否显示y轴线条
           axisLine: {
             show: true
           },
           // 纵坐标网格线设置，同理横坐标
           splitLine: {
-            show: false
+            show: true,
+            lineStyle: {
+              type: 'dashed'
+            }
           },
           // 线条位置
-          position: "left"
+          position: "left",
+          axisLabel: {
+            formatter: '{value} 元'
+          }
         },
         xAxis: {
+          type: 'category',
           axisLine: {
             show: true
           }
         },
-        // series: {
-        //   label: { show: true, position: "top" },
-        //   barMinWidth: 35,
-        //   barmMaxWidth: 35,
-        //   width: 35
-        // },
-        series(v) {
-          // console.log("v", v);
-          // 设置柱子的样式
-          v.forEach(i => {
-            console.log("series", i);
-            i.barWidth = 50;
-            i.itemStyle={
-              color:'#FF6633',
-              borderWidth:10,
-            };
-            i.label={
-              color:'#666',
-              show:true,
-              position:'top',
-              // backgroundColor:'yellow',
-            };
-
-          });
-          return v;
+        series: {
+          type: 'bar',
+          showBackground: true,
+          backgroundStyle: {
+            color: 'rgba(220, 220, 220, 0.8)'
+          },
+          barWidth: '20%',
+          itemStyle: {
+            normal: {
+              color: function (params) {
+                let colorList = [
+                  '#2f4554', '#61a0a8', '#d48265', '#91c7ae', '#749f83',
+                  '#0AAF9F', '#E89589', '#16A085', '#4A235A', '#ca8622',
+                  '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                  '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0',
+                  '#B5C334', '#FCCE10', '#E87C25', '#27727B'
+                ]
+                return colorList[params.dataIndex]
+              },
+              // 以下为是否显示，显示位置和显示格式的设置了
+              label: {
+                show: true,
+                position: 'top',
+                formatter: '{c} 元'
+              }
+            }
+          }
         },
-        dataZoom:[
+        dataZoom: [
           {
             type: 'inside',
             show: true,
             xAxisIndex: [0],
             startValue: 0,
             endValue: 4,
-            zoomLock:false,//阻止区域缩放
+            zoomLock: false,//阻止区域缩放
           }
         ],
         grid: {
           show: true,
-          backgroundColor: "#FFF6F3",
+          // backgroundColor: "#FFF6F3",
           borderColor: "#FFF6F3",
           // containLabel:false,
         }
       },
       chartData: {
-        columns: ["day", "money"],
+        columns: ['day', 'money'],
         rows: []
-      }
+      },
     }
   },
   methods: {
@@ -259,65 +135,237 @@ export default {
         console.log(res.message)
       })
     },
-    initCountUp() {
-      this.$nextTick(() => {
-        let countupLength = this.$refs.countup.length
-        let i = 0
-        for (i; i < countupLength; i++) {
-          this.numAnim = new CountUp(this.$refs.countup[i], 0, this.$refs.countup[i].innerText, 2, 1.5)
-          this.numAnim.start()
+    drawCharts() {
+      this.drawPieChart()
+    },
+    getTransactionGoodsPercent() {
+      dirGoodsPercent().then((response) => {
+        console.log(response.data.data)
+        if (response.data.status === 200) {
+          let getData = []
+          // 先进行赋值
+          for (let i = 0; i < response.data.data.length; i++) {
+            let obj = new Object()
+            obj.name = response.data.data[i].name // 物品名称
+            obj.value = response.data.data[i].value // 占比率
+            getData[i] = obj
+          }
+          this.chartPie.setOption({
+            legend: {
+              data: response.data.data.name
+            },
+            series: [{
+              data: getData
+            }]
+          })
+          console.log(getData)
         }
+      }).catch((res) => {
+        console.log(res.message)
       })
     },
-    _initScroll() {
-      if (!this.scroll) {
-        this.scroll = new BScroll(this.$refs.rankContent, {
-          scrollY: true,
-          click: true,
-          scrollbar: {
-            fade: false,
-            interactive: true // 1.8.0 新增
-          },
-          mouseWheel: {
-            speed: 20,
-            invert: false,
-            easeTime: 300
+    drawPieChart() {
+      this.chartPie = this.$echarts.init(document.getElementById('chartPie'))
+      this.chartPie.setOption({
+        // 设置标题,副标题,以及标题位置居中
+        title: {
+          text: '物品占比统计(饼状图)',
+          // subtext: '纯属虚构',
+          x: 'center'
+        },
+        // 具体点击某一项触发的样式内容
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b} : {d}%'
+        },
+        // 左上侧分类条形符
+        legend: {
+          orient: 'vertical',
+          left: 'left',
+          data: []
+        },
+
+        // 饼状图类型以及数据源
+        series: [{
+          name: '统计数量',
+          type: 'pie',
+          data: [],
+          // 设置饼状图扇形区域的样式
+          itemStyle: {
+            emphasis: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
           }
-        })
-      } else {
-        this.scroll.refresh()
-      }
+        }]
+      })
+    },
+    getReservationPercent() {
+      dirReservationPercent().then((response) => {
+        console.log(response.data.data)
+        if (response.data.status === 200) {
+          let getData = []
+          // 先进行赋值
+          for (let i = 0; i < response.data.data.length; i++) {
+            let obj = new Object()
+            obj.name = response.data.data[i].name // 到访状态
+            obj.value = response.data.data[i].value // 占比率
+            getData[i] = obj
+          }
+          this.chartRose.setOption({
+            legend: {
+              data: response.data.data.name
+            },
+            series: [{
+              data: getData
+            }]
+          })
+          console.log(getData)
+        }
+      }).catch((res) => {
+        console.log(res.message)
+      })
+    },
+    drawRoseCharts() {
+      this.chartRose = this.$echarts.init(document.getElementById('chartRose'))
+      let colorArr = ['#218de0', '#01cbb3', '#85e647', '#5d5cda', '#05c5b0', '#c29927']
+      let colorAlpha = ['rgba(60,170,211,0.05)', 'rgba(1,203,179,0.05)', 'rgba(133,230,71,0.05)', 'rgba(93,92,218,0.05)', 'rgba(5,197,176,0.05)', 'rgba(194,153,39,0.05)']
+      this.chartRose.setOption({
+        title: {
+          text: '预约状态统计(玫瑰图)',
+          // subtext: '纯属虚构',
+          x: 'center',
+          textStyle: {// 主标题文本样式{"fontSize": 18,"fontWeight": "bolder","color": "#333"}
+            color: "#ffffff"
+          }
+        },
+        backgroundColor: '#090e36',
+        grid: {
+          left: -100,
+          top: 50,
+          bottom: 10,
+          right: 10,
+          containLabel: true
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: "{b} : {c} ({d}%)"
+        },
+        legend: {
+          show: false
+        },
+        polar: {},
+        angleAxis: {
+          interval: 1,
+          type: 'category',
+          data: [],
+          z: 10,
+          axisLine: {
+            show: false,
+            lineStyle: {
+              color: "#0B4A6B",
+              width: 1,
+              type: "solid"
+            },
+          },
+          axisLabel: {
+            interval: 0,
+            show: true,
+            color: "#0B4A6B",
+            margin: 8,
+            fontSize: 16
+          },
+        },
+        radiusAxis: {
+          min: 20,
+          max: 120,
+          interval: 20,
+          axisLine: {
+            show: false,
+            lineStyle: {
+              color: "#0B3E5E",
+              width: 1,
+              type: "solid"
+            },
+          },
+          axisLabel: {
+            formatter: '{value} %',
+            show: false,
+            padding: [0, 0, 20, 0],
+            color: "#0B3E5E",
+            fontSize: 16
+          },
+          splitLine: {
+            lineStyle: {
+              color: "#07385e",
+              width: 2,
+              type: "dashed"
+            }
+          }
+        },
+        calculable: true,
+        series: [{
+          stack: 'a',
+          type: 'pie',
+          radius: '80%',
+          roseType: 'radius',
+          zlevel: 10,
+          startAngle: 100,
+          label: {
+            normal: {
+              formatter: ['{b|{b}}', '{d|{d}%}'].join('\n'),
+              rich: {
+                b: {
+                  color: '#3bd2fe',
+                  fontSize: 14,
+                  lineHeight: 20
+                },
+                d: {
+                  color: '#d0fffc',
+                  fontSize: 14,
+                  height: 20
+                },
+              },
+            }
+          },
+          labelLine: {
+            normal: {
+              show: true,
+              length: 10,
+              length2: 45,
+              lineStyle: {
+                color: '#0096b1'
+
+              }
+            },
+            emphasis: {
+              show: false
+            }
+          },
+          data: [],
+          itemStyle: {
+            borderColor: colorArr[2],
+            borderWidth:2,
+            shadowBlur: 20,
+            shadowColor: colorArr[2],
+            shadowOffsetx: 25,
+            shadowOffsety: 20,
+            color: colorAlpha[2]
+          }
+        }
+        ]
+      })
     }
   },
   created() {
     this.getAllMonthPay()
-    // 获取头部hometotal
-    getHomeTotal().then((resp) => {
-      this.homeTotalData = resp.data
-      this.initCountUp()
-    }).catch(() => {
-      console.log('获取home-total出现异常')
-    })
-    // 获取 detailItem
-    getHomeDetailItem().then(resp => {
-      this.homeDetailItem = resp.data
-    }).catch(() => {
-      console.log('获取detailItem出现异常')
-    })
-    // 获取投资榜
-    getRank().then(resp => {
-      this.rankList = resp.data
-      this._initScroll()
-    }).catch(() => {
-      console.log('获取rankList出现异常')
-    })
   },
   mounted() {
-  },
-  updated() {
-    // this.$nextTick(function() {
-    //   this.initCountUp()
-    // })
+    this.getTransactionGoodsPercent()
+    this.drawCharts()
+    this.getReservationPercent()
+    this.drawRoseCharts()
   }
 }
 </script>
