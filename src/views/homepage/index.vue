@@ -1,37 +1,20 @@
 <template>
   <div class="homepage-container">
-
     <el-row class="home-total">
       <ve-histogram :data="chartData" :extend="extend" :legend-visible="false"
                     style="width: 100%;height: 150px"></ve-histogram>
     </el-row>
 
-    <el-card style="margin-left: 150px;margin-right: 150px;margin-top: 20px;">
-        <div id="chartPie" style="width:100%; height:550px;"></div>
-    </el-card>
-
-    <el-card style="margin-left: 150px;margin-right: 150px;margin-top: 20px;">
-        <div id="chartRose" style="width:100%; height:550px;"></div>
-    </el-card>
+    <div style="margin-left: 3px;margin-right: 3px;margin-top: 10px;">
+      <div id="chartPie" style="width:50%; height:550px; float: left"></div>
+      <div id="chartRose" style="width:50%; height:550px; float: right"></div>
+    </div>
   </div>
 </template>
 <script>
 import {dirUandSTransaction, dirGoodsPercent, dirReservationPercent} from '@/api/userandstationtransaction'
-import CountUp from 'countup.js'
-import {getHomeTotal, getHomeDetailItem, getRank} from '@/api/homepage'
-import ColorLine from '@/components/color-line'
-import NearSixMonth from '@/views/homepage/near-six-month'
-import BScroll from 'better-scroll'
-import InvestmentPie from '@/views/homepage/investment-pie'
-import FinancingPie from '@/views/homepage/financing-pie'
 
 export default {
-  components: {
-    ColorLine,
-    NearSixMonth,
-    InvestmentPie,
-    FinancingPie
-  },
   data() {
     return {
       monthPayList: [],
@@ -189,6 +172,7 @@ export default {
         series: [{
           name: '统计数量',
           type: 'pie',
+          radius: '80%',
           data: [],
           // 设置饼状图扇形区域的样式
           itemStyle: {
@@ -267,7 +251,7 @@ export default {
               color: "#0B4A6B",
               width: 1,
               type: "solid"
-            },
+            }
           },
           axisLabel: {
             interval: 0,
@@ -275,7 +259,7 @@ export default {
             color: "#0B4A6B",
             margin: 8,
             fontSize: 16
-          },
+          }
         },
         radiusAxis: {
           min: 20,
@@ -287,12 +271,12 @@ export default {
               color: "#0B3E5E",
               width: 1,
               type: "solid"
-            },
+            }
           },
           axisLabel: {
             formatter: '{value} %',
             show: false,
-            padding: [0, 0, 20, 0],
+            padding: [0, 0, 10, 0],
             color: "#0B3E5E",
             fontSize: 16
           },
@@ -325,8 +309,8 @@ export default {
                   color: '#d0fffc',
                   fontSize: 14,
                   height: 20
-                },
-              },
+                }
+              }
             }
           },
           labelLine: {
@@ -336,7 +320,6 @@ export default {
               length2: 45,
               lineStyle: {
                 color: '#0096b1'
-
               }
             },
             emphasis: {
@@ -346,7 +329,7 @@ export default {
           data: [],
           itemStyle: {
             borderColor: colorArr[2],
-            borderWidth:2,
+            borderWidth: 2,
             shadowBlur: 20,
             shadowColor: colorArr[2],
             shadowOffsetx: 25,
