@@ -101,16 +101,23 @@ export default {
     handleCheckAllChange(val){
 
       let goods = JSON.parse(JSON.stringify(val))
+      console.log(goods)
+      console.log(this.checkedCities,777)
       if(goods.checkAll){
         for(var i=0;i<goods.goodsName.length;i++){
-          for(var j=0;j<this.checkedCities.length;j++){
-            if(this.checkedCities[j]===goods.goodsName[i]){
-              continue;
-            }
-            if(j===this.checkedCities.length-1){
+          if(this.checkedCities.length===0){
               this.checkedCities.push(goods.goodsName[i])
+          }else{
+            for(var j=0;j<this.checkedCities.length;j++){
+              if(this.checkedCities[j]===goods.goodsName[i]){
+                continue;
+              }
+              if(j===this.checkedCities.length-1){
+                this.checkedCities.push(goods.goodsName[i])
+              }
             }
           }
+
 
         }
       }
@@ -155,7 +162,7 @@ export default {
         this.ch = 0;
       }
       value.isIndeterminate = checkedCount > 0 && checkedCount < goods.goodsName.length;
-      if(checkedCount>this.goodsNameAndPrice.length){
+      if(this.checkedCities.length>this.goodsNameAndPrice.length){
         let gStr = {
           goodsName:'',
           price:null,
@@ -166,11 +173,11 @@ export default {
       }else{
         var k=0;
         for(var i=0;i<this.goodsNameAndPrice.length;i++){
-          for(var j=0;j<checkedCount;j++){
+          for(var j=0;j<this.checkedCities.length;j++){
             if(this.goodsNameAndPrice[i].goodsName===this.checkedCities[j]){
               continue;
             }
-            if(j===checkedCount-1){
+            if(j===this.checkedCities.length-1){
               k=i;
             }
           }
