@@ -31,7 +31,7 @@
           <div v-for="goods in goodsInfo">
             <el-checkbox :indeterminate="goods.isIndeterminate" v-model="goods.checkAll" @change="handleCheckAllChange(goods)">{{ goods.goodsType }}</el-checkbox>
             <div style="margin: 15px 0;"></div>
-            <el-checkbox-group v-model="goods.checkedCities" @change="handleCheckedCitiesChange(goods)">
+            <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange(goods)">
               <el-checkbox v-for="name in goods.goodsName" :label="name" :key="name">{{name}}</el-checkbox>
             </el-checkbox-group>
             <hr />
@@ -85,7 +85,9 @@ export default {
       address1:'',
       address2:'',
       goodsInfo:[],
-      goodsNameAndPrice:[]
+      goodsNameAndPrice:[],
+      checkedCities:[],
+      ch:0
     }
   },
   methods:{
@@ -97,17 +99,32 @@ export default {
       this.address1 = loc;
     },
     handleCheckAllChange(val){
+
       let goods = JSON.parse(JSON.stringify(val))
-      val.checkedCities = goods.checkAll ? goods.goodsName : [];
+      if(goods.checkAll){
+        for(var i=0;i<goods.goodsName.length;i++){
+          for(var j=0;j<this.checkedCities.length;j++){
+            if(this.checkedCities[j]===goods.goodsName[i]){
+              continue;
+            }
+            if(j===this.checkedCities.length-1){
+              this.checkedCities.push(goods.goodsName[i])
+            }
+          }
+
+        }
+      }
       val.isIndeterminate = false;
       if(goods.checkAll){
-        for(var i=0;i<val.checkedCities.length;i++){
+        this.goodsNameAndPrice = []
+        for(var i=0;i<this.checkedCities.length;i++){
           let gStr = {
             goodsName:'',
             price:null,
             unit:''
           };
-          gStr.goodsName = val.checkedCities[i]
+          gStr.goodsName = this.checkedCities[i]
+          // goodsNAP.push(gStr)
           this.goodsNameAndPrice.push(gStr)
         }
       }else{
@@ -115,7 +132,11 @@ export default {
             for(var j=0;j<this.goodsNameAndPrice.length;j++){
               if(this.goodsNameAndPrice[j].goodsName===goods.goodsName[i]){
                 this.goodsNameAndPrice.splice(j,1);
-
+              }
+            }
+            for(var j=0;j<this.checkedCities.length;j++){
+              if(this.checkedCities[j]===goods.goodsName[i]){
+                this.checkedCities.splice(j,1);
               }
             }
           }
@@ -124,10 +145,15 @@ export default {
       }
 
     },
+
     handleCheckedCitiesChange(value) {
       let goods = JSON.parse(JSON.stringify(value))
-      let checkedCount = goods.checkedCities.length;
+      goods.checkedCities.push(this.ch++)
+      let checkedCount = goods.checkedCities[0]+1;
       value.checkAll = checkedCount === goods.goodsName.length;
+      if(value.checkAll){
+        this.ch = 0;
+      }
       value.isIndeterminate = checkedCount > 0 && checkedCount < goods.goodsName.length;
       if(checkedCount>this.goodsNameAndPrice.length){
         let gStr = {
@@ -135,13 +161,13 @@ export default {
           price:null,
           unit:''
         };
-        gStr.goodsName = goods.checkedCities[goods.checkedCities.length-1]
+        gStr.goodsName = this.checkedCities[this.checkedCities.length-1]
         this.goodsNameAndPrice.push(gStr)
       }else{
         var k=0;
         for(var i=0;i<this.goodsNameAndPrice.length;i++){
           for(var j=0;j<checkedCount;j++){
-            if(this.goodsNameAndPrice[i].goodsName===goods.checkedCities[j]){
+            if(this.goodsNameAndPrice[i].goodsName===this.checkedCities[j]){
               continue;
             }
             if(j===checkedCount-1){
