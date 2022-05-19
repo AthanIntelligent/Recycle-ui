@@ -42,6 +42,18 @@
         label="创建时间"
         align="center">
       </el-table-column>
+      <el-table-column
+        prop="uuid"
+        label="操作"
+        align="center">
+        <template slot-scope="scope">
+          <el-button
+            @click="toRemove(scope.row)" type="text"
+            size="middle">
+            删除
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
 
@@ -74,7 +86,7 @@
 
 import {dirGoods} from "../../api/goods";
 import manufactureDialogBar from "./manufactureDialogBar"
-import {dirManufacture} from "@/api/manufacture"
+import {dirManufacture,delManufacture} from "@/api/manufacture"
 export default {
   components:{
     manufactureDialogBar
@@ -103,6 +115,7 @@ export default {
     query(manufacture){
       dirManufacture(manufacture).then(res => {
         this.manufactures = res.data.data
+        this.loading2 = false
       }).catch(err => {
 
       })
@@ -120,6 +133,7 @@ export default {
     },
     toCloseDialog(v){
       this.dialogVisible = !v
+      this.query(this.manufacture)
     },
     isExistGoods(){
       if(this.goodsList.length>0){
@@ -134,6 +148,16 @@ export default {
     },
     handleCurrentChange: function (currentPage) {
       this.currentPage = currentPage
+    },
+    toRemove(value){
+      delManufacture(value.uuid).then(res => {
+        if(res.data.status === 200){
+          this.accountTip('success','成功','删除成功')
+          this.query(this.manufacture);
+        }
+      }).catch(err => {
+        this.accountTip('error','失败',err.message)
+      })
     },
     accountTip(type,title,info) {
       this.$notify({

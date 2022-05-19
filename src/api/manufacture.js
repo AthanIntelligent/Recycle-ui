@@ -9,7 +9,7 @@ export function addManufacture(manufacturers) {
 }
 
 export function delManufacture(uuid) {
-  return axios.post('/facture/delManufacturers', uuid)
+  return axios.get('/facture/delManufacturers?uuid='+uuid)
 }
 
 export function getManufacture(uuid) {
