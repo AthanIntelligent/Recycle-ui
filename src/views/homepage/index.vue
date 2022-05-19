@@ -123,7 +123,6 @@ export default {
     },
     getTransactionGoodsPercent() {
       dirGoodsPercent().then((response) => {
-        console.log(response.data.data)
         if (response.data.status === 200) {
           let getData = []
           // 先进行赋值
@@ -141,7 +140,6 @@ export default {
               data: getData
             }]
           })
-          console.log(getData)
         }
       }).catch((res) => {
         console.log(res.message)
@@ -187,7 +185,6 @@ export default {
     },
     getReservationPercent() {
       dirReservationPercent().then((response) => {
-        console.log(response.data.data)
         if (response.data.status === 200) {
           let getData = []
           // 先进行赋值
@@ -205,7 +202,6 @@ export default {
               data: getData
             }]
           })
-          console.log(getData)
         }
       }).catch((res) => {
         console.log(res.message)

@@ -304,24 +304,6 @@ export const asyncRouterMap = [
       }
     ]
   },
-  // {
-  //   path: '/threesteps',
-  //   component: Layout,
-  //   redirect: '/threesteps/index',
-  //   // alwaysShow: true,
-  //   meta: {
-  //     icon: 'svg-aperture',
-  //     title: '基站三部曲'
-  //   },
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       name: 'ThreeSteps',
-  //       component: () => import('@/views/threesteps/index'),
-  //       meta: {icon: 'svg-aperture', title: '基站三部曲'}
-  //     }
-  //   ]
-  // },
   {
     path: '/goods-of-station',
     component: Layout,
@@ -371,23 +353,22 @@ export const asyncRouterMap = [
       }
     ]
   },
-  // {
-  //   path: '/nearBaseStation',
-  //   component: Layout,
-  //   alwaysShow: false,
-  //   meta: {
-  //     icon: 'document',
-  //     title: '附件的基站'
-  //   },
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/nearBaseStation/index'),
-  //       name: '附件的基站',
-  //       meta: { title: '附件的基站', icon: 'svg-pifu' }
-  //     }
-  //   ]
-  // },
+  {
+    path: '/factorytransaction',
+    component: Layout,
+    meta: {
+      icon: 'svg-layers',
+      title: '厂商交易'
+    },
+    children: [
+      {
+        path: 'index',
+        name: 'FactoryTransaction',
+        component: () => import('@/views/factorytransaction/index'),
+        meta: {icon: 's-promotion',title: '厂商交易'}
+      }
+    ]
+  },
   {
     path: '/nearBaseStation',
     component: Layout,

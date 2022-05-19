@@ -11,7 +11,9 @@
       </el-form-item>
       <el-form-item label="创建人">
         <el-select v-model="goods.createUser" placeholder="创建人">
-          <el-option v-for="item in stationUserList" :key="item.uuid" :value="item.uuid" :label="item.realName">{{item.realName}}</el-option>
+          <el-option v-for="item in stationUserList" :key="item.uuid" :value="item.uuid" :label="item.realName">
+            {{ item.realName }}
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -24,7 +26,8 @@
               v-loading="loading"
               element-loading-text="玩命加载中"
               element-loading-spinner="el-icon-loading"
-              :data="goodsList.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;font-size: 16px">
+              :data="goodsList.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row
+              style="width: 100%;font-size: 16px">
       <el-table-column type="index" width="100" label="序号">
       </el-table-column>
       <el-table-column
@@ -45,7 +48,7 @@
         prop="perMoney"
         label="单价">
         <template slot-scope="scope">
-          {{scope.row.perMoney+''+scope.row.unit}}
+          {{ scope.row.perMoney + '' + scope.row.unit }}
         </template>
       </el-table-column>
       <el-table-column
@@ -123,11 +126,11 @@
 import goodsDialogBar2 from './goodsDialogBar2'
 import {dirGoods, addGoods, delGoods, updGoods, getGoods} from '@/api/goods'
 import {dirGoodsType} from '@/api/goodstype'
-import {getTemplate, importG} from '@/api/goodsexcel'
+import {getTemplate} from '@/api/goodsexcel'
 import {dirStationUserList} from '@/api/userA'
 
 export default {
-  name: "GoodsFixedThead",
+  name: 'GoodsFixedThead',
   components: {'goodsDialogBar2': goodsDialogBar2},
   data() {
     return {
@@ -152,7 +155,7 @@ export default {
       pagesize: 10,
       dialogVisible: false,
       key: 1, // table key
-      path: "/static/image/goodImg/",
+      path: '/static/image/goodImg/',
       stationUserList: [],
       loading: true
     }
@@ -173,13 +176,7 @@ export default {
         console.log(res.message)
       })
     },
-    // import() {
-    //   importG().then((res) => {
-    //   }).catch((res) => {
-    //     console.log(res.data.message)
-    //   })
-    // },
-    getTemplate(){
+    getTemplate() {
       getTemplate().then((res) => {
       }).catch((res) => {
         console.log(res.data.message)
@@ -188,7 +185,7 @@ export default {
     handleSizeChange: function (size) {
       this.pagesize = size
     },
-    handleCurrentChange: function(currentPage) {
+    handleCurrentChange: function (currentPage) {
       this.currentPage = currentPage
     },
     getAllGoods() {
@@ -225,23 +222,22 @@ export default {
       this.goods.createUser = null
     },
     addGoods() {
-      alert("add")
       addGoods(this.goodsDeal).then((res) => {
-        if (this.goodsDeal.goodsName == ''){
+        if (this.goodsDeal.goodsName === '') {
           this.$message({
             type: 'error',
             message: '物品名称为必填项!'
           })
           return;
         }
-        if (this.goodsDeal.goodsType == ''){
+        if (this.goodsDeal.goodsType === '') {
           this.$message({
             type: 'error',
             message: '物品类型为必选项!'
           })
           return;
         }
-        if (res.data.status == 200){
+        if (res.data.status === 200) {
           this.$message({
             type: 'success',
             message: '添加成功!'
@@ -249,7 +245,7 @@ export default {
           this.getAllGoods()
           this.clearGoodsDeal()
         }
-        if (res.data.status != 200){
+        if (res.data.status != 200) {
           this.$message({
             type: 'info',
             message: res.data.message
@@ -260,9 +256,8 @@ export default {
       })
     },
     updGoods() {
-      alert('upd')
       updGoods(this.goodsDeal).then((res) => {
-        if (res.data.status == 200){
+        if (res.data.status === 200) {
           this.$message({
             type: 'success',
             message: '修改成功!'
@@ -270,7 +265,7 @@ export default {
           this.getAllGoods()
           this.clearGoodsDeal()
         }
-        if (res.data.status != 200){
+        if (res.data.status !== 200) {
           this.$message({
             type: 'info',
             message: res.data.message
@@ -280,7 +275,7 @@ export default {
         console.log(res.data.message)
       })
     },
-    getGoods(uuid){
+    getGoods(uuid) {
       getGoods(uuid).then((res) => {
         this.goodsDeal.uuid = res.data.data.uuid
         this.goodsDeal.goodsName = res.data.data.goodsName
@@ -313,18 +308,18 @@ export default {
         this.$message({
           type: 'info',
           message: '已取消删除'
-        });
-      });
+        })
+      })
     },
-    clearGoodsDeal(){
-      this.goodsDeal.uuid = '',
-        this.goodsDeal.goodsType = '',
-        this.goodsDeal.goodsName = '',
-        this.goodsDeal.pic = '',
-        this.goodsDeal.recycleDetail = '',
-        this.goodsDeal.perMoney = null,
-        this.goodsDeal.unit = null,
-        this.goodsDeal.remark = ''
+    clearGoodsDeal() {
+      this.goodsDeal.uuid = ''
+      this.goodsDeal.goodsType = ''
+      this.goodsDeal.goodsName = ''
+      this.goodsDeal.pic = ''
+      this.goodsDeal.recycleDetail = ''
+      this.goodsDeal.perMoney = null
+      this.goodsDeal.unit = null
+      this.goodsDeal.remark = ''
     }
   }
 }

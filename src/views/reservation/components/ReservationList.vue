@@ -42,7 +42,7 @@
               :data="reservationList"
               highlight-current-row
               style="width: 100%;font-size: 16px">
-      <el-table-column type="index" width="100" label="序号">
+      <el-table-column type="index" width="80" label="序号" align="center">
       </el-table-column>
       <el-table-column
         prop="appointmentHolder"
