@@ -1,11 +1,11 @@
 <template>
   <div class="app-container">
-    <el-form :inline="true" :model="manufacturers" class="demo-form-inline">
+    <el-form :inline="true" :model="manufacturersSelect" class="demo-form-inline">
       <el-form-item label="厂商名称">
-        <el-input v-model="manufacturers.factureName" placeholder="厂商名称"></el-input>
+        <el-input v-model="manufacturersSelect.factureName" placeholder="厂商名称"></el-input>
       </el-form-item>
       <el-form-item label="物品名称">
-        <el-input v-model="manufacturers.recycleGoodsAndPrice" placeholder="物品名称"></el-input>
+        <el-input v-model="manufacturersSelect.recycleGoodsAndPrice" placeholder="物品名称"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit()">查询</el-button>
@@ -48,7 +48,7 @@
         align="center">
         <template slot-scope="scope">
           <el-button
-            @click="toTrade(scope.row)" type="text"
+            @click="dialogVisible = true,toTrade(scope.row)" type="text"
             size="middle">
             开始交易
           </el-button>
@@ -56,6 +56,12 @@
       </el-table-column>
     </el-table>
 
+    <el-dialog
+      :title="'记录交易'"
+      :visible.sync="dialogVisible"
+      width="40%">
+      <trade-dialog-bar :manufacturersRight="manufacturers"></trade-dialog-bar>
+    </el-dialog>
 
     <el-pagination
       style="position: absolute;right:660px;bottom:15px;"
@@ -72,11 +78,14 @@
 
 <script>
 import {dirManufacture} from '@/api/manufacture'
+import TradeDialogBar from './tradeDialogBar'
 export default {
   name: 'FactoryList',
+  components: {TradeDialogBar},
+  comments: {TradeDialogBar},
   data() {
     return {
-      manufacturers: {
+      manufacturersSelect: {
         factureName: null,
         recycleGoodsAndPrice: null
       },
@@ -84,7 +93,11 @@ export default {
       currentPage: 1,
       pagesize: 10,
       loading: true,
-      dialogVisible: false
+      dialogVisible: false,
+      manufacturers: {
+        uuid: null,
+        recycleGoodsAndPrice: null
+      }
     }
   },
   created() {
@@ -92,7 +105,7 @@ export default {
   },
   methods: {
     getManufactureList() {
-      dirManufacture(this.manufacturers).then((res) => {
+      dirManufacture(this.manufacturersSelect).then((res) => {
         if (res.data.status === 200) {
           this.manufacturerList = res.data.data
           this.loading = false
@@ -105,11 +118,12 @@ export default {
       this.getManufactureList()
     },
     clearTwo() {
-      this.manufacturers.factureName = null
-      this.manufacturers.recycleGoodsAndPrice = null
+      this.manufacturersSelect.factureName = null
+      this.manufacturersSelect.recycleGoodsAndPrice = null
     },
     toTrade(row) {
-
+      this.manufacturers.uuid = row.uuid
+      this.manufacturers.recycleGoodsAndPrice = row.recycleGoodsAndPrice
     },
     handleSizeChange: function (size) {
       this.pagesize = size
