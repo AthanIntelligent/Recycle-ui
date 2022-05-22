@@ -3,10 +3,10 @@
     <el-form ref="form" :model="manufacturers" label-width="80px">
       <div style="display: flex">
         <el-form-item label="厂商名称">
-          <el-input v-model="manufacturers.factureName" style="width: 330px" type="text"></el-input>
+          <el-input v-model="manufacturers.factureName" style="width: 260px" type="text" ></el-input>
         </el-form-item>
         <el-form-item label="厂商电话">
-          <el-input v-model="manufacturers.facturePhone" style="width: 330px" type="phone"></el-input>
+          <el-input v-model="manufacturers.facturePhone" style="width: 230px" type="phone" flex="1"></el-input>
         </el-form-item>
       </div>
       <div style="display: flex">
