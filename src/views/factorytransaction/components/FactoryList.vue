@@ -136,7 +136,7 @@ export default {
       // console.log(this.manufacturers.tradeGoods)
       setTimeout(()=>{
         var trade = {
-          uuid:uuid,
+          factoryId:uuid,
           allMoney : this.totalMoney
         }
         this.manufacturers.trade = trade;
