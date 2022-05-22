@@ -23,19 +23,22 @@
         label="重量"
         width="180">
         <template slot-scope="scope">
-          <el-input type="number" style="width: 105px;" v-model="scope.row.weight" @blur="showWeight(scope.row.goodsName)"></el-input>
+          {{scope.row.weight}}{{scope.row.unit}}
         </template>
       </el-table-column>
       <el-table-column
         prop="amount"
         label="金额">
+        <template slot-scope="scope">
+          {{ scope.row.perMoney*scope.row.weight }}
+        </template>
       </el-table-column>
     </el-table>
 
-<!--    <span slot="footer" class="dialog-footer">-->
-<!--        <el-button type="primary" @click="toPay()">录入交易</el-button>-->
-<!--        <el-button @click="clearThem()">重置</el-button>-->
-<!--    </span>-->
+    <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="toPay()">确定</el-button>
+        <el-button @click="clearThem()">重置</el-button>
+    </span>
   </div>
 </template>
 
@@ -60,7 +63,7 @@ export default {
   },
   methods: {
     dealList() {
-      let list = this.manufacturersRight.recycleGoodsAndPrice.split(';')
+      let list = this.$props.manufacturersRight.recycleGoodsAndPrice.split(';')
       for (let i = 0; i < list.length; i++) {
         // eslint-disable-next-line no-new-object
         let obj = new Object()
@@ -68,22 +71,32 @@ export default {
         obj.goodsName = m[0]
         obj.perMoney = m[1]
         obj.unit = m[2]
+        this.showWeight(m[0]).then(res => {
+          obj.weight = res;
+        })
         this.showGoodsAndPrice[i] = obj
       }
       console.log(this.showGoodsAndPrice)
     },
-    showWeight(goodsName) {
-      getGoodsWeight(goodsName).then((res) => {
+    async showWeight(goodsName) {
+      var weight = ''
+      await getGoodsWeight(goodsName).then((res) => {
         if (res.data.status === 200) {
-          alert(res.data.data)
-          return res.data.data
+          weight = res.data.data
         }
       }).catch((res) => {
         console.log(res.data.message)
       })
+      return weight
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
+
+    },
+    toPay(){
+
+    },
+    clearThem(){
 
     }
   }
