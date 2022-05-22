@@ -44,11 +44,9 @@
             <div v-for="goodsAndPrice in goodsNameAndPrice" style="float: left;margin-bottom: 5px" >
               <span>【{{goodsAndPrice.goodsName}}】</span>
               <el-input v-model="goodsAndPrice.price" type="number" style="width: 120px;" placeholder='请输入单价'></el-input>
-              <el-select v-model="goodsAndPrice.unit" :value="goodsAndPrice.unit" placeholder="请选择单位">
+              <el-select v-model="goodsAndPrice.unit" :value="goodsAndPrice.unit" style="width: 100px" placeholder="单位">
                 <el-option value="个">个</el-option>
-                <el-option value="克">克</el-option>
-                <el-option value="千克">千克</el-option>
-                <el-option value="吨">吨</el-option>
+                <el-option value="斤">斤</el-option>
               </el-select>
             </div>
           </div>
@@ -155,6 +153,7 @@ export default {
 
     handleCheckedCitiesChange(value) {
       let goods = JSON.parse(JSON.stringify(value))
+      console.log( this.checkedCities)
       goods.checkedCities.push(this.ch++)
       let checkedCount = goods.checkedCities[0]+1;
       value.checkAll = checkedCount === goods.goodsName.length;
@@ -192,6 +191,7 @@ export default {
       if(this.$props.goodsList != null){
         let len = this.$props.goodsList.length;
         let goods =  this.$props.goodsList;
+
         var j=0;
         for(var i=0;i<len;i++){
           if(!goodsType.includes(goods[i].goodsType)){
@@ -205,7 +205,8 @@ export default {
             checkAll:false,
             goodsName:[],
             checkedCities:[],
-            isIndeterminate:true
+            isIndeterminate:true,
+            goodsUnit:[]
           };
           for(var h=0;h<len;h++){
             if(goodsType[k]==goods[h].goodsType){
