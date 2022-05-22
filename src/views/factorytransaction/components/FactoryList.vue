@@ -48,20 +48,22 @@
         align="center">
         <template slot-scope="scope">
           <el-button
-            @click="dialogVisible = true,toTrade(scope.row)" type="text"
+            @click="toTrade(scope.row)" type="text"
             size="middle">
             开始交易
           </el-button>
         </template>
       </el-table-column>
     </el-table>
+    <div v-if="dialogVisible">
+      <el-dialog
+        :title="'记录交易'"
+        :visible.sync="dialogVisible"
+        width="40%">
+        <trade-dialog-bar :manufacturersRight="manufacturers"></trade-dialog-bar>
+      </el-dialog>
+    </div>
 
-    <el-dialog
-      :title="'记录交易'"
-      :visible.sync="dialogVisible"
-      width="40%">
-      <trade-dialog-bar :manufacturersRight="manufacturers"></trade-dialog-bar>
-    </el-dialog>
 
     <el-pagination
       style="position: absolute;right:660px;bottom:15px;"
@@ -79,6 +81,7 @@
 <script>
 import {dirManufacture} from '@/api/manufacture'
 import TradeDialogBar from './tradeDialogBar'
+import { getGoodsWeight } from '@/api/transaction'
 export default {
   name: 'FactoryList',
   components: {TradeDialogBar},
@@ -95,9 +98,10 @@ export default {
       loading: true,
       dialogVisible: false,
       manufacturers: {
-        uuid: null,
-        recycleGoodsAndPrice: null
-      }
+        trade: {},
+        tradeGoods: []
+      },
+      totalMoney:0
     }
   },
   created() {
@@ -108,11 +112,53 @@ export default {
       dirManufacture(this.manufacturersSelect).then((res) => {
         if (res.data.status === 200) {
           this.manufacturerList = res.data.data
+          console.log(this.manufacturerList)
           this.loading = false
         }
       }).catch((res) => {
         console.log(res.data.message)
       })
+    },
+    dealList(uuid,recycleGoodsAndPrice){
+      let list = recycleGoodsAndPrice.split(';')
+      for (var i = 0; i < list.length; i++) {
+        let m = list[i].split(',')
+        var obj ={
+          goodsName : m[0],
+          perMoney : m[1],
+          unit : m[2]
+        }
+        this.showWeight(m[0],obj)
+
+        this.manufacturers.tradeGoods[i] = obj
+      }
+
+      // console.log(this.manufacturers.tradeGoods)
+      setTimeout(()=>{
+        var trade = {
+          uuid:uuid,
+          allMoney : this.totalMoney
+        }
+        this.manufacturers.trade = trade;
+        // console.log(this.manufacturers.trade)
+      },1000)
+
+    },
+    async showWeight(goodsName,obj) {
+      var weight = ''
+      await getGoodsWeight(goodsName).then((res) => {
+        if (res.data.status === 200) {
+          weight = res.data.data
+          obj['weight'] = weight;
+          obj['rmb'] = weight*obj.perMoney;
+
+        }
+      }).catch((res) => {
+        console.log(res.data.message)
+      })
+      this.totalMoney += obj.rmb
+
+      return weight;
     },
     onSubmit() {
       this.getManufactureList()
@@ -122,8 +168,10 @@ export default {
       this.manufacturersSelect.recycleGoodsAndPrice = null
     },
     toTrade(row) {
-      this.manufacturers.uuid = row.uuid
-      this.manufacturers.recycleGoodsAndPrice = row.recycleGoodsAndPrice
+      // this.manufacturers.uuid = row.uuid
+      // this.manufacturers.recycleGoodsAndPrice = row.recycleGoodsAndPrice
+      this.dealList(row.uuid,row.recycleGoodsAndPrice);
+      this.dialogVisible = true
     },
     handleSizeChange: function (size) {
       this.pagesize = size

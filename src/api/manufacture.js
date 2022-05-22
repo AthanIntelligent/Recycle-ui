@@ -16,3 +16,7 @@ export function getManufacture(uuid) {
   return axios.post('/facture/getManufacturers', uuid)
 }
 
+export function payStationManufacture(facture){
+  return axios.post('/facture/toPayFacture', facture)
+}
+

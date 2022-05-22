@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-table :data="showGoodsAndPrice" @selection-change="handleSelectionChange">
+    <el-table :data="tradeGoods" @selection-change="handleSelectionChange" v-loading="isWeight">
       <el-table-column
         type="selection"
         width="50">
@@ -15,7 +15,7 @@
         label="单价"
         width="120">
         <template slot-scope="scope">
-          {{ scope.row.perMoney }} / {{ scope.row.unit }}
+          {{scope.row.perMoney}}/{{scope.row.unit}}
         </template>
       </el-table-column>
       <el-table-column
@@ -27,78 +27,83 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="amount"
+        prop="rmb"
         label="金额">
         <template slot-scope="scope">
-          {{ scope.row.perMoney*scope.row.weight }}
+          ￥{{scope.row.rmb}}
         </template>
       </el-table-column>
-    </el-table>
 
+    </el-table>
+    <div style="margin-top: 20px;font-size: 16px" v-if="allMoney>0">
+     <span>总金额:</span> {{$props.manufacturersRight.trade.allMoney>0?'￥'+$props.manufacturersRight.trade.allMoney:0}}
+    </div>
     <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="toPay()">确定</el-button>
-        <el-button @click="clearThem()">重置</el-button>
     </span>
   </div>
 </template>
 
 <script>
-import { getGoodsWeight } from '@/api/transaction'
+import {payStationManufacture} from '@/api/manufacture'
 export default {
   name: 'tradeDialogBar',
   props: {
-    manufacturersRight: {
-      uuid: null,
-      recycleGoodsAndPrice: null
-    }
+    manufacturersRight: {}
   },
   data() {
     return {
-      showGoodsAndPrice: [],
-      selectedGoodsAndPrice: []
+      isWeight:true,
+      allMoney:0,
+      tradeGoods:[],
+      manufacture:{
+        trade:{},
+        tradeGoods:[]
+      }
     }
-  },
-  created() {
-    this.dealList()
   },
   methods: {
-    dealList() {
-      let list = this.$props.manufacturersRight.recycleGoodsAndPrice.split(';')
-      for (let i = 0; i < list.length; i++) {
-        // eslint-disable-next-line no-new-object
-        let obj = new Object()
-        let m = list[i].split(',')
-        obj.goodsName = m[0]
-        obj.perMoney = m[1]
-        obj.unit = m[2]
-        this.showWeight(m[0]).then(res => {
-          obj.weight = res;
-        })
-        this.showGoodsAndPrice[i] = obj
-      }
-      console.log(this.showGoodsAndPrice)
-    },
-    async showWeight(goodsName) {
-      var weight = ''
-      await getGoodsWeight(goodsName).then((res) => {
-        if (res.data.status === 200) {
-          weight = res.data.data
-        }
-      }).catch((res) => {
-        console.log(res.data.message)
-      })
-      return weight
-    },
     // 多选框选中数据
     handleSelectionChange(selection) {
-
+      this.allMoney = 0;
+      for(var i=0;i<selection.length;i++){
+        this.allMoney +=selection[i].rmb
+      }
+      this.manufacture.tradeGoods= selection
+      this.$props.manufacturersRight.trade.allMoney=this.allMoney;
     },
     toPay(){
+      this.manufacture.trade = this.$props.manufacturersRight.trade;
+      if(this.manufacture.tradeGoods.length===0){
+        this.accountTip('warning','提示','请选择你要卖出的废品')
+        return;
+      }
+      console.log(this.manufacture,111)
 
+      payStationManufacture(this.manufacture).then(res=>{
+
+      }).catch(err=>{
+
+      })
     },
-    clearThem(){
-
+    accountTip(type,title,info) {
+      this.$notify({
+        title: title,
+        dangerouslyUseHTMLString: true,
+        message: '<strong>提示：<i>'+info+'</i></strong>',
+        type: type,
+        position: 'top-right',
+        offset: 80
+      })
     }
+  },
+  mounted() {
+    setTimeout(()=>{
+      this.tradeGoods = this.$props.manufacturersRight.tradeGoods;
+      console.log(this.tradeGoods)
+      this.isWeight = false
+    },1000)
+
   }
 }
 </script>
