@@ -20,3 +20,6 @@ export function payStationManufacture(facture){
   return axios.post('/facture/toPayFacture', facture)
 }
 
+export function getFactoryTrade(uuid) {
+  return axios.get('/facture/getFactoryTrade?factoryId=' + uuid)
+}

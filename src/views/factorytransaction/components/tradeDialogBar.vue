@@ -15,15 +15,15 @@
         label="单价"
         width="120">
         <template slot-scope="scope">
-          {{scope.row.perMoney}}/{{scope.row.unit}}
+          {{scope.row.perMoney}} {{scope.row.unit}}
         </template>
       </el-table-column>
       <el-table-column
         prop="weight"
-        label="重量"
+        label="重量/个数"
         width="180">
         <template slot-scope="scope">
-          {{scope.row.weight}}{{scope.row.unit}}
+          {{scope.row.weight}}
         </template>
       </el-table-column>
       <el-table-column
@@ -81,7 +81,10 @@ export default {
       console.log(this.manufacture,111)
 
       payStationManufacture(this.manufacture).then(res=>{
-
+        if (res.data.status === 200) {
+          this.accountTip('success','成功','交易成功!')
+          this.$emit('dialog',true)
+        }
       }).catch(err=>{
 
       })

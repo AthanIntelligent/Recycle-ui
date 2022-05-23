@@ -60,7 +60,7 @@
         :title="'记录交易'"
         :visible.sync="dialogVisible"
         width="40%">
-        <trade-dialog-bar :manufacturersRight="manufacturers"></trade-dialog-bar>
+        <trade-dialog-bar @dialog="toCloseDialog" :manufacturersRight="manufacturers"></trade-dialog-bar>
       </el-dialog>
     </div>
 
@@ -108,6 +108,10 @@ export default {
     this.getManufactureList()
   },
   methods: {
+    toCloseDialog(v) {
+      this.dialogVisible = !v
+      this.getManufactureList()
+    },
     getManufactureList() {
       dirManufacture(this.manufacturersSelect).then((res) => {
         if (res.data.status === 200) {

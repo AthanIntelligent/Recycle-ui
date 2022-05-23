@@ -71,6 +71,17 @@
       :with-header="false">
       <transaction-goods-dialog-bar :transactionGoodsListRight="transactionGoodsList"></transaction-goods-dialog-bar>
     </el-drawer>
+
+    <el-pagination
+      style="position: absolute;right:660px;bottom:15px;"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="currentPage"
+      :page-sizes="[5, 10, 15]"
+      :page-size="pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="transactionList.length">
+    </el-pagination>
   </div>
 </template>
 
@@ -111,6 +122,12 @@ name: "TransactionList",
     this.getAllTransactionList()
   },
   methods: {
+    handleSizeChange: function (size) {
+      this.pagesize = size
+    },
+    handleCurrentChange: function (currentPage) {
+      this.currentPage = currentPage
+    },
     getAllTransactionList() {
       dirTransaction(this.transactionSelect).then((res) => {
         if (res.data.status === 200) {

@@ -48,6 +48,13 @@
         align="center">
         <template slot-scope="scope">
           <el-button
+            v-if="scope.row.isVisible === true"
+            @click="dialogVisible2 = true,getManufactureId(scope.row.uuid)"
+            size="middle"
+            type="text">
+            查看交易
+          </el-button>
+          <el-button
             @click="toRemove(scope.row)" type="text"
             size="middle">
             删除
@@ -56,6 +63,26 @@
       </el-table-column>
     </el-table>
 
+    <el-dialog
+      title="添加厂商"
+      :visible.sync="dialogVisible"
+      width="45%">
+      <manufactureDialogBar v-bind:goodsList="goodsList" @cancelFacture="toCloseDialog"></manufactureDialogBar>
+      <!--      <span slot="footer" class="dialog-footer">-->
+      <!--        <el-button @click="dialogVisible = false">取 消</el-button>-->
+      <!--        <el-button type="primary" @click="dialogVisible = false,addGoods()"-->
+      <!--                   v-if="goodsDeal.uuid == ''">确 定</el-button>-->
+      <!--        <el-button type="primary" @click="dialogVisible = false,updGoods()" v-else>确 定</el-button>-->
+      <!--      </span>-->
+    </el-dialog>
+
+    <el-dialog
+      title="查看交易"
+      :visible.sync="dialogVisible2"
+      width="45%">
+      <see-trade-dialog-bar :factortyIdRight="factortyId"></see-trade-dialog-bar>
+<!--      <manufactureDialogBar v-bind:goodsList="goodsList" @cancelFacture="toCloseDialog"></manufactureDialogBar>-->
+    </el-dialog>
 
     <el-pagination
       style="position: absolute;right:660px;bottom:15px;"
@@ -67,33 +94,23 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="manufactures.length">
     </el-pagination>
-    <el-dialog
-      title="添加厂商"
-      :visible.sync="dialogVisible"
-      width="45%">
-      <manufactureDialogBar v-bind:goodsList="goodsList" @cancelFacture="toCloseDialog"></manufactureDialogBar>
-<!--      <span slot="footer" class="dialog-footer">-->
-<!--        <el-button @click="dialogVisible = false">取 消</el-button>-->
-<!--        <el-button type="primary" @click="dialogVisible = false,addGoods()"-->
-<!--                   v-if="goodsDeal.uuid == ''">确 定</el-button>-->
-<!--        <el-button type="primary" @click="dialogVisible = false,updGoods()" v-else>确 定</el-button>-->
-<!--      </span>-->
-    </el-dialog>
   </div>
 </template>
 
 <script>
-
+import seeTradeDialogBar from "./seeTradeDialogBar";
 import {dirGoods} from "../../api/goods";
 import manufactureDialogBar from "./manufactureDialogBar"
 import {dirManufacture,delManufacture} from "@/api/manufacture"
 export default {
   components:{
-    manufactureDialogBar
+    manufactureDialogBar,
+    seeTradeDialogBar
   },
   data() {
     return {
       dialogVisible:false,
+      dialogVisible2:false,
       currentPage: 1,
       pagesize: 10,
       loading2: true,
@@ -103,7 +120,8 @@ export default {
         recycleGoodsAndPrice:''
       },
       manufactures:[],
-      goodsList:[]
+      goodsList:[],
+      factortyId: null
     }
   },
   mounted() {
@@ -112,6 +130,9 @@ export default {
     this.query(this.manufacture);
   },
   methods: {
+    getManufactureId(uuid) {
+      this.factortyId = uuid
+    },
     query(manufacture){
       dirManufacture(manufacture).then(res => {
         this.manufactures = res.data.data
