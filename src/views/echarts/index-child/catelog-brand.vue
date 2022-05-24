@@ -82,8 +82,9 @@ export default {
         },
         yAxis: [
           {
-            name: '(件)',
+            name: '(个)',
             type: 'value',
+            boundaryGap:[0,1],
             // max: 10,
             // 单位字体大小
             nameTextStyle: {

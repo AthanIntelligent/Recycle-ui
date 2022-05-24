@@ -168,7 +168,7 @@ export const asyncRouterMap = [
     path: '/echarts',
     component: Layout,
     meta: {
-      title: '交易可视化',
+      title: '首页',
       icon: 'svg-droplet'
     },
     redirect: '/echarts/index',
@@ -177,7 +177,7 @@ export const asyncRouterMap = [
         path: 'index',
         name: '数量统计',
         component: () => import('@/views/echarts'),
-        meta: {title: '交易可视化', icon: 'svg-heart'}
+        meta: {title: '首页', icon: 'svg-heart'}
       }
     ]
   },

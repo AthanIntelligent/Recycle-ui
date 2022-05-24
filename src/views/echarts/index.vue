@@ -5,7 +5,7 @@
     <div v-show="showFlag === 1">
       <!-- 数量统计-总的数据分布 -->
       <div class="header brand-header">
-        <span class="name">数据分布</span>
+        <span class="name">基站分布</span>
       </div>
       <div class="brand-wrapper">
         <catelog-brand width="100%" height="100%" :x-data="catelogXData" :y-data="catelogYData" @gotoList="handlerToList"></catelog-brand>
@@ -16,9 +16,10 @@
         <el-col :span="8">
           <div class="detail-wrapper">
             <div class="header">
-              <span class="name">数据细分类别展示</span>
+              <span class="name">回收类型占比</span>
             </div>
             <div class="content">
+
               <detail-label v-if="catelogData.length > 0" :label-data="catelogData"></detail-label>
             </div>
           </div>
@@ -28,7 +29,7 @@
         <el-col :span="8">
           <div class="num-top10">
             <div class="header">
-              <span class="name">数量排行TOP10</span>
+              <span class="name">基站交易排行TOP10</span>
             </div>
             <div class="content">
               <part-brand :table-data="departData"></part-brand>
@@ -40,7 +41,7 @@
         <el-col :span="8">
           <div class="rate-top10">
             <div class="header">
-              <span class="name">完成率排行TOP10</span>
+              <span class="name">回收废品流行度Top10</span>
             </div>
             <div class="content">
               <part-rate width="100%" height="100%" :x-data="rateXData" :y-data="rateYData"></part-rate>
@@ -59,7 +60,7 @@
 </template>
 <script>
 import { deepClone } from '@/utils'
-import {getData, getDepartTop} from '@/api/echarts'
+import {getData, getDepartTop,getPieGoodsType,getBarGoodsTop10} from '@/api/echarts'
 import CatelogBrand from './index-child/catelog-brand'
 import DetailLabel from './index-child/detail-label'
 import PartBrand from './index-child/part-brand'
@@ -82,6 +83,7 @@ export default {
       catelogData: [],
       catelogXData: [],
       catelogYData: [],
+      chartPie: '',
       // top10数据【数量】
       departData: [],
       // 完成率top10
@@ -98,14 +100,14 @@ export default {
     _getCateData() {
       getData().then(resp => {
         let respData = resp.data.data
-        this.catelogData = respData.sort((a, b) => {
-          return b.all - a.all
-        })
+        console.log(respData[0][0])
+        // this.catelogData = respData.sort((a, b) => {
+        //   return b.all - a.all
+        // })
         respData.forEach((v, i, _this) => {
-          this.catelogYData.push(v.all)
+          this.catelogYData.push(v[1])
           this.catelogXData.push({
-            'value': v.quesName,
-            'id': v.quesId
+            'value': v[0]
           })
         })
       })
@@ -114,28 +116,40 @@ export default {
     _getDepartTop() {
       getDepartTop().then(resp => {
         let respData = resp.data.data
-        // clone
-        let _respData1 = deepClone(respData)
-        let _respData2 = deepClone(respData)
+        console.log(respData,"top1")
         // 总数排行
-        this.departData = _respData1.sort((a, b) => {
-          return b.all - a.all
+        this.departData = respData.sort((a, b) => {
+          return b.monthRecycle - a.monthRecycle
         })
-        // 完成率排行
-        _respData2.sort((a, b) => {
-          return (b.done * 100 / b.all) - (a.done * 100 / a.all)
-        })
-        _respData2.forEach((v, i, _this) => {
-          this.rateYData.push(v.deptName)
-          let _percentage = (v.done * 100 / v.all).toFixed(2)
-          this.rateXData.push({'value': _percentage, 'id': v.deptId})
-        })
+      })
+    },
+    _getPieGoodsType(){
+      getPieGoodsType().then(res =>{
+        if (res.data.status === 200) {
+          this.catelogData = res.data.data;
+        }
+      }).catch(err=>{
+
+      })
+    },
+    _getBarGoodsTop10(){
+      getBarGoodsTop10().then(res =>{
+        var data = res.data.data;
+        data.sort(function (a, b) { return a.value - b.value; });
+        for(var i=0;i<data.length;i++){
+          this.rateXData[i] = data[i].value
+          this.rateYData[i] = data[i].name
+        }
+      }).catch(err =>{
+
       })
     }
   },
   created() {
     this._getCateData()
     this._getDepartTop()
+    this._getPieGoodsType()
+    this._getBarGoodsTop10();
   }
 }
 </script>
@@ -164,7 +178,7 @@ export default {
       font-size 18px
   .brand-wrapper
     width 100%
-    height 300px
+    height 400px
   .details-wrapper
     height auto
     margin-top 25px

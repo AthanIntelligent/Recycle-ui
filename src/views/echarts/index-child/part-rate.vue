@@ -1,11 +1,9 @@
 <template>
-  <div></div>
+  <div style="height: 400px">
+    <div id="myChart" style="width: 100%;height: 100%"></div>
+  </div>
 </template>
 <script>
-import { debounce } from '@/utils/index'
-let echarts = require('echarts/lib/echarts')
-require('echarts/lib/chart/bar')
-require('echarts/lib/component/tooltip')
 export default {
   name: 'part-rate',
   props: {
@@ -35,137 +33,78 @@ export default {
   data() {
     return {
       optionData: [],
-      grayBar: [100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
     }
   },
   methods: {
-    // 点击事件
-    _click(e) {
-      let _deptid = this.xData[e.dataIndex].id
-      console.log(_deptid)
-      this.$emit('goList', _deptid)
-    },
     initChart() {
-      this.chart = echarts.init(this.$el)
-      this.chart.setOption({
-        // tooltip: {},
-        // color: ['#61a8ff'],
+      var chartDom = document.getElementById('myChart');
+      var myChart = this.$echarts.init(chartDom);
+      var option;
+
+      option = {
+        title: {
+          text: '废品名称',
+            textStyle: {
+              color: '#999'
+            }
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        legend: {
+          textStyle: {
+            fontSize: 12,//字体大小
+            color: '#fff'//字体颜色
+          }
+        },
         grid: {
-          left: 10,
-          right: 10,
-          bottom: 1,
-          top: 1,
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
           containLabel: true
         },
-        xAxis: [
-          {
-            show: false,
-            boundaryGap: true
-          },
-          {
-            show: false
-          }
-        ],
-        yAxis: [
-          {
-            type: 'category',
-            inverse: true,
-            data: this.yData,
-            axisLabel: {
-              color: '#fff',
-              fontSize: 16
-            },
-            axisLine: {
-              show: false
-            }
-          },
-          {
-            type: 'category',
-            inverse: true,
-            data: this.xData,
-            axisLabel: {
-              color: '#fff',
-              fontSize: 16,
-              formatter: '{value}%'
-            },
-            axisLine: {
-              show: false
+        xAxis: {
+          type: 'value',
+          boundaryGap: [0,1],
+          axisLabel: {
+            show: true,
+            textStyle: {
+              color: '#ffffff'
             }
           }
-        ],
+        },
+        yAxis: {
+          type: 'category',
+          data: this.yData,
+          axisLabel: {
+            show: true,
+            textStyle: {
+              color: '#ffffff'
+            }
+          }
+        },
+        color:['#62d1de','#54d6b6','#a6db69','#ffd454','#ffa361','#d1d1d1'],
         series: [
           {
-            show: true,
+            name: new Date().getFullYear(),
             type: 'bar',
-            barGap: '-100%',
-            barWidth: '40%', // 统计条宽度
-            itemStyle: {
-              normal: {
-                color: 'rgba(102, 102, 102,0.5)'
-              }
-            },
-            z: 1,
-            data: this.grayBar
-          },
-          {
-            type: 'bar',
-            data: this.xData,
-            barWidth: '40%',
-            label: {
-              normal: {
-                show: false,
-                textStyle: {
-                  color: '#fff'
-                },
-                position: 'right',
-                fontStyle: {
-                  fontSize: 16
-                },
-                formatter: '{c}%'
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: {
-                  colorStops: [{
-                    offset: 0,
-                    color: '#E287D5' // 0% 处的颜色
-                  }, {
-                    offset: 1,
-                    color: '#FD96A6 ' // 100% 处的颜色
-                  }],
-                  globalCoord: false // 缺省为 false
-                }
-              }
-            }
+            data: this.xData
           }
         ]
-      })
-      this.chart.on('click', this._click)
-    }
-  },
-  watch: {
-    xData() {
-      this.initChart()
-      this.__resizeHandler()
-    },
-    yData() {
-      this.initChart()
-      this.__resizeHandler()
+      };
+
+      myChart.setOption(option);
     }
   },
   created() {
   },
   mounted() {
-    this.$el.style.width = this.width
-    this.$el.style.height = this.height
-    this.initChart()
-    this.__resizeHandler = debounce(() => {
-      if (this.chart) {
-        this.chart.resize()
-      }
-    }, 100)
-    window.addEventListener('resize', this.__resizeHandler)
+    setTimeout(()=>{
+      this.initChart();
+    },1500)
   }
 }
 </script>

@@ -4,16 +4,16 @@
       <li class="item">
         <span class="index" style="visibility: hidden"></span>
         <span class="name">地区</span>
-        <span class="value">总数</span>
-        <span class="done-value">完成数</span>
-        <span class="rate">完成率</span>
+        <span class="value">基站名称</span>
+        <span class="done-value">回收量(月)</span>
+        <span class="rate">销售量(月)</span>
       </li>
       <li class="item" v-for="(item, index) of tableData" :key="item.id" @click="_select(item)">
         <span class="index" :class="classObject(index)">{{index + 1}}</span>
-        <span class="name">{{item.deptName}}</span>
-        <span class="value">{{item.all}}件</span>
-        <span class="done-value">{{item.done}}件</span>
-        <span class="rate">{{(item.done*100/item.all).toFixed(2)}}%</span>
+        <span class="name">{{item.stationArea}}</span>
+        <span class="value">{{item.stationName}}</span>
+        <span class="done-value">{{item.monthRecycle}}</span>
+        <span class="rate">{{item.monthSale}}</span>
       </li>
     </ul>
   </div>
@@ -55,7 +55,7 @@ export default {
 <style scoped lang="stylus">
 .part-brand-wrapper
   height 200px
-  background-image url('/static/part-brand.png')
+  /*background-image url('/static/part-brand.png')*/
   background-repeat no-repeat
   background-size 100% 100%
   .data-wrapper
