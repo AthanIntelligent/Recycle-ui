@@ -81,7 +81,6 @@
       :visible.sync="dialogVisible2"
       width="45%">
       <see-trade-dialog-bar :factortyIdRight="factortyId"></see-trade-dialog-bar>
-<!--      <manufactureDialogBar v-bind:goodsList="goodsList" @cancelFacture="toCloseDialog"></manufactureDialogBar>-->
     </el-dialog>
 
     <el-pagination

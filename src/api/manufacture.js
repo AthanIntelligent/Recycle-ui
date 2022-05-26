@@ -23,3 +23,11 @@ export function payStationManufacture(facture){
 export function getFactoryTrade(uuid) {
   return axios.get('/facture/getFactoryTrade?factoryId=' + uuid)
 }
+
+export function getTradeGoods(uuid) {
+  return axios.get('/facture/getTradeGoods?tradeId=' + uuid)
+}
+
+export function getMyMoney() {
+  return axios.get('/facture/getMyMoney')
+}

@@ -1,10 +1,10 @@
 <template>
   <div class="homepage-container">
+    <h2 style="color: #f50057">基站总收益：￥ {{this.myMoney}}</h2>
     <el-row class="home-total">
       <ve-histogram :data="chartData" :extend="extend" :legend-visible="false"
                     style="width: 100%;height: 150px"></ve-histogram>
     </el-row>
-
     <div style="margin-left: 3px;margin-right: 3px;margin-top: 10px;">
       <div id="chartPie" style="width:50%; height:550px; float: left"></div>
       <div id="chartRose" style="width:50%; height:550px; float: right"></div>
@@ -13,10 +13,12 @@
 </template>
 <script>
 import {dirUandSTransaction, dirGoodsPercent, dirReservationPercent} from '@/api/userandstationtransaction'
+import {getMyMoney} from '@/api/manufacture'
 
 export default {
   data() {
     return {
+      myMoney: null,
       monthPayList: [],
       homeDetailItem: [],
       rankList: [],
@@ -31,9 +33,9 @@ export default {
           x: 'center'
         },
         // x轴的文字倾斜
-        "xAxis.0.axisLabel.rotate": 45,
+        'xAxis.0.axisLabel.rotate': 45,
         yAxis: {
-          type: "value",
+          type: 'value',
           // 是否显示y轴线条
           axisLine: {
             show: true
@@ -46,7 +48,7 @@ export default {
             }
           },
           // 线条位置
-          position: "left",
+          position: 'left',
           axisLabel: {
             formatter: '{value} 元'
           }
@@ -92,20 +94,20 @@ export default {
             xAxisIndex: [0],
             startValue: 0,
             endValue: 4,
-            zoomLock: false,//阻止区域缩放
+            zoomLock: false // 阻止区域缩放
           }
         ],
         grid: {
           show: true,
           // backgroundColor: "#FFF6F3",
-          borderColor: "#FFF6F3",
+          borderColor: '#FFF6F3'
           // containLabel:false,
         }
       },
       chartData: {
         columns: ['day', 'money'],
         rows: []
-      },
+      }
     }
   },
   methods: {
@@ -127,6 +129,7 @@ export default {
           let getData = []
           // 先进行赋值
           for (let i = 0; i < response.data.data.length; i++) {
+            // eslint-disable-next-line no-new-object
             let obj = new Object()
             obj.name = response.data.data[i].name // 物品名称
             obj.value = response.data.data[i].value // 占比率
@@ -189,6 +192,7 @@ export default {
           let getData = []
           // 先进行赋值
           for (let i = 0; i < response.data.data.length; i++) {
+            // eslint-disable-next-line no-new-object
             let obj = new Object()
             obj.name = response.data.data[i].name // 到访状态
             obj.value = response.data.data[i].value // 占比率
@@ -217,7 +221,7 @@ export default {
           // subtext: '纯属虚构',
           x: 'center',
           textStyle: {// 主标题文本样式{"fontSize": 18,"fontWeight": "bolder","color": "#333"}
-            color: "#ffffff"
+            color: '#ffffff'
           }
         },
         backgroundColor: '#090e36',
@@ -230,7 +234,7 @@ export default {
         },
         tooltip: {
           trigger: 'item',
-          formatter: "{b} : {c} ({d}%)"
+          formatter: '{b} : {c} ({d}%)'
         },
         legend: {
           show: false
@@ -244,15 +248,15 @@ export default {
           axisLine: {
             show: false,
             lineStyle: {
-              color: "#0B4A6B",
+              color: '#0B4A6B',
               width: 1,
-              type: "solid"
+              type: 'solid'
             }
           },
           axisLabel: {
             interval: 0,
             show: true,
-            color: "#0B4A6B",
+            color: '#0B4A6B',
             margin: 8,
             fontSize: 16
           }
@@ -264,23 +268,23 @@ export default {
           axisLine: {
             show: false,
             lineStyle: {
-              color: "#0B3E5E",
+              color: '#0B3E5E',
               width: 1,
-              type: "solid"
+              type: 'solid'
             }
           },
           axisLabel: {
             formatter: '{value} %',
             show: false,
             padding: [0, 0, 10, 0],
-            color: "#0B3E5E",
+            color: '#0B3E5E',
             fontSize: 16
           },
           splitLine: {
             lineStyle: {
-              color: "#07385e",
+              color: '#07385e',
               width: 2,
-              type: "dashed"
+              type: 'dashed'
             }
           }
         },
@@ -335,10 +339,20 @@ export default {
         }
         ]
       })
+    },
+    getMyMoney() {
+      getMyMoney().then((res) => {
+        if(res.data.status === 200) {
+          this.myMoney = res.data.data
+        }
+      }).catch((res) => {
+        console.log(res.data.message)
+      })
     }
   },
   created() {
     this.getAllMonthPay()
+    this.getMyMoney()
   },
   mounted() {
     this.getTransactionGoodsPercent()
